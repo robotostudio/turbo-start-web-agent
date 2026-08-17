@@ -1,0 +1,107 @@
+{
+  "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
+  "blockCount": 2,
+  "blocks": {
+    "Hero": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "variant": {
+            "default": "centered",
+            "type": "string",
+            "enum": [
+              "centered",
+              "left"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "primary": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
+          },
+          "secondary": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
+          }
+        },
+        "required": [
+          "title"
+        ]
+      }
+    },
+    "CTA": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "variant": {
+            "default": "boxed",
+            "type": "string",
+            "enum": [
+              "boxed",
+              "plain"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "primary": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
+          }
+        },
+        "required": [
+          "title"
+        ]
+      }
+    }
+  }
+}
