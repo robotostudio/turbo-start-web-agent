@@ -122,7 +122,7 @@ const SAFE_URL_SCHEME = /^(https?|mailto|tel):/i;
  * and http(s)/mailto/tel schemes. Everything else — including
  * protocol-relative `//host` and pseudo-schemes like `javascript:` — is
  * unsafe and rejected. */
-const isSafeUrl = (value: string): boolean => {
+export const isSafeUrl = (value: string): boolean => {
   if (value.startsWith("//")) return false;
   if (
     value.startsWith("/") ||
