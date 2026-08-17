@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { z } from "zod";
-import { ctaSchema, heroSchema, parseBlock } from "./schemas.ts";
+import { ctaSchema, heroSchema, parseBlock, safeUrl } from "./schemas.ts";
 
 test("parseBlock returns parsed data for valid props", () => {
   const parsed = parseBlock("Hero", heroSchema, { title: "Hi" });
@@ -66,5 +66,10 @@ test("link schema accepts relative, https, and mailto hrefs", () => {
 
 test("the href URL rule survives into the JSON Schema", () => {
   const json = z.toJSONSchema(ctaSchema, { io: "input" });
+  assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
+});
+
+test("safeUrl always carries its rule into the JSON Schema", () => {
+  const json = z.toJSONSchema(z.object({ u: safeUrl() }), { io: "input" });
   assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
 });

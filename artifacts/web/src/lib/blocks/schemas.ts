@@ -15,13 +15,16 @@ import { isSafeUrl } from "../content/remark-content-lockdown.ts";
 // is a bare string, inviting exactly the unsafe value this refine rejects.
 export const URL_RULE = "Must be an http(s), mailto, tel, or relative URL.";
 
+/** The ONLY sanctioned way to declare a URL prop. The .refine() enforces the
+ * rule at build time; the .describe() is what carries it into catalog.json,
+ * because z.toJSONSchema() silently drops refinements. Never hand-write this
+ * pairing — a bare .refine() validates correctly and documents nothing. */
+export const safeUrl = () =>
+  z.string().min(1, "must not be blank").refine(isSafeUrl, URL_RULE).describe(URL_RULE);
+
 const link = z.object({
   label: z.string(),
-  href: z
-    .string()
-    .min(1, "href must not be blank")
-    .refine(isSafeUrl, "href must be http(s), mailto, tel, or a relative URL")
-    .describe(URL_RULE),
+  href: safeUrl(),
 });
 
 export const heroSchema = z.object({
