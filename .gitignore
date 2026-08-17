@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.velite/
+out/
+dist/
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+.DS_Store
+docs/superpowers/

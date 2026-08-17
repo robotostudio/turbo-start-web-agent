@@ -1,0 +1,50 @@
+# ============================================================================
+# SECURITY: Minimum release age for npm packages (supply-chain attack defense)
+# ============================================================================
+#
+# Any npm package version must have been published for at least 1 day (1440
+# minutes) before pnpm will install it. Malicious npm releases are typically
+# discovered and pulled within hours, so a 1-day delay is a strong buffer.
+#
+# DO NOT DISABLE THIS SETTING. Removing it or setting it to 0 leaves the whole
+# workspace open to supply-chain attacks, the #1 vector for npm compromises.
+#
+# If you genuinely need a package before the window passes (e.g. an urgent
+# security fix), add it to minimumReleaseAgeExclude below, and only for
+# packages from organisations with an impeccable security posture. Remove the
+# exclusion once the window has passed.
+#
+#   minimumReleaseAgeExclude:
+#     - typescript
+# ============================================================================
+minimumReleaseAge: 1440
+
+packages:
+  - artifacts/*
+  - lib/*
+  - lib/integrations/*
+
+autoInstallPeers: false
+
+# Network resilience. The default 60s fetch timeout / 2 retries can fail on
+# large tarballs (next and @next/swc are 25-40MB) over slow or flaky
+# connections — pnpm aborts with "error (23)" during install. pnpm 11 reads
+# these from pnpm-workspace.yaml, not .npmrc. They only apply to slow or
+# failed requests, so fast networks are unaffected.
+fetchTimeout: 300000
+fetchRetries: 5
+
+# pnpm 11 replaced `onlyBuiltDependencies` with `allowBuilds`. Both are listed
+# so the workspace behaves identically on pnpm 10 and 11 — each version
+# ignores the key it does not recognise.
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild
+  - sharp
+  - unrs-resolver
+
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

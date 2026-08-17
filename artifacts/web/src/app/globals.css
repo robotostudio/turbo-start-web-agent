@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS
+   Blocks and primitives only ever reference these tokens, never raw hex or px.
+   Re-theming a client project means editing values here — never renaming or
+   removing a token, which would break every Block that references it.
+   ========================================================================== */
+
+@theme {
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.21 0.006 285.9);
+  --color-muted: oklch(0.967 0.001 286.4);
+  --color-muted-foreground: oklch(0.552 0.016 285.9);
+  --color-brand: oklch(0.55 0.22 264);
+  --color-brand-foreground: oklch(1 0 0);
+  --color-border: oklch(0.92 0.004 286.3);
+  --color-ring: oklch(0.55 0.22 264);
+
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-prose: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 0.75rem;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  /* Horizontal page gutter shared by every Block, so sections align down the
+     page without each Block inventing its own padding. */
+  .page-inset {
+    margin-inline: auto;
+    max-width: 80rem;
+    padding-inline: 1.5rem;
+  }
+}

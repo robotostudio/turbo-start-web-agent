@@ -1,0 +1,24 @@
+{
+  "name": "turbo-start-web-agent",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "dev": "pnpm --filter @workspace/web run dev",
+    "start": "pnpm --filter @workspace/web run start",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "lint": "pnpm --filter @workspace/web run lint",
+    "test": "pnpm --filter @workspace/web run test",
+    "content:check": "pnpm --filter @workspace/web run content:check",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
