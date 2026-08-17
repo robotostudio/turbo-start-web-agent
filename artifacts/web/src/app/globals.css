@@ -17,9 +17,11 @@
   --color-border: oklch(0.92 0.004 286.3);
   --color-ring: oklch(0.55 0.22 264);
 
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-prose: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+  /* Plain @theme (not @theme inline) is correct here: next/font's variable and
+     Tailwind's theme variable both resolve on <html>, so the var() reference
+     works. Verified by compiling through the installed Tailwind engine. */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
   --radius-card: 0.75rem;
 }

@@ -30,7 +30,7 @@ export function Hero(raw: HeroProps) {
           variant === "centered" ? "items-center text-center" : "items-start text-left",
         )}
       >
-        <h1 className="font-heading text-5xl text-foreground lg:text-6xl">{title}</h1>
+        <h1 className="font-sans text-5xl text-foreground lg:text-6xl">{title}</h1>
         {subtitle && <p className="max-w-2xl text-lg text-muted-foreground">{subtitle}</p>}
         {(primary || secondary) && (
           <div className="flex flex-wrap gap-4">

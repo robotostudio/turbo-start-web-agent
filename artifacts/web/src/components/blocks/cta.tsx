@@ -14,7 +14,7 @@ export function CTA(raw: CtaProps) {
             variant === "boxed" && "rounded-card border border-border bg-muted px-8 py-16",
           )}
         >
-          <h2 className="font-heading text-3xl text-foreground">{title}</h2>
+          <h2 className="font-sans text-3xl text-foreground">{title}</h2>
           {body && <p className="max-w-xl text-muted-foreground">{body}</p>}
           {primary &&
             (primary.href.startsWith("/") ? (

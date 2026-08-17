@@ -4,14 +4,13 @@ import * as runtime from "react/jsx-runtime";
 import { blockComponents } from "@/components/blocks";
 
 // One top-level prose element (heading, paragraph, list) wrapped in the
-// site's shared `.page-inset` gutter, using `font-prose` for legible body
-// copy, then narrowed to a readable measure inside it. Blocks (Hero, CTA, …)
-// are matched by capitalised name and never reach this wrapper — they already
-// carry their own `page-inset`, so wrapping the whole MDX tree in one
-// ancestor container would double that padding up on every page a Block
-// renders on.
+// site's shared `.page-inset` gutter, using `font-sans` for body copy, then
+// narrowed to a readable measure inside it. Blocks (Hero, CTA, …) are matched
+// by capitalised name and never reach this wrapper — they already carry
+// their own `page-inset`, so wrapping the whole MDX tree in one ancestor
+// container would double that padding up on every page a Block renders on.
 const ProseBlock = ({ children }: { children: ReactNode }) => (
-  <div className="page-inset font-prose">{children}</div>
+  <div className="page-inset font-sans">{children}</div>
 );
 
 const proseComponents = {
