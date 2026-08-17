@@ -27,21 +27,29 @@ const link = z.object({
   href: safeUrl(),
 });
 
-export const heroSchema = z.object({
-  variant: z.enum(["centered", "left"]).default("centered"),
-  title: z.string(),
-  subtitle: z.string().optional(),
-  primary: link.optional(),
-  secondary: link.optional(),
-});
+export const heroSchema = z
+  .object({
+    variant: z.enum(["centered", "left"]).default("centered"),
+    title: z.string(),
+    subtitle: z.string().optional(),
+    primary: link.optional(),
+    secondary: link.optional(),
+  })
+  .describe(
+    "The page-opening banner: a large headline, an optional supporting line, and up to two calls to action. Use once per page, at the top.",
+  );
 export type HeroProps = z.input<typeof heroSchema>;
 
-export const ctaSchema = z.object({
-  variant: z.enum(["boxed", "plain"]).default("boxed"),
-  title: z.string(),
-  body: z.string().optional(),
-  primary: link.optional(),
-});
+export const ctaSchema = z
+  .object({
+    variant: z.enum(["boxed", "plain"]).default("boxed"),
+    title: z.string(),
+    body: z.string().optional(),
+    primary: link.optional(),
+  })
+  .describe(
+    "A closing prompt to take one action: a short heading, optional body text, and a single button.",
+  );
 export type CtaProps = z.input<typeof ctaSchema>;
 
 // The registry the catalog generator reads. Keep in step with blockComponents

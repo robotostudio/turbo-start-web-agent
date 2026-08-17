@@ -1,0 +1,23 @@
+# Default text handling: normalize line endings to LF in the repository,
+# and let git decide per-platform what to check out as (safe default for
+# a mixed-OS contributor base).
+* text=auto
+
+# The catalog and gallery generators (scripts/generate-catalog.ts,
+# scripts/generate-gallery.ts) write LF-only output, and their --check
+# drift gates compare bytes. On Windows with core.autocrlf=true, checkout
+# would rewrite these to CRLF, so a completely unmodified tree would fail
+# catalog:check / gallery:check with "file is out of date" even though
+# nothing was touched. Pin these to LF so that never happens.
+artifacts/web/src/lib/blocks/catalog.json text eol=lf
+artifacts/web/content/pages/blocks-gallery.mdx text eol=lf
+
+# Pin the other text types the drift gates and tooling depend on, so the
+# same class of checkout-dependent failure can't creep in elsewhere.
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.mdx text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.yml text eol=lf
