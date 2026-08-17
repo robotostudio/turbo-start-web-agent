@@ -13,37 +13,123 @@ noindex: true
 ---
 `;
 
+// A Block name as it can appear in `<BlockSpec name="...">` and still be
+// found again by this parser. Must start with a letter (matching the
+// capitalised-JSX-tag rule content lockdown already enforces) and may
+// contain digits after that — kept as a single source string so the parser's
+// regex and the runtime round-trip check below can never drift apart.
+const NAME_SOURCE = "[A-Za-z][A-Za-z0-9]*";
+
+/** Every name in `blockSchemas` must match this to be found by `parseSections`
+ * — exported so generate-gallery.ts can assert every registered Block is
+ * parsable before it ever renders a file. */
+export const BLOCK_NAME_PATTERN = new RegExp(`^${NAME_SOURCE}$`);
+
 // Matches a section's opening line regardless of extra attributes
 // (status="todo" and any future ones), and its closing line exactly. Both
-// anchored to the full line: a `<BlockSpec name="X">` mid-sentence inside a
-// hand-written example body (which cannot happen — content lockdown forbids
-// nested BlockSpec elements — but a stray code-block sample of the MDX syntax
-// itself could) would still only match at the start of its own line, same as
-// the real thing. Section boundaries are therefore a best-effort structural
-// scan, not a full MDX parse — good enough because this generator only ever
-// reads its own previously-generated output.
-const OPEN_TAG = /^<BlockSpec name="([A-Za-z]+)"/;
+// anchored to the full line, so a `<BlockSpec name="X">` or `</BlockSpec>`
+// line inside a hand-written example body — plausible: the content lockdown
+// permits fenced code samples of the MDX syntax itself, or a literal
+// `</BlockSpec>` line in one — still matches this regex the same as the real
+// thing. `parseSections` below deals with that by (1) ignoring tag-shaped
+// lines inside fenced code blocks, and (2) for the lines outside fences,
+// treating the LAST close before the next open as authoritative rather than
+// the first. Section boundaries are therefore a best-effort structural scan,
+// not a full MDX parse — good enough because this generator only ever reads
+// its own previously-generated output plus hand-written bodies.
+const OPEN_TAG = new RegExp(`^<BlockSpec name="(${NAME_SOURCE})"`);
 const CLOSE_TAG = /^<\/BlockSpec>$/;
+
+// Toggled by a line that starts with three (or more) backticks — a fenced
+// code block delimiter. Line-based, like the rest of this parser: it doesn't
+// know about nested/mismatched fence lengths, only "are we inside a fence
+// right now", which is all that's needed to keep a code sample's own
+// `<BlockSpec>`/`</BlockSpec>` text from being mistaken for real tags.
+const FENCE_DELIMITER = /^```/;
+
+/** For each line, whether it sits inside a fenced code block (the delimiter
+ * lines themselves count as "inside" — they never match OPEN_TAG/CLOSE_TAG
+ * anyway, so it doesn't matter which side they land on). */
+function computeFenceMask(lines: string[]): boolean[] {
+  const mask: boolean[] = new Array(lines.length).fill(false);
+  let inFence = false;
+  for (let i = 0; i < lines.length; i++) {
+    if (FENCE_DELIMITER.test(lines[i])) {
+      inFence = !inFence;
+      mask[i] = true;
+      continue;
+    }
+    mask[i] = inFence;
+  }
+  return mask;
+}
 
 /** Split an existing gallery MDX body into named sections, keyed by Block
  * name, each value the section's full raw text (its opening tag line through
  * its closing tag line, verbatim, newline-joined). A section with no matching
  * close tag before EOF is malformed input and is dropped rather than
  * swallowing the rest of the file — defensive, since a hand-edited file is
- * the one input this generator does not fully control. */
+ * the one input this generator does not fully control.
+ *
+ * Line endings are normalised (CRLF/CR -> LF) before splitting, so a file
+ * saved with CRLF line endings parses identically to its LF equivalent — the
+ * anchored `$`-based regexes above would otherwise never match a line ending
+ * in a stray `\r`, silently producing zero sections. This only affects
+ * parsing: nothing here writes a file, so output line endings are untouched.
+ *
+ * Two sections sharing the same name is a silent-data-loss risk (a bad merge
+ * could produce one), so it throws naming the duplicated Block rather than
+ * quietly keeping the last one. */
 export function parseSections(source: string): Map<string, string> {
-  const lines = source.split("\n");
+  const lines = source.replace(/\r\n?/g, "\n").split("\n");
+  const inFence = computeFenceMask(lines);
   const sections = new Map<string, string>();
   for (let i = 0; i < lines.length; i++) {
+    if (inFence[i]) continue;
     const open = lines[i].match(OPEN_TAG);
     if (!open) continue;
     const name = open[1];
-    const close = lines.findIndex((line, index) => index > i && CLOSE_TAG.test(line));
+
+    // The boundary is the next real (non-fenced) opening tag, or EOF.
+    let boundary = lines.length;
+    for (let j = i + 1; j < lines.length; j++) {
+      if (!inFence[j] && OPEN_TAG.test(lines[j])) {
+        boundary = j;
+        break;
+      }
+    }
+
+    // The true close is the LAST real (non-fenced) close tag before that
+    // boundary, not the first — a code sample earlier in the body may
+    // contain its own literal `</BlockSpec>` line.
+    let close = -1;
+    for (let j = i + 1; j < boundary; j++) {
+      if (!inFence[j] && CLOSE_TAG.test(lines[j])) close = j;
+    }
     if (close === -1) continue;
+
+    if (sections.has(name)) {
+      throw new Error(
+        `Duplicate <BlockSpec name="${name}"> section in the gallery MDX — remove one before regenerating.`,
+      );
+    }
     sections.set(name, lines.slice(i, close + 1).join("\n"));
     i = close;
   }
   return sections;
+}
+
+/** Throws naming any Block whose name cannot round-trip through
+ * `parseSections` (i.e. doesn't match `BLOCK_NAME_PATTERN`) — called before
+ * rendering so a future Block name the parser can't handle fails loudly at
+ * generation time instead of silently losing its section on the next run. */
+export function assertNamesParsable(blockNames: string[]): void {
+  const unparsable = blockNames.filter((name) => !BLOCK_NAME_PATTERN.test(name));
+  if (unparsable.length > 0) {
+    throw new Error(
+      `Block name(s) ${unparsable.map((name) => `"${name}"`).join(", ")} do not match the gallery section parser's name pattern (${BLOCK_NAME_PATTERN}) and cannot round-trip through blocks-gallery.mdx. Rename the Block, or widen NAME_SOURCE in gallery-sections.ts.`,
+    );
+  }
 }
 
 /** The stub a Block gets when it has no hand-written example yet. Emitted

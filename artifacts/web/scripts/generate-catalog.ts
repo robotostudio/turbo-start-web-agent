@@ -45,8 +45,35 @@ const rendered = `${JSON.stringify(catalog, null, 2)}\n`;
 if (process.argv.includes("--check")) {
   const existing = readFileSync(outputPath, "utf8");
   if (existing !== rendered) {
+    // Same "name what changed" contract as gallery:check (see
+    // generate-gallery.ts) — two generators doing the same job should behave
+    // the same way. `existing` may not even be valid JSON (hand-edited, or
+    // from an older/incompatible generator); parse defensively and fall back
+    // to "no prior blocks", which reports every registered Block as changed
+    // rather than crashing the check.
+    const existingBlocks: Record<string, unknown> = (() => {
+      try {
+        const parsed = JSON.parse(existing) as { blocks?: unknown };
+        return parsed && typeof parsed.blocks === "object" && parsed.blocks !== null
+          ? (parsed.blocks as Record<string, unknown>)
+          : {};
+      } catch {
+        return {};
+      }
+    })();
+    const currentNames = new Set(Object.keys(blocks));
+    const changed = blockSchemas
+      .map(({ name }) => name)
+      .filter((name) => JSON.stringify(existingBlocks[name]) !== JSON.stringify(blocks[name]));
+    const removed = Object.keys(existingBlocks).filter((name) => !currentNames.has(name));
+    const detail = [
+      changed.length > 0 ? `schema changed or added: ${changed.join(", ")}` : null,
+      removed.length > 0 ? `no longer registered: ${removed.join(", ")}` : null,
+    ]
+      .filter(Boolean)
+      .join("; ");
     process.stderr.write(
-      "Block catalog is out of date. Run `pnpm catalog` and commit the result.\n",
+      `Block catalog is out of date${detail ? ` (${detail})` : ""}. Run \`pnpm catalog\` and commit the result.\n`,
     );
     process.exit(1);
   }

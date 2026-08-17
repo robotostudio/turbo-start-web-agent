@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { test } from "node:test";
 import {
+  assertNamesParsable,
   droppedSections,
   missingSections,
   parseSections,
@@ -103,4 +104,93 @@ test("droppedSections names a Block present in the file but not the registry", (
 test("missingSections names a registered Block with no existing section", () => {
   const existing = new Map([["Hero", stubSection("Hero")]]);
   assert.deepEqual(missingSections(["Hero", "CTA"], existing), ["CTA"]);
+});
+
+// --- Regression tests: silent data-loss bugs -------------------------------
+
+test("parseSections treats CRLF line endings the same as LF", () => {
+  const lf = ['<BlockSpec name="Hero">', "", '<Hero title="Hi" />', "", "</BlockSpec>"].join("\n");
+  const crlf = lf.replace(/\n/g, "\r\n");
+  const lfSections = parseSections(lf);
+  const crlfSections = parseSections(crlf);
+  assert.equal(crlfSections.size, 1);
+  assert.equal(crlfSections.get("Hero"), lfSections.get("Hero"));
+});
+
+test("a body containing a literal </BlockSpec> line (in a fenced code sample) round-trips byte-identically", () => {
+  const source = [
+    '<BlockSpec name="Hero">',
+    "",
+    "Example MDX syntax for reference:",
+    "",
+    "```mdx",
+    '<BlockSpec name="Example">',
+    '  <Hero title="x" />',
+    "</BlockSpec>",
+    "```",
+    "",
+    '<Hero title="Hi" />',
+    "",
+    "</BlockSpec>",
+  ].join("\n");
+  const sections = parseSections(source);
+  assert.equal(sections.size, 1);
+  assert.equal(sections.get("Hero"), source);
+  // Round-trip through render as well.
+  const rendered = renderGallery(["Hero"], sections);
+  assert.match(rendered, /<Hero title="Hi" \/>/);
+  assert.equal((rendered.match(/<\/BlockSpec>/g) ?? []).length, 2);
+});
+
+test("a body containing <BlockSpec inside a fenced code sample does not break sectioning", () => {
+  const source = [
+    '<BlockSpec name="Hero">',
+    "",
+    "```mdx",
+    '<BlockSpec name="Example">',
+    "  ...",
+    "</BlockSpec>",
+    "```",
+    "",
+    '<Hero title="Hi" />',
+    "",
+    "</BlockSpec>",
+    "",
+    '<BlockSpec name="CTA">',
+    "",
+    '<CTA title="Start" />',
+    "",
+    "</BlockSpec>",
+  ].join("\n");
+  const sections = parseSections(source);
+  assert.equal(sections.size, 2);
+  assert.match(sections.get("Hero") ?? "", /<Hero title="Hi" \/>/);
+  assert.match(sections.get("CTA") ?? "", /<CTA title="Start" \/>/);
+});
+
+test("two sections with the same name throw instead of silently dropping one", () => {
+  const source = [
+    '<BlockSpec name="Hero">',
+    "first",
+    "</BlockSpec>",
+    "",
+    '<BlockSpec name="Hero">',
+    "second",
+    "</BlockSpec>",
+  ].join("\n");
+  assert.throws(() => parseSections(source), /duplicate.*Hero/i);
+});
+
+test("a Block name containing a digit round-trips through parseSections", () => {
+  const source = ['<BlockSpec name="Hero2">', "body", "</BlockSpec>"].join("\n");
+  const sections = parseSections(source);
+  assert.equal(sections.get("Hero2"), source);
+});
+
+test("assertNamesParsable does not throw for names matching the parser's pattern", () => {
+  assert.doesNotThrow(() => assertNamesParsable(["Hero", "CTA", "Hero2"]));
+});
+
+test("assertNamesParsable throws naming a Block whose name the parser cannot round-trip", () => {
+  assert.throws(() => assertNamesParsable(["2Hero"]), /2Hero/);
 });

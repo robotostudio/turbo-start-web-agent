@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blockSchemas } from "../src/lib/blocks/schemas.ts";
 import {
+  assertNamesParsable,
   droppedSections,
   missingSections,
   parseSections,
@@ -29,6 +30,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const outputPath = join(here, "..", "content", "pages", "blocks-gallery.mdx");
 
 const blockNames = blockSchemas.map(({ name }) => name);
+assertNamesParsable(blockNames);
 const existing = existsSync(outputPath) ? readFileSync(outputPath, "utf8") : "";
 const existingSections = parseSections(existing);
 const rendered = renderGallery(blockNames, existingSections);
