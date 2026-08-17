@@ -1,0 +1,42 @@
+---
+title: Block gallery
+description: Every Block in this template, rendered live.
+noindex: true
+---
+
+<BlockSpec name="Hero">
+
+<Hero
+  variant="centered"
+  title="Your website, editable by any AI agent"
+  subtitle="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."
+  primary={{ label: "Read the docs", href: "/about" }}
+  secondary={{ label: "View source", href: "https://github.com" }}
+/>
+
+<Hero
+  variant="left"
+  title="Or lead from the left"
+  subtitle="Same Block, different variant — set through a literal prop, not a new component."
+  primary={{ label: "Read the docs", href: "/about" }}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="CTA">
+
+<CTA
+  variant="boxed"
+  title="Start from this template"
+  body="Compose pages from Blocks. The build is the gate."
+  primary={{ label: "About Harbour", href: "/about" }}
+/>
+
+<CTA
+  variant="plain"
+  title="Same Block, no box"
+  body="The plain variant drops the border and background."
+  primary={{ label: "About Harbour", href: "/about" }}
+/>
+
+</BlockSpec>

@@ -2,6 +2,7 @@ import { run } from "@mdx-js/mdx";
 import type { ComponentProps, ReactNode } from "react";
 import * as runtime from "react/jsx-runtime";
 import { blockComponents } from "@/components/blocks";
+import { BlockSpec } from "@/components/blocks/block-spec";
 
 // One top-level prose element (heading, paragraph, list) wrapped in the
 // site's shared `.page-inset` gutter, using `font-sans` for body copy, then
@@ -84,5 +85,8 @@ const proseComponents = {
 // on bad props.
 export async function MdxContent({ source }: { source: string }) {
   const { default: Content } = await run(source, runtime);
-  return <Content components={{ ...blockComponents, ...proseComponents }} />;
+  // BlockSpec is Block Gallery chrome, injected here rather than registered in
+  // blockComponents/blockSchemas — a Block listing itself in its own gallery
+  // would skew blockCount. See src/components/blocks/block-spec.tsx.
+  return <Content components={{ ...blockComponents, BlockSpec, ...proseComponents }} />;
 }
