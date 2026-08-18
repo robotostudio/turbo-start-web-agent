@@ -1,0 +1,47 @@
+/*
+ * CSS-only variant switcher for /design-preview.
+ *
+ * Radio + :checked technique, so every group on the page can be switched
+ * independently with zero client JavaScript (this route must stay a server
+ * component). Canonical Tailwind utilities (peer/has-*) can't express this:
+ * the toolbar (labels) and the panels live in separate wrapper elements for
+ * layout reasons, so the radio inputs and the elements they control are not
+ * direct siblings — that rules out peer-checked/has-checked, which both
+ * require a direct sibling relationship. `:has()` on the shared `.group`
+ * ancestor reaches across that nesting instead. `:nth-of-type` keys each
+ * rule to its position, so this single stylesheet works for every group
+ * instance on the page (each is scoped by its own DOM subtree, not by a
+ * per-group generated id/class).
+ *
+ * Only plain CSS values and var(--color-*)/var(--radius-*) tokens are used
+ * here (no Tailwind functions like --spacing() — CSS Modules are not run
+ * through Tailwind's engine, so a Tailwind function would ship unresolved).
+ */
+
+.panel {
+  display: none;
+}
+
+.group:has(.toolbar input:nth-of-type(1):checked) .panels .panel:nth-of-type(1),
+.group:has(.toolbar input:nth-of-type(2):checked) .panels .panel:nth-of-type(2),
+.group:has(.toolbar input:nth-of-type(3):checked) .panels .panel:nth-of-type(3),
+.group:has(.toolbar input:nth-of-type(4):checked) .panels .panel:nth-of-type(4) {
+  display: contents;
+}
+
+.group:has(.toolbar input:nth-of-type(1):checked) .toolbar .option:nth-of-type(1),
+.group:has(.toolbar input:nth-of-type(2):checked) .toolbar .option:nth-of-type(2),
+.group:has(.toolbar input:nth-of-type(3):checked) .toolbar .option:nth-of-type(3),
+.group:has(.toolbar input:nth-of-type(4):checked) .toolbar .option:nth-of-type(4) {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-brand-foreground);
+}
+
+.group:has(.toolbar input:nth-of-type(1):focus-visible) .toolbar .option:nth-of-type(1),
+.group:has(.toolbar input:nth-of-type(2):focus-visible) .toolbar .option:nth-of-type(2),
+.group:has(.toolbar input:nth-of-type(3):focus-visible) .toolbar .option:nth-of-type(3),
+.group:has(.toolbar input:nth-of-type(4):focus-visible) .toolbar .option:nth-of-type(4) {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
