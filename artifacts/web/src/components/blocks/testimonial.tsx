@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { parseBlock, type TestimonialProps, testimonialSchema } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function Testimonial(raw: TestimonialProps) {
   const { title, testimonials } = parseBlock("Testimonial", testimonialSchema, raw);
@@ -7,9 +8,7 @@ export function Testimonial(raw: TestimonialProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-          {title}
-        </h2>
+        <SectionHeader title={title} />
         <ul className="mt-16 grid grid-cols-1 gap-x-10 gap-y-14 sm:mt-20 sm:grid-cols-3">
           {testimonials.map((testimonial) => (
             <li key={testimonial.person.name} className="flex flex-col justify-between gap-8">

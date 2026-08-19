@@ -57,11 +57,17 @@ without regenerating fails the build.
 
 - Pages live in `artifacts/web/content/pages/*.mdx`; posts live in
   `content/blog/` and are served at `/blog` and `/blog/[slug]`.
-- Frontmatter is validated by Velite. `draft: true` keeps an entry out of the
-  production build **on Vercel** — the check is `VERCEL_ENV !== "production"`,
-  which is unset on Netlify, Cloudflare, Docker, and any self-hosted build, so
-  drafts publish there on every build. `noindex: true` publishes an entry but
-  keeps it out of the sitemap and asks search engines not to index it.
+- Frontmatter is validated by Velite. `draft: true` keeps an entry out of any
+  production build, on Vercel or anywhere else. On Vercel, `VERCEL_ENV`
+  disambiguates a production deployment from a preview one (both build with
+  `NODE_ENV=production`), so drafts stay visible on preview URLs and are
+  excluded only from production. Off Vercel — Netlify, Cloudflare, Docker, any
+  self-hosted build — there is no such signal, so `NODE_ENV === "production"`
+  is what excludes drafts there. Set `PREVIEW_DRAFTS=true` to deliberately
+  render drafts on a production-mode build anyway (e.g. a staging environment
+  that runs `next build`/`next start` the same as prod). `noindex: true`
+  publishes an entry but keeps it out of the sitemap and asks search engines
+  not to index it.
 - Site chrome — the header nav and the footer — is **not** MDX content. It's
   edited as YAML in `content/settings/navigation.yml` and
   `content/settings/footer.yml`, validated by the same Velite/Zod pipeline

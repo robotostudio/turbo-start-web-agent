@@ -18,7 +18,7 @@ noindex: true
 <Hero
   variant="centered"
   title="Your website, editable by any AI agent"
-  subtitle="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."
+  lede="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."
   primary={{ label: "Read the docs", href: "/about" }}
   secondary={{ label: "View source", href: "https://github.com" }}
 />
@@ -26,7 +26,7 @@ noindex: true
 <Hero
   variant="left"
   title="Or lead from the left"
-  subtitle="Same Block, different variant — set through a literal prop, not a new component."
+  lede="Same Block, different variant — set through a literal prop, not a new component."
   primary={{ label: "Read the docs", href: "/about" }}
 />
 
@@ -36,7 +36,7 @@ noindex: true
 
 <CTA
   title="Start from this template"
-  body="Compose pages from Blocks. The build is the gate."
+  lede="Compose pages from Blocks. The build is the gate."
   primary={{ label: "About Harbour", href: "/about" }}
 />
 
@@ -54,31 +54,31 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <FeatureGrid
   title="A template that stays out of your way once the client signs off."
-  subtitle="Six pieces, each one doing a single job well."
+  lede="Six pieces, each one doing a single job well."
   features={[
     {
       title: "Block system.",
-      description: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
+      body: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
     },
     {
       title: "Bring your own content.",
-      description: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+      body: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
     },
     {
       title: "One token file.",
-      description: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
+      body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
     },
     {
       title: "Schemas that catch mistakes.",
-      description: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
+      body: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
     },
     {
       title: "No client JS by default.",
-      description: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+      body: "Sections render as server components — a block only ships a bundle when it actually needs one.",
     },
     {
       title: "Ships in an afternoon.",
-      description: "Clone the repo, swap the tokens and copy, push. Most rebuilds go live the same day.",
+      body: "Clone the repo, swap the tokens and copy, push. Most rebuilds go live the same day.",
     },
   ]}
 />
@@ -89,7 +89,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <FeatureSplit
   title="Every block ships with real content, not lorem ipsum."
-  body="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
+  lede="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
   points={[
     "Every block preview ships with client-ready copy",
     "Content stays wired to the same schema in production",
@@ -141,7 +141,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <Gallery
   title="Wallpapers, ready for a hero background."
-  subtitle="A wide crop for full-bleed heroes, square crops for everything smaller."
+  lede="A wide crop for full-bleed heroes, square crops for everything smaller."
   images={[
     { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=arctic-fjord", alt: "Arctic fjord wallpaper" },
     { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=basalt-plateau", alt: "Basalt plateau wallpaper" },
@@ -298,7 +298,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <Newsletter
   title="Get notified when new blocks ship."
-  subtitle="One email a month, unsubscribe anytime."
+  lede="One email a month, unsubscribe anytime."
   action="https://forms.example.com/subscribe"
 />
 
@@ -308,20 +308,20 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <Pricing
   title="One template, three ways to license it."
-  subtitle="Start free, upgrade the day you take on a second client."
+  lede="Start free, upgrade the day you take on a second client."
   plans={[
     {
-      name: "Starter",
+      title: "Starter",
       price: "Free",
-      description: "For a single portfolio or personal project.",
+      body: "For a single portfolio or personal project.",
       features: ["1 site", "Full block library", "Community support", "MIT-licensed"],
       cta: { label: "Clone the repo", href: "https://github.com" },
     },
     {
-      name: "Studio",
+      title: "Studio",
       price: "$249",
       period: "one-time",
-      description: "For agencies shipping client sites every month.",
+      body: "For agencies shipping client sites every month.",
       features: [
         "Unlimited sites",
         "Block registry updates",
@@ -332,9 +332,9 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
       emphasized: true,
     },
     {
-      name: "Agency",
+      title: "Agency",
       price: "Custom",
-      description: "For teams running a full client roster.",
+      body: "For teams running a full client roster.",
       features: [
         "Everything in Studio",
         "Custom blocks on request",

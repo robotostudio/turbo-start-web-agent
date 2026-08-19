@@ -11,12 +11,19 @@
    px. Re-theming a client project means editing values here — never renaming
    or removing a token, which would break every Block that references it.
 
-   Follows the shadcn/ui token contract: raw values live on :root/.dark as
-   bare custom properties (--primary, --secondary, --card, ...); the
-   `@theme inline` block below maps them into Tailwind's --color-* namespace
-   so utilities like `bg-primary` work, and so any `npx shadcn add` component
-   — including from v0 or third-party registries — lands already themed to
+   Follows the shadcn/ui token contract: raw values live on :root as bare
+   custom properties (--primary, --secondary, --card, ...); the `@theme
+   inline` block below maps them into Tailwind's --color-* namespace so
+   utilities like `bg-primary` work, and so any `npx shadcn add` component —
+   including from v0 or third-party registries — lands already themed to
    these values instead of shadcn's stock zinc palette.
+
+   No .dark overrides: this template is light-mode-only today. `@custom-
+   variant dark` below is left in place as cheap forward-compat scaffolding
+   (shadcn's own convention) for a future theme toggle, but nothing in this
+   file or the component tree applies a `.dark` class or uses a `dark:`
+   utility yet — verify both are still true before trusting `dark:` classes
+   added elsewhere to actually do anything.
    ========================================================================== */
 
 @theme {
@@ -53,6 +60,31 @@
     padding-inline: 1.5rem;
   }
 
+  /* Top gap under the sticky header (`site-header.tsx`'s `<header class="sticky
+     top-4 …">`) for pages whose content starts with markdown, not a Block.
+     Every Block's outermost element is a `<section>` that only wraps
+     `.page-inset` one level down (see hero.tsx, faq.tsx, etc. — `<section
+     class="font-sans"><div class="page-inset py-20">`), so this adjacent-
+     sibling selector can never match a Block that opens a page: the header's
+     actual next sibling in that case is the `<section>`, which carries no
+     `.page-inset` class of its own, and a Block's own `py-*` already supplies
+     the gap. It matches only markdown/prose output (`ProseBlock` in
+     mdx-content.tsx, and the blog index) — those render `.page-inset` on
+     their OWN outermost element with no `<section>` indirection and no
+     vertical padding, which is what left /privacy and /blog sitting flush
+     under the header. Because `+` only ever matches the single element
+     immediately following the header, this rule cannot leak onto later
+     `.page-inset` elements further down a prose page, even though every
+     top-level markdown node gets its own `.page-inset` wrapper. */
+  header + .page-inset {
+    padding-top: 5rem;
+  }
+  @media (min-width: 40rem) {
+    header + .page-inset {
+      padding-top: 7rem;
+    }
+  }
+
   /* Sets the vendored Drawer's own `--drawer-inset` extension point (see
      `m-(--drawer-inset,0px)` and the closed-transform calcs in
      `@/components/ui/drawer`) so the site header's mobile nav panel floats
@@ -78,8 +110,8 @@
    the --color-* Tailwind theme keys. `@theme inline` below only inlines
    --color-* into generated utility classes — it does not emit a --color-*
    custom property at :root — so `var(--color-foreground)` would resolve to
-   nothing here. The bare tokens are real :root/.dark custom properties and
-   stay resolvable regardless of Tailwind's inline optimization. */
+   nothing here. The bare tokens are real :root custom properties and stay
+   resolvable regardless of Tailwind's inline optimization. */
 .prose {
   --tw-prose-body: var(--foreground);
   --tw-prose-headings: var(--foreground);
@@ -100,19 +132,6 @@
 }
 
 @theme inline {
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -160,51 +179,4 @@
   --input: oklch(0.92 0.004 286.3);
   --ring: oklch(0.55 0.22 264);
   --radius: 0.75rem;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.21 0.006 285.9);
-  --sidebar-primary: oklch(0.55 0.22 264);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.4);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.9);
-  --sidebar-border: oklch(0.92 0.004 286.3);
-  --sidebar-ring: oklch(0.55 0.22 264);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.2 264);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.2 264);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.2 264);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.2 264);
 }

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { type ImageCardsProps, imageCardsSchema, parseBlock } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function ImageCards(raw: ImageCardsProps) {
   const { title, cards } = parseBlock("ImageCards", imageCardsSchema, raw);
@@ -7,9 +8,7 @@ export function ImageCards(raw: ImageCardsProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-xl text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl">
-          {title}
-        </h2>
+        <SectionHeader title={title} />
         <div className="mt-14 grid grid-cols-1 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
           {cards.map((card) => (
             <div key={card.title} className="group">

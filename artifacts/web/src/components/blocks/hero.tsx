@@ -20,7 +20,7 @@ const ActionLink = ({
   );
 
 export function Hero(raw: HeroProps) {
-  const { variant, title, subtitle, primary, secondary } = parseBlock("Hero", heroSchema, raw);
+  const { variant, title, lede, primary, secondary } = parseBlock("Hero", heroSchema, raw);
 
   return (
     <section className="font-sans">
@@ -31,7 +31,7 @@ export function Hero(raw: HeroProps) {
         )}
       >
         <h1 className="font-sans text-5xl text-foreground lg:text-6xl">{title}</h1>
-        {subtitle && <p className="max-w-2xl text-lg text-muted-foreground">{subtitle}</p>}
+        {lede && <p className="max-w-2xl text-lg text-muted-foreground">{lede}</p>}
         {(primary || secondary) && (
           <div className="flex flex-wrap gap-4">
             {primary && (

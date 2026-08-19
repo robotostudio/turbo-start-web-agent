@@ -27,11 +27,53 @@ export const link = z.object({
   href: safeUrl(),
 });
 
+// The hosts next.config.mjs's images.remotePatterns actually allows, plus any
+// *.public.blob.vercel-storage.com subdomain. A media src outside this list
+// passes the catalog and this schema today only because safeUrl() is a
+// generic href check — but next/image throws at RENDER for a host it isn't
+// configured for, so a wrong host used to reach production as a broken page
+// instead of a build failure. Keep this in step with next.config.mjs by
+// hand; there's no single source both a Next config and this script can
+// share without importing one into the other's runtime.
+const MEDIA_EXACT_HOSTS = ["images.unsplash.com", "assets.ui.sh"];
+const MEDIA_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+
+function isAllowedMediaHost(hostname: string): boolean {
+  return MEDIA_EXACT_HOSTS.includes(hostname) || hostname.endsWith(MEDIA_HOST_SUFFIX);
+}
+
+function isAllowedMediaSrc(src: string): boolean {
+  if (src.startsWith("/")) return true; // served from /public, always allowed
+  try {
+    const url = new URL(src);
+    return url.protocol === "https:" && isAllowedMediaHost(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+export const MEDIA_SRC_RULE =
+  "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows.";
+
+/** The ONLY sanctioned way to declare an image src prop. Deliberately
+ * stricter than safeUrl(): every media prop renders through next/image,
+ * which fails at request time for a host outside remotePatterns, so — unlike
+ * a link href — an arbitrary https URL is not actually safe here. Same
+ * .refine()/.describe() pairing as safeUrl() and for the same reason:
+ * z.toJSONSchema() silently drops refinements, so the rule is restated in
+ * .describe() to reach the catalog at all. */
+export const mediaSrc = () =>
+  z
+    .string()
+    .min(1, "must not be blank")
+    .refine(isAllowedMediaSrc, MEDIA_SRC_RULE)
+    .describe(MEDIA_SRC_RULE);
+
 /** A single image: a validated URL plus its alt text. `alt` defaults to ""
  * (decorative) rather than being required, matching the purely-visual images
  * ported from the design-preview sources this Block family draws on. */
 export const media = z.object({
-  src: safeUrl(),
+  src: mediaSrc(),
   alt: z.string().default(""),
 });
 
@@ -50,7 +92,7 @@ export const heroSchema = z
   .object({
     variant: z.enum(["centered", "left"]).default("centered"),
     title: z.string(),
-    subtitle: z.string().optional(),
+    lede: z.string().optional(),
     primary: link.optional(),
     secondary: link.optional(),
   })
@@ -72,7 +114,7 @@ export type BannerProps = z.input<typeof bannerSchema>;
 export const ctaBandSchema = z
   .object({
     title: z.string(),
-    body: z.string().optional(),
+    lede: z.string().optional(),
     primary: link,
   })
   .describe(
@@ -83,7 +125,7 @@ export type CtaBandProps = z.input<typeof ctaBandSchema>;
 export const newsletterSchema = z
   .object({
     title: z.string(),
-    subtitle: z.string().optional(),
+    lede: z.string().optional(),
     action: safeUrl(),
     buttonLabel: z.string().default("Subscribe"),
   })
@@ -95,25 +137,25 @@ export type NewsletterProps = z.input<typeof newsletterSchema>;
 export const featureGridSchema = z
   .object({
     title: z.string(),
-    subtitle: z.string().optional(),
+    lede: z.string().optional(),
     features: z
       .array(
         z.object({
           title: z.string(),
-          description: z.string(),
+          body: z.string(),
         }),
       )
       .min(1),
   })
   .describe(
-    "An unbordered grid of short title/description pairs enumerating several capabilities at a glance, with no icons or cards. Use mid-page to list what the product does when each point needs only a sentence.",
+    "An unbordered grid of short title/body pairs enumerating several capabilities at a glance, with no icons or cards. Use mid-page to list what the product does when each point needs only a sentence.",
   );
 export type FeatureGridProps = z.input<typeof featureGridSchema>;
 
 export const featureSplitSchema = z
   .object({
     title: z.string(),
-    body: z.string().optional(),
+    lede: z.string().optional(),
     points: z.array(z.string()).optional(),
     image: media,
   })
@@ -133,10 +175,13 @@ export const imageCardsSchema = z
           image: media,
         }),
       )
-      .min(1),
+      // The grid is a fixed 3-column row (sm:grid-cols-3) — fewer than 3
+      // cards leaves empty columns and looks unfinished. More than 3 wraps
+      // cleanly onto additional full-width rows.
+      .min(3),
   })
   .describe(
-    "A row of cards, each pairing an image with a short title and body copy. Use to showcase several examples, case studies, or products side by side.",
+    "A row of cards, each pairing an image with a short title and body copy, three per row. Use to showcase several examples, case studies, or products side by side — provide at least 3, ideally a multiple of 3.",
   );
 export type ImageCardsProps = z.input<typeof imageCardsSchema>;
 
@@ -149,7 +194,7 @@ export const galleryImageCount = 8;
 export const gallerySchema = z
   .object({
     title: z.string(),
-    subtitle: z.string().optional(),
+    lede: z.string().optional(),
     images: z.array(media).length(galleryImageCount),
   })
   .describe(
@@ -184,32 +229,48 @@ export const testimonialSchema = z
           person,
         }),
       )
-      .min(1),
+      // The grid is a fixed 3-column row (sm:grid-cols-3) — fewer than 3
+      // quotes leaves empty columns and looks unfinished. More than 3 wraps
+      // cleanly onto additional full-width rows.
+      .min(3),
   })
   .describe(
-    "A row of short customer quotes, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims.",
+    "A row of short customer quotes, three per row, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims — provide at least 3, ideally a multiple of 3.",
   );
 export type TestimonialProps = z.input<typeof testimonialSchema>;
 
 export const logoCloudSchema = z
   .object({
     lede: z.string(),
-    logos: z.array(media).min(1),
+    // The grid is a fixed 6-column row (sm:grid-cols-6) — fewer than 6 logos
+    // leaves the row left-aligned with empty trailing columns instead of a
+    // full band. More than 6 wraps cleanly onto additional full-width rows.
+    logos: z.array(media).min(6),
   })
   .describe(
-    "A row of customer or partner logos under a short line of supporting text, no heading. Use to signal adoption or social proof without making an argument.",
+    "A row of customer or partner logos under a short line of supporting text, no heading, six per row. Use to signal adoption or social proof without making an argument — provide at least 6, ideally a multiple of 6.",
   );
 export type LogoCloudProps = z.input<typeof logoCloudSchema>;
 
 export const teamSchema = z
   .object({
     title: z.string(),
-    team: z.array(person).min(1),
+    // The grid is a fixed 3-column row (sm:grid-cols-3) — fewer than 3
+    // members leaves empty columns and looks unfinished. More than 3 wraps
+    // cleanly onto additional full-width rows.
+    team: z.array(person).min(3),
   })
   .describe(
-    "A grid of team member photos with name and role beneath each. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages.",
+    "A grid of team member photos with name and role beneath each, three per row. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages. Provide at least 3, ideally a multiple of 3.",
   );
 export type TeamProps = z.input<typeof teamSchema>;
+
+// The row is a fixed 4-column divided layout (sm:grid-cols-4 with
+// sm:divide-x) — not an authorable variant, same rationale as
+// galleryImageCount: any count other than exactly 4 either leaves empty
+// divided columns or drops an orphan stat onto an undivided second row, so
+// the count is exported for tests to reference rather than hard-coded twice.
+export const statsCount = 4;
 
 export const statsSchema = z
   .object({
@@ -221,24 +282,24 @@ export const statsSchema = z
           label: z.string(),
         }),
       )
-      .min(1),
+      .length(statsCount),
   })
   .describe(
-    "A row of large numeric stats, each with a short label, divided at wider widths. Use to make a quantitative case — scale, results, usage — at a glance.",
+    "A row of exactly four large numeric stats, each with a short label, divided at wider widths. Use to make a quantitative case — scale, results, usage — at a glance.",
   );
 export type StatsProps = z.input<typeof statsSchema>;
 
 export const pricingSchema = z
   .object({
     title: z.string(),
-    subtitle: z.string().optional(),
+    lede: z.string().optional(),
     plans: z
       .array(
         z.object({
-          name: z.string(),
+          title: z.string(),
           price: z.string(),
           period: z.string().optional(),
-          description: z.string().optional(),
+          body: z.string().optional(),
           features: z.array(z.string()).optional(),
           cta: link.optional(),
           emphasized: z.boolean().default(false),
@@ -247,7 +308,7 @@ export const pricingSchema = z
       .min(1),
   })
   .describe(
-    "A row of pricing plan cards, each with a name, price, optional feature list, and call to action, with one plan visually raised as the recommended choice — the only bordered, carded Block in this set. Use to compare plan tiers side by side on a pricing page or section; not for a single fixed price.",
+    "A row of pricing plan cards, each with a title, price, optional feature list, and call to action, with one plan visually raised as the recommended choice — the only bordered, carded Block in this set. Use to compare plan tiers side by side on a pricing page or section; not for a single fixed price.",
   );
 export type PricingProps = z.input<typeof pricingSchema>;
 

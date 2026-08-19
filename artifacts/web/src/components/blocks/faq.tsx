@@ -1,4 +1,5 @@
 import { type FaqProps, faqSchema, parseBlock } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function Faq(raw: FaqProps) {
   const { title, faqs } = parseBlock("Faq", faqSchema, raw);
@@ -6,9 +7,7 @@ export function Faq(raw: FaqProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-          {title}
-        </h2>
+        <SectionHeader title={title} />
         <dl className="mt-14 flex flex-col gap-12 sm:mt-20 sm:gap-10">
           {faqs.map((faq) => (
             <div

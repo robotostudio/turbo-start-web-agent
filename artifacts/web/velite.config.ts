@@ -74,6 +74,21 @@ const footerColumn = s.object({
   links: s.array(footerLink),
 });
 
+// The wordmark shown next to the site name in the footer. `icon` is a
+// hardcoded-in-component enum, not markup from content — the actual SVG (see
+// XIcon/GitHubIcon in site-footer.tsx) can't safely live in YAML, only which
+// one to render and where it links.
+const footerSocialLink = s.object({
+  label: s.string().min(1),
+  href: href(),
+  icon: s.enum(["x", "github"]),
+});
+
+const footerBrand = s.object({
+  name: s.string().min(1),
+  href: href(),
+});
+
 export default defineConfig({
   root: "content",
   strict: true,
@@ -121,9 +136,14 @@ export default defineConfig({
       pattern: "settings/footer.yml",
       single: true,
       schema: s.object({
+        brand: footerBrand,
         columns: s.array(footerColumn),
+        social: s.array(footerSocialLink),
         legal: s.array(footerLink),
         note: s.string().optional(),
+        // Trailing legal text after the auto-generated "© {year} {brand}."
+        // (the year and brand name are never content — see site-footer.tsx).
+        copyrightNote: s.string().optional(),
       }),
     },
   },

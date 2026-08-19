@@ -32,12 +32,42 @@ const isNoindex = (item: WithFlags): boolean => item.noindex === true;
 
 // A draft is unfinished, not secret — the team should read it in place before
 // it ships. The site is static, so there is no request-time check to hang that
-// on; which deployment builds the page IS the access control. VERCEL_ENV is
-// "production" only on the production deployment and is undefined locally, so
-// local dev and every preview render drafts. This check is Vercel-specific:
-// VERCEL_ENV is never set on Netlify, Cloudflare, Docker, or any self-hosted
-// build, so drafts publish there on every build, including production.
-const INCLUDE_DRAFTS = process.env.VERCEL_ENV !== "production";
+// on; which deployment builds the page IS the access control.
+//
+// NODE_ENV alone can't be the whole rule: Next.js sets NODE_ENV=production for
+// every `next build`/`next start`, including a Vercel PREVIEW deployment — so
+// a bare `NODE_ENV !== "production"` check would hide drafts on preview too,
+// breaking the "review the draft on its preview URL before it ships" workflow.
+// VERCEL_ENV disambiguates on Vercel: it's "production" only on the
+// production deployment and "preview" elsewhere. Off Vercel (VERCEL_ENV is
+// unset — Netlify, Cloudflare, Docker, or any self-hosted build) there is no
+// such signal, so NODE_ENV is the only production check available, and it is
+// honoured there: this is the fix for drafts otherwise publishing on every
+// off-Vercel build, including production.
+//
+// PREVIEW_DRAFTS=true is the explicit escape hatch: set it to deliberately
+// render drafts on an off-Vercel build that is production-mode by necessity
+// (e.g. a staging environment that runs `next build`/`next start` same as
+// prod), without weakening the default for everyone else.
+// A structural subset of process.env, not `Pick<NodeJS.ProcessEnv, ...>`:
+// ProcessEnv's properties come from its index signature, so Pick would make
+// all three keys REQUIRED (present, even if `undefined`) rather than
+// optional — every test call site would have to spell out all three. This
+// type says what the predicate actually needs: each var, present or not.
+type DraftEnv = {
+  VERCEL_ENV?: string;
+  NODE_ENV?: string;
+  PREVIEW_DRAFTS?: string;
+};
+
+export const shouldIncludeDrafts = (env: DraftEnv): boolean => {
+  if (env.PREVIEW_DRAFTS === "true") return true;
+  const isProduction =
+    env.VERCEL_ENV !== undefined ? env.VERCEL_ENV === "production" : env.NODE_ENV === "production";
+  return !isProduction;
+};
+
+const INCLUDE_DRAFTS = shouldIncludeDrafts(process.env);
 
 const published = <T extends WithFlags>(items: T[]): T[] => items.filter((i) => !isDraft(i));
 

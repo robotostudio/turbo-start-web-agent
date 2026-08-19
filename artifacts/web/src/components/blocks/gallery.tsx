@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { type GalleryProps, gallerySchema, parseBlock } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 // Fixed mosaic layout, keyed by tile position (0-indexed) — see
 // `galleryImageCount` in schemas.ts for why the shape is not authorable.
@@ -30,17 +31,12 @@ const TILE_SIZES = [
 ];
 
 export function Gallery(raw: GalleryProps) {
-  const { title, subtitle, images } = parseBlock("Gallery", gallerySchema, raw);
+  const { title, lede, images } = parseBlock("Gallery", gallerySchema, raw);
 
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-xl text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">{subtitle}</p>
-        )}
+        <SectionHeader title={title} lede={lede} />
         <div className="mt-14 grid grid-cols-2 gap-4 sm:mt-20 sm:grid-cols-4">
           {images.map((image, index) => (
             <div key={image.src} className={TILE_CLASS_NAMES[index]}>

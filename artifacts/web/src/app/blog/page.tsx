@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getEntries } from "@/lib/content/loader";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "News, updates, and writing from the Harbour team.",
+};
 
 // Newest first — pubDate is an ISO datetime string (Velite's s.isodate()), so
 // lexical and chronological order agree without a Date parse.
@@ -15,6 +21,7 @@ export default function BlogIndex() {
   return (
     <div className="page-inset font-sans">
       <div className="mx-auto max-w-3xl">
+        <h1 className="mb-4 text-4xl font-semibold tracking-tight text-foreground">Blog</h1>
         {posts.map((post) => (
           <article key={post.slug} className="border-t border-border py-6 first:border-t-0">
             <h2 className="text-xl font-semibold">

@@ -1,7 +1,7 @@
 import { type NewsletterProps, newsletterSchema, parseBlock } from "@/lib/blocks/schemas";
 
 export function Newsletter(raw: NewsletterProps) {
-  const { title, subtitle, action, buttonLabel } = parseBlock("Newsletter", newsletterSchema, raw);
+  const { title, lede, action, buttonLabel } = parseBlock("Newsletter", newsletterSchema, raw);
 
   return (
     <section className="font-sans">
@@ -11,9 +11,9 @@ export function Newsletter(raw: NewsletterProps) {
             <h2 className="mx-auto max-w-lg text-3xl font-semibold tracking-tight text-balance text-foreground">
               {title}
             </h2>
-            {subtitle && (
+            {lede && (
               <p className="mx-auto mt-3 max-w-sm text-lg text-pretty text-muted-foreground">
-                {subtitle}
+                {lede}
               </p>
             )}
           </div>

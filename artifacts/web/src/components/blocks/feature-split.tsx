@@ -1,20 +1,16 @@
 import Image from "next/image";
 import { type FeatureSplitProps, featureSplitSchema, parseBlock } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function FeatureSplit(raw: FeatureSplitProps) {
-  const { title, body, points, image } = parseBlock("FeatureSplit", featureSplitSchema, raw);
+  const { title, lede, points, image } = parseBlock("FeatureSplit", featureSplitSchema, raw);
 
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
         <div className="grid grid-cols-1 items-center gap-x-12 gap-y-10 lg:grid-cols-2">
           <div>
-            <h2 className="max-w-md text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl">
-              {title}
-            </h2>
-            {body && (
-              <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">{body}</p>
-            )}
+            <SectionHeader title={title} lede={lede} />
             {points && points.length > 0 && (
               <ul className="mt-8 flex flex-col gap-3">
                 {points.map((point) => (

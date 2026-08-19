@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { parseBlock, type TeamProps, teamSchema } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function Team(raw: TeamProps) {
   const { title, team } = parseBlock("Team", teamSchema, raw);
@@ -7,9 +8,7 @@ export function Team(raw: TeamProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-          {title}
-        </h2>
+        <SectionHeader title={title} />
         <ul className="mt-16 grid grid-cols-2 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
           {team.map((person) => (
             <li key={person.name}>

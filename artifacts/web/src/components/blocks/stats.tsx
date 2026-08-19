@@ -1,4 +1,5 @@
 import { parseBlock, type StatsProps, statsSchema } from "@/lib/blocks/schemas";
+import { SectionHeader } from "./section-header";
 
 export function Stats(raw: StatsProps) {
   const { title, stats } = parseBlock("Stats", statsSchema, raw);
@@ -6,9 +7,7 @@ export function Stats(raw: StatsProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-20 sm:py-28">
-        <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-          {title}
-        </h2>
+        <SectionHeader title={title} />
         <dl className="mt-14 divide-y divide-foreground/10 sm:mt-20 sm:grid sm:grid-cols-4 sm:divide-x sm:divide-y-0">
           {stats.map((stat) => (
             <div

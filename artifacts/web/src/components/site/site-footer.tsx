@@ -4,10 +4,14 @@ import { footer } from "#velite";
 // the house voice: no card, no recessed band, just a top border to close the
 // page and generous column gaps instead of dividers between them.
 //
-// Server component: columns, legal links, and the note come from the
-// `footer` singleton collection (content/settings/footer.yml), validated at
-// build time by velite.config.ts. Brand name, social links, and the
-// copyright line are presentation, not content, and stay in the component.
+// Server component: the wordmark, columns, social links, legal links, and
+// notes all come from the `footer` singleton collection
+// (content/settings/footer.yml), validated at build time by velite.config.ts
+// — every href through the same isSafeUrl refine Block links use, since YAML
+// never passes through the MDX content-lockdown remark plugin. What stays in
+// the component: the social-icon SVGs themselves (`icon` in content only
+// selects one of the two below), and the "© {year} {brand}." assembly — the
+// year is computed at build time, never authored.
 
 function XIcon() {
   return (
@@ -39,14 +43,28 @@ function GitHubIcon() {
   );
 }
 
+const socialIcons = {
+  x: XIcon,
+  github: GitHubIcon,
+} as const;
+
 export function SiteFooter() {
+  // Static generation only — computed once per build, same as every other
+  // page on this site. Not a live "today's date"; that's the point.
+  const year = new Date().getFullYear();
+  const copyright = `© ${year} ${footer.brand.name}${footer.copyrightNote ? `. ${footer.copyrightNote}` : ""}`;
+
   return (
     <footer className="border-t border-border font-sans">
       <div className="page-inset py-16 sm:py-20">
         <div className="flex flex-col gap-12 sm:flex-row sm:justify-between sm:gap-16">
           <div className="max-w-xs">
-            <a href="/" aria-label="Homepage" className="text-base font-semibold text-foreground">
-              Harbour
+            <a
+              href={footer.brand.href}
+              aria-label="Homepage"
+              className="text-base font-semibold text-foreground"
+            >
+              {footer.brand.name}
             </a>
             {footer.note ? (
               <p className="mt-4 text-base text-pretty text-muted-foreground sm:text-sm">
@@ -54,12 +72,14 @@ export function SiteFooter() {
               </p>
             ) : null}
             <div className="mt-6 flex items-center gap-5">
-              <a href="https://x.com" aria-label="Harbour on X">
-                <XIcon />
-              </a>
-              <a href="https://github.com" aria-label="Harbour on GitHub">
-                <GitHubIcon />
-              </a>
+              {footer.social.map((link) => {
+                const Icon = socialIcons[link.icon];
+                return (
+                  <a key={link.label} href={link.href} aria-label={link.label}>
+                    <Icon />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
@@ -85,9 +105,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            &copy; 2026 Harbour. Released under the MIT license.
-          </p>
+          <p className="text-sm text-muted-foreground">{copyright}</p>
           <div className="flex items-center gap-6">
             {footer.legal.map((link) => (
               <a
