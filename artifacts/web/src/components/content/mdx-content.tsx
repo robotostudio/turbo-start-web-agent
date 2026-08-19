@@ -4,80 +4,71 @@ import * as runtime from "react/jsx-runtime";
 import { blockComponents } from "@/components/blocks";
 import { BlockSpec } from "@/components/blocks/block-spec";
 
-// One top-level prose element (heading, paragraph, list) wrapped in the
-// site's shared `.page-inset` gutter, using `font-sans` for body copy, then
-// narrowed to a readable measure inside it. Blocks (Hero, CTA, …) are matched
-// by capitalised name and never reach this wrapper — they already carry
-// their own `page-inset`, so wrapping the whole MDX tree in one ancestor
-// container would double that padding up on every page a Block renders on.
+// One top-level markdown element (heading, paragraph, list) wrapped in the
+// site's shared `.page-inset` gutter, using `font-sans` for body copy, and
+// styled by @tailwindcss/typography's `prose` scope — its --tw-prose-*
+// variables are remapped to the site's design tokens in globals.css — rather
+// than hand-rolled per-element classes. Blocks (Hero, CTA, …) are matched by
+// capitalised name and never reach this wrapper — they already carry their
+// own `page-inset`, so wrapping the whole MDX tree in one ancestor container
+// would double that padding up on every page a Block renders on, and would
+// let `.prose`'s descendant selectors reach into a Block's own markup (its
+// rules use `:where()`, zero specificity, so a Block's own classes would
+// usually win — but "usually" isn't the guarantee this file wants).
+//
+// The unstyled inner <div> exists only so the real element ends up a
+// GRANDCHILD of `.prose`, never a direct child: the plugin zeroes the margin
+// of whatever is `.prose`'s own `> :first-child` / `> :last-child` — and
+// since every element here is alone in its own isolated `.prose` scope
+// (there being no way to group a run of markdown nodes across independent
+// component-map lookups without also risking engulfing a Block), it would
+// otherwise BE both at once, collapsing its own margin-top and margin-bottom
+// to zero — i.e. completely unspaced. Browser-verified: computed
+// `margin-top` on a rendered `p`/`h2` is non-zero with this indirection, zero
+// without it.
 const ProseBlock = ({ children }: { children: ReactNode }) => (
-  <div className="page-inset font-sans">{children}</div>
+  <div className="page-inset font-sans">
+    <div className="prose prose-base max-w-3xl">
+      <div>{children}</div>
+    </div>
+  </div>
 );
 
+// Only the elements markdown can produce as TOP-LEVEL nodes need an entry
+// here. Inline-level tags nested inside one of these — li, a, code, strong —
+// are styled automatically by `.prose`'s descendant selectors regardless of
+// depth, so they don't need their own override; one rendered by a Block's own
+// JSX is untouched either way, since Blocks never resolve through this map.
 const proseComponents = {
-  h1: ({ children, ...props }: ComponentProps<"h1">) => (
+  h1: (props: ComponentProps<"h1">) => (
     <ProseBlock>
-      <h1
-        className="mx-auto max-w-3xl pt-12 pb-4 font-semibold text-4xl text-foreground"
-        {...props}
-      >
-        {children}
-      </h1>
+      <h1 {...props} />
     </ProseBlock>
   ),
-  h2: ({ children, ...props }: ComponentProps<"h2">) => (
+  h2: (props: ComponentProps<"h2">) => (
     <ProseBlock>
-      <h2
-        className="mx-auto max-w-3xl pt-10 pb-3 font-semibold text-3xl text-foreground"
-        {...props}
-      >
-        {children}
-      </h2>
+      <h2 {...props} />
     </ProseBlock>
   ),
-  h3: ({ children, ...props }: ComponentProps<"h3">) => (
+  h3: (props: ComponentProps<"h3">) => (
     <ProseBlock>
-      <h3 className="mx-auto max-w-3xl pt-8 pb-2 font-semibold text-2xl text-foreground" {...props}>
-        {children}
-      </h3>
+      <h3 {...props} />
     </ProseBlock>
   ),
-  p: ({ children, ...props }: ComponentProps<"p">) => (
+  p: (props: ComponentProps<"p">) => (
     <ProseBlock>
-      <p className="mx-auto max-w-3xl pb-4 text-foreground leading-7" {...props}>
-        {children}
-      </p>
+      <p {...props} />
     </ProseBlock>
   ),
-  ul: ({ children, ...props }: ComponentProps<"ul">) => (
+  ul: (props: ComponentProps<"ul">) => (
     <ProseBlock>
-      <ul className="mx-auto max-w-3xl list-disc space-y-2 pb-4 pl-6 text-foreground" {...props}>
-        {children}
-      </ul>
+      <ul {...props} />
     </ProseBlock>
   ),
-  ol: ({ children, ...props }: ComponentProps<"ol">) => (
+  ol: (props: ComponentProps<"ol">) => (
     <ProseBlock>
-      <ol className="mx-auto max-w-3xl list-decimal space-y-2 pb-4 pl-6 text-foreground" {...props}>
-        {children}
-      </ol>
+      <ol {...props} />
     </ProseBlock>
-  ),
-  li: (props: ComponentProps<"li">) => <li className="leading-7" {...props} />,
-  a: (props: ComponentProps<"a">) => (
-    <a
-      className="text-primary underline underline-offset-4 hover:text-muted-foreground"
-      {...props}
-    />
-  ),
-  code: (props: ComponentProps<"code">) => (
-    <code
-      className="rounded-lg border border-border bg-muted px-1.5 py-0.5 text-foreground text-sm"
-      {...props}
-    />
-  ),
-  strong: (props: ComponentProps<"strong">) => (
-    <strong className="font-semibold text-foreground" {...props} />
   ),
 };
 

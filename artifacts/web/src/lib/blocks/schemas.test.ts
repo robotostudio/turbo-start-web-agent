@@ -2,15 +2,22 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { z } from "zod";
 import {
-  ctaSchema,
+  bannerSchema,
+  ctaBandSchema,
+  faqSchema,
   featureGridSchema,
   featureSplitSchema,
   galleryImageCount,
   gallerySchema,
   heroSchema,
   imageCardsSchema,
+  logoCloudSchema,
+  newsletterSchema,
   parseBlock,
   safeUrl,
+  statsSchema,
+  teamSchema,
+  testimonialSchema,
 } from "./schemas.ts";
 
 test("parseBlock returns parsed data for valid props", () => {
@@ -36,19 +43,19 @@ test("parseBlock rejects unknown variants", () => {
 
 test("parseBlock rejects a link missing href", () => {
   assert.throws(
-    () => parseBlock("CTA", ctaSchema, { title: "Hi", primary: { label: "Go" } }),
+    () => parseBlock("Hero", heroSchema, { title: "Hi", primary: { label: "Go" } }),
     /href/,
   );
 });
 
 test("parseBlock rejects a missing required prop", () => {
-  assert.throws(() => parseBlock("CTA", ctaSchema, {}), /title/);
+  assert.throws(() => parseBlock("Hero", heroSchema, {}), /title/);
 });
 
 test("link schema rejects javascript: hrefs", () => {
   assert.throws(
     () =>
-      parseBlock("CTA", ctaSchema, {
+      parseBlock("Hero", heroSchema, {
         title: "x",
         primary: { label: "x", href: "javascript:alert(1)" },
       }),
@@ -59,7 +66,7 @@ test("link schema rejects javascript: hrefs", () => {
 test("link schema rejects data: hrefs", () => {
   assert.throws(
     () =>
-      parseBlock("CTA", ctaSchema, {
+      parseBlock("Hero", heroSchema, {
         title: "x",
         primary: { label: "x", href: "data:text/html,x" },
       }),
@@ -69,13 +76,13 @@ test("link schema rejects data: hrefs", () => {
 
 test("link schema accepts relative, https, and mailto hrefs", () => {
   for (const href of ["/about", "https://example.com", "mailto:a@b.com", "#section"]) {
-    const parsed = parseBlock("CTA", ctaSchema, { title: "x", primary: { label: "x", href } });
+    const parsed = parseBlock("Hero", heroSchema, { title: "x", primary: { label: "x", href } });
     assert.equal(parsed.primary?.href, href);
   }
 });
 
 test("the href URL rule survives into the JSON Schema", () => {
-  const json = z.toJSONSchema(ctaSchema, { io: "input" });
+  const json = z.toJSONSchema(heroSchema, { io: "input" });
   assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
 });
 
@@ -227,5 +234,289 @@ test("Gallery rejects an unsafe image URL", () => {
         images: [{ src: "javascript:alert(1)", alt: "" }, ...eightImages.slice(1)],
       }),
     /src/,
+  );
+});
+
+// --- Faq --------------------------------------------------------
+
+test("Faq parses valid props", () => {
+  const parsed = parseBlock("Faq", faqSchema, {
+    title: "Questions",
+    faqs: [{ question: "Is it free?", answer: "Yes." }],
+  });
+  assert.equal(parsed.faqs.length, 1);
+});
+
+test("Faq rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Faq", faqSchema, {}),
+    (error: Error) => error.message.includes("<Faq>") && error.message.includes("title"),
+  );
+});
+
+test("Faq rejects a faq entry missing its answer", () => {
+  assert.throws(
+    () => parseBlock("Faq", faqSchema, { title: "x", faqs: [{ question: "Only a question" }] }),
+    /answer/,
+  );
+});
+
+test("Faq rejects an empty faqs array", () => {
+  assert.throws(() => parseBlock("Faq", faqSchema, { title: "x", faqs: [] }), /faqs/);
+});
+
+// --- Testimonial --------------------------------------------------------
+
+const samplePerson = {
+  name: "Jordan Ellis",
+  role: "Creative Director",
+  avatar: { src: "https://assets.ui.sh/avatars/3.webp", alt: "" },
+};
+
+test("Testimonial parses valid props", () => {
+  const parsed = parseBlock("Testimonial", testimonialSchema, {
+    title: "What people say",
+    testimonials: [{ quote: "Great template.", person: samplePerson }],
+  });
+  assert.equal(parsed.testimonials.length, 1);
+  assert.equal(parsed.testimonials[0].person.name, "Jordan Ellis");
+});
+
+test("Testimonial rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Testimonial", testimonialSchema, {}),
+    (error: Error) => error.message.includes("<Testimonial>") && error.message.includes("title"),
+  );
+});
+
+test("Testimonial rejects an unsafe avatar URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        testimonials: [
+          {
+            quote: "q",
+            person: { ...samplePerson, avatar: { src: "javascript:alert(1)", alt: "" } },
+          },
+        ],
+      }),
+    /src/,
+  );
+});
+
+// --- LogoCloud --------------------------------------------------------
+
+test("LogoCloud parses valid props", () => {
+  const parsed = parseBlock("LogoCloud", logoCloudSchema, {
+    lede: "Powering marketing sites for teams like these.",
+    logos: [{ src: "https://assets.ui.sh/logos/align.svg", alt: "align" }],
+  });
+  assert.equal(parsed.logos.length, 1);
+});
+
+test("LogoCloud rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("LogoCloud", logoCloudSchema, {}),
+    (error: Error) => error.message.includes("<LogoCloud>") && error.message.includes("lede"),
+  );
+});
+
+test("LogoCloud rejects an empty logos array", () => {
+  assert.throws(() => parseBlock("LogoCloud", logoCloudSchema, { lede: "x", logos: [] }), /logos/);
+});
+
+test("LogoCloud rejects an unsafe logo URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("LogoCloud", logoCloudSchema, {
+        lede: "x",
+        logos: [{ src: "javascript:alert(1)", alt: "logo" }],
+      }),
+    /src/,
+  );
+});
+
+// --- Team --------------------------------------------------------
+
+test("Team parses valid props", () => {
+  const parsed = parseBlock("Team", teamSchema, {
+    title: "The team",
+    team: [samplePerson],
+  });
+  assert.equal(parsed.team.length, 1);
+});
+
+test("Team rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Team", teamSchema, {}),
+    (error: Error) => error.message.includes("<Team>") && error.message.includes("title"),
+  );
+});
+
+test("Team rejects a person missing role", () => {
+  assert.throws(
+    () =>
+      parseBlock("Team", teamSchema, {
+        title: "x",
+        team: [{ name: "Jordan Reyes", avatar: samplePerson.avatar }],
+      }),
+    /role/,
+  );
+});
+
+test("Team rejects an unsafe avatar URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("Team", teamSchema, {
+        title: "x",
+        team: [{ ...samplePerson, avatar: { src: "javascript:alert(1)", alt: "" } }],
+      }),
+    /src/,
+  );
+});
+
+test("Team's person schema carries no href field (no hover affordance)", () => {
+  const parsed = parseBlock("Team", teamSchema, { title: "x", team: [samplePerson] });
+  assert.equal("href" in parsed.team[0], false);
+});
+
+// --- Stats --------------------------------------------------------
+
+test("Stats parses valid props", () => {
+  const parsed = parseBlock("Stats", statsSchema, {
+    title: "The numbers",
+    stats: [{ value: "12", label: "Blocks in the registry" }],
+  });
+  assert.equal(parsed.stats.length, 1);
+});
+
+test("Stats rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Stats", statsSchema, {}),
+    (error: Error) => error.message.includes("<Stats>") && error.message.includes("title"),
+  );
+});
+
+test("Stats rejects an empty stats array", () => {
+  assert.throws(() => parseBlock("Stats", statsSchema, { title: "x", stats: [] }), /stats/);
+});
+
+test("Stats rejects a stat missing its value", () => {
+  assert.throws(
+    () => parseBlock("Stats", statsSchema, { title: "x", stats: [{ label: "Only a label" }] }),
+    /value/,
+  );
+});
+
+// --- Banner --------------------------------------------------------------
+
+test("Banner parses valid props", () => {
+  const parsed = parseBlock("Banner", bannerSchema, {
+    message: "Now shipping: the Harbour block system.",
+    link: { label: "Explore the blocks", href: "/blocks-gallery" },
+  });
+  assert.equal(parsed.message, "Now shipping: the Harbour block system.");
+  assert.equal(parsed.link?.href, "/blocks-gallery");
+});
+
+test("Banner parses without the optional link", () => {
+  const parsed = parseBlock("Banner", bannerSchema, { message: "Scheduled maintenance tonight." });
+  assert.equal(parsed.link, undefined);
+});
+
+test("Banner rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Banner", bannerSchema, {}),
+    (error: Error) => error.message.includes("<Banner>") && error.message.includes("message"),
+  );
+});
+
+test("Banner rejects an unsafe link URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("Banner", bannerSchema, {
+        message: "x",
+        link: { label: "Go", href: "javascript:alert(1)" },
+      }),
+    /href/,
+  );
+});
+
+// --- Newsletter ------------------------------------------------------------
+
+test("Newsletter parses valid props", () => {
+  const parsed = parseBlock("Newsletter", newsletterSchema, {
+    title: "Get notified when new blocks ship.",
+    subtitle: "One email a month.",
+    action: "https://forms.example.com/subscribe",
+  });
+  assert.equal(parsed.action, "https://forms.example.com/subscribe");
+});
+
+test("Newsletter applies the buttonLabel default", () => {
+  const parsed = parseBlock("Newsletter", newsletterSchema, {
+    title: "x",
+    action: "/subscribe",
+  });
+  assert.equal(parsed.buttonLabel, "Subscribe");
+});
+
+test("Newsletter rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Newsletter", newsletterSchema, { title: "x" }),
+    (error: Error) => error.message.includes("<Newsletter>") && error.message.includes("action"),
+  );
+});
+
+test("Newsletter rejects an unsafe action URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("Newsletter", newsletterSchema, {
+        title: "x",
+        action: "javascript:alert(1)",
+      }),
+    /action/,
+  );
+});
+
+test("the action URL rule survives into the JSON Schema", () => {
+  const json = z.toJSONSchema(newsletterSchema, { io: "input" });
+  assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
+});
+
+// --- CTA (ctaBandSchema) --------------------------------------------------
+
+test("CTA band parses valid props", () => {
+  const parsed = parseBlock("CTA", ctaBandSchema, {
+    title: "Your next client site starts from Harbour.",
+    body: "Six Blocks, one token file, zero lock-in.",
+    primary: { label: "Clone the repo", href: "https://github.com" },
+  });
+  assert.equal(parsed.primary.label, "Clone the repo");
+});
+
+test("CTA band requires primary (no variant without a button to fall back on)", () => {
+  assert.throws(
+    () => parseBlock("CTA", ctaBandSchema, { title: "x" }),
+    (error: Error) => error.message.includes("<CTA>") && error.message.includes("primary"),
+  );
+});
+
+test("CTA band rejects a primary link missing href", () => {
+  assert.throws(
+    () => parseBlock("CTA", ctaBandSchema, { title: "x", primary: { label: "Go" } }),
+    /href/,
+  );
+});
+
+test("CTA band rejects an unsafe primary URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("CTA", ctaBandSchema, {
+        title: "x",
+        primary: { label: "Go", href: "javascript:alert(1)" },
+      }),
+    /href/,
   );
 });

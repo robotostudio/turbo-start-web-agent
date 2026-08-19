@@ -22,7 +22,7 @@ export const URL_RULE = "Must be an http(s), mailto, tel, or relative URL.";
 export const safeUrl = () =>
   z.string().min(1, "must not be blank").refine(isSafeUrl, URL_RULE).describe(URL_RULE);
 
-const link = z.object({
+export const link = z.object({
   label: z.string(),
   href: safeUrl(),
 });
@@ -30,9 +30,20 @@ const link = z.object({
 /** A single image: a validated URL plus its alt text. `alt` defaults to ""
  * (decorative) rather than being required, matching the purely-visual images
  * ported from the design-preview sources this Block family draws on. */
-const media = z.object({
+export const media = z.object({
   src: safeUrl(),
   alt: z.string().default(""),
+});
+
+/** A named individual: display name, role/title, and a photo. Deliberately
+ * carries no `href` — Team (the first Block to use this) is a settled
+ * decision to have no per-member link, since no team member is a link and
+ * there are no bio pages, so any other Block reusing `person` inherits the
+ * same no-link shape rather than each reinventing it. */
+export const person = z.object({
+  name: z.string(),
+  role: z.string(),
+  avatar: media,
 });
 
 export const heroSchema = z
@@ -48,17 +59,38 @@ export const heroSchema = z
   );
 export type HeroProps = z.input<typeof heroSchema>;
 
-export const ctaSchema = z
+export const bannerSchema = z
   .object({
-    variant: z.enum(["boxed", "plain"]).default("boxed"),
-    title: z.string(),
-    body: z.string().optional(),
-    primary: link.optional(),
+    message: z.string(),
+    link: link.optional(),
   })
   .describe(
-    "A closing prompt to take one action: a short heading, optional body text, and a single button.",
+    "A full-bleed, brand-colored strip pinned above the page content, carrying one short announcement and an optional link. Use for a single site-wide notice — a launch, an incident, a promotion — not for content that repeats or scrolls.",
   );
-export type CtaProps = z.input<typeof ctaSchema>;
+export type BannerProps = z.input<typeof bannerSchema>;
+
+export const ctaBandSchema = z
+  .object({
+    title: z.string(),
+    body: z.string().optional(),
+    primary: link,
+  })
+  .describe(
+    "A full-bleed, brand-colored closing band with a heading, optional supporting copy, and a single button — the highest-contrast CTA treatment available. Use as the last section on a page for the strongest possible visual close.",
+  );
+export type CtaBandProps = z.input<typeof ctaBandSchema>;
+
+export const newsletterSchema = z
+  .object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    action: safeUrl(),
+    buttonLabel: z.string().default("Subscribe"),
+  })
+  .describe(
+    "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide. Use to grow an email list without embedding a third-party widget.",
+  );
+export type NewsletterProps = z.input<typeof newsletterSchema>;
 
 export const featureGridSchema = z
   .object({
@@ -125,16 +157,94 @@ export const gallerySchema = z
   );
 export type GalleryProps = z.input<typeof gallerySchema>;
 
+export const faqSchema = z
+  .object({
+    title: z.string(),
+    faqs: z
+      .array(
+        z.object({
+          question: z.string(),
+          answer: z.string(),
+        }),
+      )
+      .min(1),
+  })
+  .describe(
+    "A single-column list of question/answer pairs, question and answer sharing a line at wider widths. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA.",
+  );
+export type FaqProps = z.input<typeof faqSchema>;
+
+export const testimonialSchema = z
+  .object({
+    title: z.string(),
+    testimonials: z
+      .array(
+        z.object({
+          quote: z.string(),
+          person,
+        }),
+      )
+      .min(1),
+  })
+  .describe(
+    "A row of short customer quotes, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims.",
+  );
+export type TestimonialProps = z.input<typeof testimonialSchema>;
+
+export const logoCloudSchema = z
+  .object({
+    lede: z.string(),
+    logos: z.array(media).min(1),
+  })
+  .describe(
+    "A row of customer or partner logos under a short line of supporting text, no heading. Use to signal adoption or social proof without making an argument.",
+  );
+export type LogoCloudProps = z.input<typeof logoCloudSchema>;
+
+export const teamSchema = z
+  .object({
+    title: z.string(),
+    team: z.array(person).min(1),
+  })
+  .describe(
+    "A grid of team member photos with name and role beneath each. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages.",
+  );
+export type TeamProps = z.input<typeof teamSchema>;
+
+export const statsSchema = z
+  .object({
+    title: z.string(),
+    stats: z
+      .array(
+        z.object({
+          value: z.string(),
+          label: z.string(),
+        }),
+      )
+      .min(1),
+  })
+  .describe(
+    "A row of large numeric stats, each with a short label, divided at wider widths. Use to make a quantitative case — scale, results, usage — at a glance.",
+  );
+export type StatsProps = z.input<typeof statsSchema>;
+
 // The registry the catalog generator reads. Keep in step with blockComponents
 // in src/components/blocks/index.ts — a schema with no component renders
 // nothing, and a component with no schema cannot be validated.
 export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
+  { name: "Banner", schema: bannerSchema },
   { name: "Hero", schema: heroSchema },
-  { name: "CTA", schema: ctaSchema },
+  { name: "CTA", schema: ctaBandSchema },
   { name: "FeatureGrid", schema: featureGridSchema },
   { name: "FeatureSplit", schema: featureSplitSchema },
   { name: "ImageCards", schema: imageCardsSchema },
   { name: "Gallery", schema: gallerySchema },
+  { name: "Faq", schema: faqSchema },
+  { name: "Testimonial", schema: testimonialSchema },
+  { name: "LogoCloud", schema: logoCloudSchema },
+  { name: "Team", schema: teamSchema },
+  { name: "Stats", schema: statsSchema },
+  { name: "Newsletter", schema: newsletterSchema },
 ];
 
 // Validate a Block's props at render. Every Block calls this first, so invalid

@@ -4,6 +4,15 @@ description: Every Block in this template, rendered live.
 noindex: true
 ---
 
+<BlockSpec name="Banner">
+
+<Banner
+  message="Now shipping: the Harbour block system."
+  link={{ label: "Explore the blocks", href: "/blocks-gallery" }}
+/>
+
+</BlockSpec>
+
 <BlockSpec name="Hero">
 
 <Hero
@@ -26,16 +35,8 @@ noindex: true
 <BlockSpec name="CTA">
 
 <CTA
-  variant="boxed"
   title="Start from this template"
   body="Compose pages from Blocks. The build is the gate."
-  primary={{ label: "About Harbour", href: "/about" }}
-/>
-
-<CTA
-  variant="plain"
-  title="Same Block, no box"
-  body="The plain variant drops the border and background."
   primary={{ label: "About Harbour", href: "/about" }}
 />
 
@@ -151,6 +152,154 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
     { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=limestone-karst", alt: "Limestone karst wallpaper" },
     { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=misty-marshland", alt: "Misty marshland wallpaper" },
   ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Faq">
+
+<Faq
+  title="The questions every agency asks first."
+  faqs={[
+    {
+      question: "Do I need to know Sanity, or can I use plain Markdown?",
+      answer: "Neither is required. Block components read from a shared content shape, and the shape ships with a Markdown adapter and a Sanity adapter already wired. Point the config at whichever one matches the client's comfort level — the sections themselves never know which backend is behind them.",
+    },
+    {
+      question: "How long does a client rebuild actually take?",
+      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week — layout, spacing, responsive behavior — are already decided.",
+    },
+    {
+      question: "What happens when a client wants a block that doesn't exist yet?",
+      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template — it's an addition to it, so the next client project gets it for free too.",
+    },
+    {
+      question: "Is the block registry locked to a specific CMS?",
+      answer: "No. The registry is just a mapping from a type string to a component. Whatever's supplying that type — Sanity, a JSON file, a headless CMS you bolt on later — the registry doesn't care, as long as the props match the schema.",
+    },
+    {
+      question: "Can I white-label this for resale?",
+      answer: "Yes. It ships MIT-licensed specifically so agencies can rebrand, resell, and reuse it across client engagements without asking permission or crediting the template anywhere client-facing.",
+    },
+    {
+      question: "Does it support multiple languages?",
+      answer: "Not yet natively — routing and copy are single-locale today. Multi-language support is on the roadmap, but if a client needs it now, the content layer is thin enough that most teams wire in next-intl themselves in under a day.",
+    },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Testimonial">
+
+<Testimonial
+  title="What agencies say once they've shipped a client site."
+  testimonials={[
+    {
+      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days — and the client didn't know the difference.",
+      person: {
+        name: "Jordan Ellis",
+        role: "Creative Director, Fernwood Studio",
+        avatar: { src: "https://assets.ui.sh/avatars/3.webp", alt: "" },
+      },
+    },
+    {
+      quote: "The block registry is the first thing I show new hires. They're shipping client sections in their first week instead of their first month.",
+      person: {
+        name: "Casey Okafor",
+        role: "Founder, Northbound",
+        avatar: { src: "https://assets.ui.sh/avatars/7.webp", alt: "" },
+      },
+    },
+    {
+      quote: "Nothing ships client JS unless a block actually needs it. Our Lighthouse scores stopped being a monthly fire drill.",
+      person: {
+        name: "Morgan Vale",
+        role: "Lead Engineer, Attic Digital",
+        avatar: { src: "https://assets.ui.sh/avatars/11.webp", alt: "" },
+      },
+    },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="LogoCloud">
+
+<LogoCloud
+  lede="Powering marketing sites for teams like these."
+  logos={[
+    { src: "https://assets.ui.sh/logos/align.svg?color=zinc-400&height=28", alt: "Align" },
+    { src: "https://assets.ui.sh/logos/artifact.svg?color=zinc-400&height=28", alt: "Artifact" },
+    { src: "https://assets.ui.sh/logos/axiom.svg?color=zinc-400&height=28", alt: "Axiom" },
+    { src: "https://assets.ui.sh/logos/concise.svg?color=zinc-400&height=28", alt: "Concise" },
+    { src: "https://assets.ui.sh/logos/looply.svg?color=zinc-400&height=28", alt: "Looply" },
+    { src: "https://assets.ui.sh/logos/orbital.svg?color=zinc-400&height=28", alt: "Orbital" },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Team">
+
+<Team
+  title="The people building the block registry."
+  team={[
+    {
+      name: "Jordan Reyes",
+      role: "Design Lead",
+      avatar: { src: "https://assets.ui.sh/avatars/2.webp", alt: "" },
+    },
+    {
+      name: "Casey Whitfield",
+      role: "Engineering Lead",
+      avatar: { src: "https://assets.ui.sh/avatars/6.webp", alt: "" },
+    },
+    {
+      name: "Morgan Ito",
+      role: "Product Manager",
+      avatar: { src: "https://assets.ui.sh/avatars/10.webp", alt: "" },
+    },
+    {
+      name: "Riley Sandoval",
+      role: "Front-End Engineer",
+      avatar: { src: "https://assets.ui.sh/avatars/13.webp", alt: "" },
+    },
+    {
+      name: "Avery Kwan",
+      role: "Design Systems",
+      avatar: { src: "https://assets.ui.sh/avatars/4.webp", alt: "" },
+    },
+    {
+      name: "Sasha Novak",
+      role: "Operations",
+      avatar: { src: "https://assets.ui.sh/avatars/15.webp", alt: "" },
+    },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Stats">
+
+<Stats
+  title="The numbers behind the pitch."
+  stats={[
+    { value: "12", label: "Blocks in the registry today" },
+    { value: "3.2 hrs", label: "Average time to reskin a client site" },
+    { value: "94%", label: "Sections shipped without custom code" },
+    { value: "0kb", label: "Client JS shipped by default" },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Newsletter">
+
+<Newsletter
+  title="Get notified when new blocks ship."
+  subtitle="One email a month, unsubscribe anytime."
+  action="https://forms.example.com/subscribe"
 />
 
 </BlockSpec>

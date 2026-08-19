@@ -1,7 +1,39 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 6,
+  "blockCount": 13,
   "blocks": {
+    "Banner": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "link": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "description": "A full-bleed, brand-colored strip pinned above the page content, carrying one short announcement and an optional link. Use for a single site-wide notice — a launch, an incident, a promotion — not for content that repeats or scrolls."
+      }
+    },
     "Hero": {
       "schema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -67,14 +99,6 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-          "variant": {
-            "default": "boxed",
-            "type": "string",
-            "enum": [
-              "boxed",
-              "plain"
-            ]
-          },
           "title": {
             "type": "string"
           },
@@ -100,9 +124,10 @@
           }
         },
         "required": [
-          "title"
+          "title",
+          "primary"
         ],
-        "description": "A closing prompt to take one action: a short heading, optional body text, and a single button."
+        "description": "A full-bleed, brand-colored closing band with a heading, optional supporting copy, and a single button — the highest-contrast CTA treatment available. Use as the last section on a page for the strongest possible visual close."
       }
     },
     "FeatureGrid": {
@@ -277,6 +302,259 @@
           "images"
         ],
         "description": "An eight-image mosaic of varying tile sizes, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. Use when the goal is browsing images, not reading copy."
+      }
+    },
+    "Faq": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "faqs": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "question",
+                "answer"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "faqs"
+        ],
+        "description": "A single-column list of question/answer pairs, question and answer sharing a line at wider widths. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA."
+      }
+    },
+    "Testimonial": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "testimonials": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quote": {
+                  "type": "string"
+                },
+                "person": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "object",
+                      "properties": {
+                        "src": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Must be an http(s), mailto, tel, or relative URL."
+                        },
+                        "alt": {
+                          "default": "",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "src"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "role",
+                    "avatar"
+                  ]
+                }
+              },
+              "required": [
+                "quote",
+                "person"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "testimonials"
+        ],
+        "description": "A row of short customer quotes, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims."
+      }
+    },
+    "LogoCloud": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "lede": {
+            "type": "string"
+          },
+          "logos": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Must be an http(s), mailto, tel, or relative URL."
+                },
+                "alt": {
+                  "default": "",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "src"
+              ]
+            }
+          }
+        },
+        "required": [
+          "lede",
+          "logos"
+        ],
+        "description": "A row of customer or partner logos under a short line of supporting text, no heading. Use to signal adoption or social proof without making an argument."
+      }
+    },
+    "Team": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "team": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Must be an http(s), mailto, tel, or relative URL."
+                    },
+                    "alt": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "role",
+                "avatar"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "team"
+        ],
+        "description": "A grid of team member photos with name and role beneath each. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages."
+      }
+    },
+    "Stats": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "stats": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "stats"
+        ],
+        "description": "A row of large numeric stats, each with a short label, divided at wider widths. Use to make a quantitative case — scale, results, usage — at a glance."
+      }
+    },
+    "Newsletter": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Must be an http(s), mailto, tel, or relative URL."
+          },
+          "buttonLabel": {
+            "default": "Subscribe",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "action"
+        ],
+        "description": "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide. Use to grow an email list without embedding a third-party widget."
       }
     }
   }
