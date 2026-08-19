@@ -1,0 +1,22 @@
+<!--
+  Placeholder favicon for the "Harbour" demo brand.
+
+  Next.js picks up this file automatically (the app/icon.svg convention)
+  and generates the link rel="icon" tag itself, no manual wiring needed.
+
+  This is deliberately a plain monogram, not a crafted logo: every template
+  adopter is expected to swap this file for their own brand mark. The badge
+  color below (#2b62ef) is the sRGB rendering of this project's primary
+  design token (oklch(0.55 0.22 264) in src/app/globals.css), kept as a
+  literal hex value because a favicon is served as a standalone document and
+  can't resolve the host page's CSS custom properties. The H glyph itself
+  uses currentColor so swapping the badge fill is enough to re-theme it.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Harbour">
+  <rect width="32" height="32" rx="8" fill="#2b62ef" />
+  <g fill="currentColor" style="color: #ffffff">
+    <rect x="9" y="8" width="4" height="16" rx="1" />
+    <rect x="19" y="8" width="4" height="16" rx="1" />
+    <rect x="9" y="14" width="14" height="4" rx="1" />
+  </g>
+</svg>

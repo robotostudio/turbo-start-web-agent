@@ -25,15 +25,15 @@ description: A starter marketing site you can edit with any AI agent.
 
 <FeatureGrid
   title="A template that stays out of your way once the client signs off."
-  subtitle="Thirteen pieces, each one doing a single job well."
+  subtitle="Fourteen pieces, each one doing a single job well."
   features={[
     {
       title: "Block system.",
       description: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
     },
     {
-      title: "Bring your own content.",
-      description: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+      title: "Content lives in git.",
+      description: "It's plain-text MDX — diffable, reviewable as a pull request, revertible, and directly editable by an AI agent.",
     },
     {
       title: "One token file.",
@@ -71,7 +71,7 @@ description: A starter marketing site you can edit with any AI agent.
 <Stats
   title="The numbers behind the pitch."
   stats={[
-    { value: "13", label: "Blocks in the registry today" },
+    { value: "14", label: "Blocks in the registry today" },
     { value: "3.2 hrs", label: "Average time to reskin a client site" },
     { value: "94%", label: "Sections shipped without custom code" },
     { value: "0kb", label: "Client JS shipped by default" },
@@ -142,8 +142,8 @@ description: A starter marketing site you can edit with any AI agent.
   title="The questions every agency asks first."
   faqs={[
     {
-      question: "Do I need to know Sanity, or can I use plain Markdown?",
-      answer: "Neither is required. Block components read from a shared content shape, and the shape ships with a Markdown adapter and a Sanity adapter already wired. Point the config at whichever one matches the client's comfort level — the sections themselves never know which backend is behind them.",
+      question: "Do I need to know a CMS, or is plain Markdown enough?",
+      answer: "There's no CMS to learn — content is just MDX files in content/, validated by Zod at build time. A remark plugin locks down what MDX can contain, so an agent can edit those files directly without ever touching a database or an admin panel.",
     },
     {
       question: "How long does a client rebuild actually take?",
@@ -155,7 +155,7 @@ description: A starter marketing site you can edit with any AI agent.
     },
     {
       question: "Is the block registry locked to a specific CMS?",
-      answer: "No. The registry is just a mapping from a type string to a component. Whatever's supplying that type — Sanity, a JSON file, a headless CMS you bolt on later — the registry doesn't care, as long as the props match the schema.",
+      answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time — swap the source and you'd rebuild that check, not just add an adapter.",
     },
     {
       question: "Can I white-label this for resale?",

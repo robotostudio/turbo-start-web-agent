@@ -22,7 +22,7 @@ Open http://localhost:3000.
 
 Pages are composed from **Blocks** — pre-built, schema-validated sections such
 as `Hero`, `FeatureGrid`, `Testimonial`, and `CTA`. The registry currently
-ships **13 Blocks**; the full set lives at `src/lib/blocks/schemas.ts` and
+ships **14 Blocks**; the full set lives at `src/lib/blocks/schemas.ts` and
 renders live, with the exact props each one expects, at
 [`/blocks-gallery`](http://localhost:3000/blocks-gallery).
 
