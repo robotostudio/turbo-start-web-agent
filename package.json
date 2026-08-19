@@ -17,6 +17,8 @@
     "content:check": "pnpm --filter @workspace/web run content:check",
     "catalog:check": "pnpm --filter @workspace/web run catalog:check",
     "gallery:check": "pnpm --filter @workspace/web run gallery:check",
+    "harness": "node --experimental-strip-types scripts/harness-gen/index.ts",
+    "harness:check": "node --experimental-strip-types scripts/harness-gen/index.ts --check",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
   },

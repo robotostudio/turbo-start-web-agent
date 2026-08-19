@@ -16,6 +16,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run harness:check
       - run: pnpm run content:check
       - run: pnpm run catalog:check
       - run: pnpm run gallery:check

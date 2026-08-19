@@ -1,0 +1,27 @@
+# GENERATED FILE — do not edit directly.
+# Source: scripts/harness-gen/adapters/cursor.ts (edit the list below).
+# Regenerate with `pnpm harness`.
+#
+# No .cursor/rules file is generated alongside this one. Cursor reads
+# AGENTS.md natively (root and nested) — a .cursor/rules/*.mdc file here
+# would just duplicate it in a second format, which is exactly the kind of
+# drift this generator exists to prevent. This is a deliberate omission,
+# not an oversight.
+#
+# Reminder from Cursor's own docs: this file narrows what Agent/Tab/Inline
+# Edit and @-references can see. It does NOT block terminal or MCP tool
+# access — it is not a sandbox.
+
+# Dependency and build output — large, never hand-edited, already in
+# .gitignore. No reason to spend Agent context on these.
+node_modules/
+.next/
+.velite/
+
+# Package manager lockfile — large, generated, never hand-edited.
+pnpm-lock.yaml
+
+# Generated from src/lib/blocks/schemas.ts by `pnpm catalog` (AGENTS.md
+# §4). Editing this file directly is silently overwritten the next time
+# anyone runs the generator — edit the schema instead.
+artifacts/web/src/lib/blocks/catalog.json

@@ -1,0 +1,48 @@
+# GENERATED FILE — do not edit directly.
+# Source: harness.config.json (edit that), or
+# scripts/harness-gen/adapters/replit.ts (edit the shape below).
+# Regenerate with `pnpm harness`.
+#
+# Deliberately omitted, on purpose, not by oversight:
+#
+#   [deployment]   This site deploys from its own host (see
+#                  harness.config.json's site.host). A Replit deployment
+#                  here would stand up a second, duplicate copy of the
+#                  marketing site — bad for SEO, and a second place content
+#                  could drift from what's actually live.
+#
+#   [workflows], [postMerge], and a .replitignore file
+#                  The research behind this generator
+#                  (docs/research/agent-platform-surfaces.md §1) found no
+#                  primary source documenting any of the three against
+#                  Replit's official docs. They are empirically observed in
+#                  Replit-generated repos, not contractual — this harness
+#                  does not depend on any of them working. Verify against a
+#                  live Agent-generated repo before adding any of them by
+#                  hand.
+#
+# "modules" pins the Nix module Replit provisions the workspace with. This
+# project requires Node >=24 (package.json "engines", .nvmrc) — the exact
+# module identifier below is a best-effort match against that requirement,
+# not verified against Replit's live module registry (this generator's
+# research did not have a way to enumerate it). If Replit reports this
+# module as unavailable, check the current list in the workspace's
+# Nix/Modules UI and update this line by hand until a future harness-gen
+# revision can verify it.
+modules = ["nodejs-24"]
+
+# pnpm run dev delegates to artifacts/web's "dev" script, which
+# already runs `next dev` bound to 0.0.0.0 and reads the PORT env var
+# (falling back to 3000) — both required for Replit's preview proxy to
+# reach it. See artifacts/web/package.json.
+run = "pnpm run dev"
+
+# Reports capabilities before an agent starts editing (git reachability, PR
+# ability, package-manager usability, plus every probe in
+# harness.config.json). Always exits 0 — see scripts/preflight.sh's own
+# header for why a capability *report* must never block a boot.
+onBoot = "sh scripts/preflight.sh"
+
+[[ports]]
+localPort = 3000
+externalPort = 80

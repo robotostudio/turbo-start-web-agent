@@ -1,0 +1,39 @@
+{
+  "//": "Single source of truth for the capability-probe script (scripts/preflight.sh) and the per-platform generator (harness-gen). Edit this file, not their output. See AGENTS.md and docs/superpowers/plans/2026-08-19-agent-harness.md.",
+  "project": {
+    "slug": "turbo-start-web-agent",
+    "name": "Harbour",
+    "//name": "Display name shown to an agent/operator. This is the template's own demo brand (see artifacts/web/content/settings/footer.yml). An adopter forking this template for a real client replaces it with the client's name."
+  },
+  "site": {
+    "host": "https://example.com",
+    "//host": "Placeholder — replace with the deployed origin and set NEXT_PUBLIC_SITE_URL to match (see .env.example at the repo root). Left unset/unreplaced, artifacts/web/src/app/sitemap.ts silently falls back to this same placeholder and ships a sitemap of example.com URLs."
+  },
+  "commands": {
+    "dev": "pnpm run dev",
+    "build": "pnpm run build",
+    "check": [
+      "pnpm run content:check",
+      "pnpm run catalog:check",
+      "pnpm run gallery:check",
+      "pnpm run lint",
+      "pnpm run test",
+      "pnpm run typecheck",
+      "pnpm run build"
+    ],
+    "//check": "Exact order CI runs them in (.github/workflows/ci.yml). All must pass — the build is the gate."
+  },
+  "platforms": ["replit", "claude-code", "cursor"],
+  "capabilities": [
+    {
+      "env": "SLACK_WEBHOOK_URL",
+      "label": "Newsletter Block form submissions post to a Slack channel",
+      "fallback": "-> Point the Newsletter Block's `action` prop (artifacts/web/src/lib/blocks/schemas.ts, artifacts/web/src/components/blocks/newsletter.tsx) at a different form endpoint you do control (e.g. Formspree, a serverless function), or leave `action` as a placeholder URL until a real endpoint is configured. The Block itself has no server code — `action` is a plain literal URL prop, so any safe-scheme endpoint works."
+    },
+    {
+      "env": "BLOB_READ_WRITE_TOKEN",
+      "label": "Image uploads to Vercel Blob storage",
+      "fallback": "-> Reference existing images by URL instead of uploading new ones: images.unsplash.com, assets.ui.sh, or a file already committed under artifacts/web/public/ (served as a relative /path). These are the only hosts artifacts/web/next.config.mjs's images.remotePatterns allows besides *.public.blob.vercel-storage.com, and mediaSrc() in schemas.ts enforces the same list at build time."
+    }
+  ]
+}
