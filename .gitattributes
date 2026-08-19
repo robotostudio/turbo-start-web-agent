@@ -21,3 +21,9 @@ artifacts/web/content/pages/blocks-gallery.mdx text eol=lf
 *.md text eol=lf
 *.css text eol=lf
 *.yml text eol=lf
+
+# Generated files with no extension (harness-gen adapters) fall under the
+# `* text=auto` default above and are otherwise unpinned — same drift risk
+# as the two files above, for the same reason.
+.replit text eol=lf
+.cursorignore text eol=lf

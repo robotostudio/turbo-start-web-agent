@@ -7,11 +7,13 @@
   },
   "site": {
     "host": "https://example.com",
-    "//host": "Placeholder — replace with the deployed origin and set NEXT_PUBLIC_SITE_URL to match (see .env.example at the repo root). Left unset/unreplaced, artifacts/web/src/app/sitemap.ts silently falls back to this same placeholder and ships a sitemap of example.com URLs."
+    "//host": "Placeholder — replace with the deployed origin and set NEXT_PUBLIC_SITE_URL to match (see .env.example at the repo root). Left unset/unreplaced, artifacts/web/src/app/sitemap.ts silently falls back to this same placeholder and ships a sitemap of example.com URLs. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh."
   },
   "commands": {
     "dev": "pnpm run dev",
+    "//dev": "Consumed: interpolated verbatim into the generated .replit's \"run\" line by scripts/harness-gen/adapters/replit.ts.",
     "build": "pnpm run build",
+    "//build": "Documentation only: not read by scripts/harness-gen or scripts/preflight.sh. Recorded here for an operator/agent scanning this file for the build command.",
     "check": [
       "pnpm run harness:check",
       "pnpm run content:check",
@@ -22,9 +24,10 @@
       "pnpm run typecheck",
       "pnpm run build"
     ],
-    "//check": "Exact order CI runs them in (.github/workflows/ci.yml), harness:check first. All must pass — the build is the gate."
+    "//check": "Exact order CI runs them in (.github/workflows/ci.yml), harness:check first. All must pass — the build is the gate. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh; the actual order lives in .github/workflows/ci.yml and AGENTS.md §5, this is a restatement for anyone scanning the manifest."
   },
   "platforms": ["replit", "claude-code", "cursor"],
+  "//platforms": "Consumed: drives which harness-gen adapters run (scripts/harness-gen/index.ts). Each entry must match a key in that file's ADAPTERS map (currently \"replit\", \"claude-code\", \"cursor\") — an unrecognized entry fails generation with a named error instead of silently doing nothing.",
   "capabilities": [
     {
       "env": "SLACK_WEBHOOK_URL",

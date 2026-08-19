@@ -10,14 +10,23 @@ export interface HarnessConfig {
     slug: string;
     name: string;
   };
+  /** Documentation only — not read by harness-gen or preflight.sh. */
   site: {
     host: string;
   };
   commands: {
+    /** Consumed: interpolated into the generated .replit's "run" line. */
     dev: string;
+    /** Documentation only — not read by harness-gen or preflight.sh. */
     build: string;
+    /** Documentation only — not read by harness-gen or preflight.sh. */
     check: string[];
   };
+  /**
+   * Consumed: selects which entries of index.ts's ADAPTERS map run. Every
+   * entry must be a known adapter id — index.ts validates this and fails
+   * generation with a named error otherwise (see validateConfig).
+   */
   platforms: string[];
   capabilities: Array<{
     env: string;

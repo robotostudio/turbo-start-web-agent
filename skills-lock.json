@@ -10,7 +10,7 @@
         "ref": "v1.0.0",
         "commit": "0000000000000000000000000000000000000000"
       },
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
       "reviewedBy": "your-name-here",
       "reviewedAt": "2026-08-19",
       "notes": "Worked example only, per .agents/skills/find-skills/SKILL.md — not an installed skill. Replace or remove this entry when you install a real one; do not leave it as if it were real."

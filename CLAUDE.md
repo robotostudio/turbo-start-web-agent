@@ -22,6 +22,13 @@ platform-neutral file.
   `.claude/skills/`, `.claude/agents/`, and `.claude/commands/` from that
   clone — nothing under `~/.claude/` on anyone's own machine carries over.
   Commit anything a cloud session needs to see.
+- **A `SessionStart` hook in `.claude/settings.json` runs
+  `scripts/preflight.sh`**, gated on `CLAUDE_CODE_REMOTE=true` so it only
+  fires in cloud sessions, and its report (git remote reachability, `gh`
+  PR ability, `pnpm` usability, plus every capability declared in
+  `harness.config.json`) is added to context before you make any claim
+  about what you can push, publish, or open a PR for. Locally, run
+  `sh scripts/preflight.sh` by hand for the same report.
 - **`.claude/skills/` is a generated, byte-identical copy of
   `.agents/skills/`** (see `.claude/skills/README.md`), not a symlink.
   Edit skills under `.agents/skills/` and run `pnpm harness` to refresh the

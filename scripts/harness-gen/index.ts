@@ -34,21 +34,162 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 // principle (see its own comment for why restating the rules in
 // independently hand-written prose would have been the wrong fix).
 
+// Known platform ids -> the adapter that generates their surface. Also the
+// source of truth harness.config.json's "platforms" array is validated
+// against below: an adopter adding a fourth platform name there without
+// adding a matching adapter here gets a named error instead of the entry
+// silently doing nothing (see F8/harness follow-ups).
+const ADAPTERS: Record<string, Adapter> = {
+  "claude-code": generateClaudeCode,
+  replit: generateReplit,
+  cursor: generateCursor,
+};
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+function fail(message: string): never {
+  process.stderr.write(`${message}\n`);
+  process.exit(1);
+}
+
+// Minimal structural validation of the parsed manifest. Not a schema
+// library (per types.ts's "no new dependencies" constraint) — just enough
+// to turn a typo'd or incomplete harness.config.json into one friendly
+// message naming the exact field that's wrong, matching the phrasing
+// generate-catalog.ts/generate-gallery.ts use for their own drift errors,
+// instead of a raw Node stack trace pointing at whichever adapter first
+// dereferences the missing field.
+function validateConfig(raw: unknown): HarnessConfig {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    throw new Error("must be a JSON object");
+  }
+  const cfg = raw as Record<string, unknown>;
+
+  const project = cfg.project;
+  if (typeof project !== "object" || project === null) {
+    throw new Error('"project" must be an object with "slug" and "name" strings');
+  }
+  const { slug, name } = project as Record<string, unknown>;
+  if (typeof slug !== "string" || slug.length === 0) {
+    throw new Error('"project.slug" must be a non-empty string');
+  }
+  if (typeof name !== "string" || name.length === 0) {
+    throw new Error('"project.name" must be a non-empty string');
+  }
+
+  const site = cfg.site;
+  if (typeof site !== "object" || site === null) {
+    throw new Error('"site" must be an object with a "host" string');
+  }
+  const { host } = site as Record<string, unknown>;
+  if (typeof host !== "string") {
+    throw new Error('"site.host" must be a string');
+  }
+
+  const commands = cfg.commands;
+  if (typeof commands !== "object" || commands === null) {
+    throw new Error(
+      '"commands" must be an object with "dev"/"build" strings and a "check" array of strings',
+    );
+  }
+  const { dev, build, check } = commands as Record<string, unknown>;
+  if (typeof dev !== "string" || dev.length === 0) {
+    throw new Error('"commands.dev" must be a non-empty string');
+  }
+  if (typeof build !== "string" || build.length === 0) {
+    throw new Error('"commands.build" must be a non-empty string');
+  }
+  if (!Array.isArray(check) || check.some((c) => typeof c !== "string")) {
+    throw new Error('"commands.check" must be an array of strings');
+  }
+
+  const platforms = cfg.platforms;
+  if (!Array.isArray(platforms) || platforms.some((p) => typeof p !== "string")) {
+    throw new Error('"platforms" must be an array of strings');
+  }
+  const unknownPlatforms = (platforms as string[]).filter((p) => !(p in ADAPTERS));
+  if (unknownPlatforms.length > 0) {
+    throw new Error(
+      `"platforms" lists ${unknownPlatforms.map((p) => `"${p}"`).join(", ")}, but no adapter is registered for ` +
+        `${unknownPlatforms.length > 1 ? "them" : "it"} in scripts/harness-gen/index.ts. Known platforms: ` +
+        `${Object.keys(ADAPTERS).join(", ")}.`,
+    );
+  }
+
+  const capabilitiesRaw = cfg.capabilities ?? [];
+  if (!Array.isArray(capabilitiesRaw)) {
+    throw new Error('"capabilities" must be an array');
+  }
+  capabilitiesRaw.forEach((c, i) => {
+    if (typeof c !== "object" || c === null) {
+      throw new Error(
+        `"capabilities[${i}]" must be an object with "env", "label", and "fallback" strings`,
+      );
+    }
+    const { env, label, fallback } = c as Record<string, unknown>;
+    if (typeof env !== "string" || env.length === 0) {
+      throw new Error(`"capabilities[${i}].env" must be a non-empty string`);
+    }
+    if (typeof label !== "string" || label.length === 0) {
+      throw new Error(`"capabilities[${i}].label" must be a non-empty string`);
+    }
+    if (typeof fallback !== "string") {
+      throw new Error(`"capabilities[${i}].fallback" must be a string`);
+    }
+  });
+
+  return {
+    project: { slug, name },
+    site: { host },
+    commands: { dev, build, check: check as string[] },
+    platforms: platforms as string[],
+    capabilities: capabilitiesRaw as HarnessConfig["capabilities"],
+  };
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "..", "..");
 
 const agentsMdPath = join(repoRoot, "AGENTS.md");
 const configPath = join(repoRoot, "harness.config.json");
 
-const agentsMd = readFileSync(agentsMdPath, "utf8");
-const config: HarnessConfig = JSON.parse(readFileSync(configPath, "utf8"));
+let agentsMd: string;
+try {
+  agentsMd = readFileSync(agentsMdPath, "utf8");
+} catch (err) {
+  fail(`Cannot read AGENTS.md at ${agentsMdPath}: ${errorMessage(err)}`);
+}
 
-const adapters: Adapter[] = [generateClaudeCode, generateReplit, generateCursor];
+let config: HarnessConfig;
+try {
+  const rawText = readFileSync(configPath, "utf8");
+  let raw: unknown;
+  try {
+    raw = JSON.parse(rawText);
+  } catch (err) {
+    throw new Error(`not valid JSON (${errorMessage(err)})`);
+  }
+  config = validateConfig(raw);
+} catch (err) {
+  fail(
+    `harness.config.json is invalid: ${errorMessage(err)}. Fix the manifest (see its own "//" comments and ` +
+      `AGENTS.md §5), then re-run \`pnpm harness\`.`,
+  );
+}
+
+const adapters: Adapter[] = config.platforms.map((platformId) => ADAPTERS[platformId]);
 
 const files: GeneratedFile[] = [];
 const ownedDirs: string[] = [];
 for (const adapter of adapters) {
-  const result = adapter({ repoRoot, agentsMd, config });
+  let result: ReturnType<Adapter>;
+  try {
+    result = adapter({ repoRoot, agentsMd, config });
+  } catch (err) {
+    fail(`Cannot generate harness surfaces: ${errorMessage(err)}`);
+  }
   files.push(...result.files);
   if (result.ownedDirs) {
     ownedDirs.push(...result.ownedDirs);

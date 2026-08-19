@@ -95,6 +95,33 @@ If these pass, the content is valid. Fix the content, not the schema. A green
 build is necessary but not sufficient — always click through the built site
 (nav, footer, and every page it links to) before calling a change done.
 
+## The agent harness
+
+This template is agent-native: **`AGENTS.md`** at the repo root is the
+canonical rulebook — the content model, Block composition, the
+build-is-the-gate rule, git discipline — read natively by Codex, Cursor,
+GitHub Copilot/VS Code, Zed, and most of the rest of the ecosystem.
+
+Claude Code and Replit don't read `AGENTS.md` on their own, so
+**`CLAUDE.md`, `replit.md`, `.replit`, and `.cursorignore` bridge that
+gap — and all four are generated**, by `pnpm harness`, from `AGENTS.md`,
+`harness.config.json`, and `.agents/skills/`. Never hand-edit a generated
+file (each one says so at the top); edit the inputs and regenerate.
+`pnpm harness:check` is the read-only drift gate CI runs — it fails,
+naming exactly which generated file is stale, instead of writing anything.
+
+`docs/platforms/` holds a connection runbook per supported platform
+(Replit, Claude Code, Cursor): scoping a client repo to one platform, a
+write-only push identity, turning off platform-side automation that would
+fight this template's review-before-publish model, and a smoke test.
+
+`scripts/preflight.sh` reports what an agent session can actually do —
+git remote reachability, `gh`/`pnpm`/`node` presence, manifest capability
+probes — at session start (wired to Replit's `onBoot`; run it by hand on
+other platforms). The platform mapping itself is verified against each
+vendor's own documentation (`docs/research/agent-platform-surfaces.md`);
+it has not yet been exercised in a live session on any of these platforms.
+
 ## Licence
 
 MIT.

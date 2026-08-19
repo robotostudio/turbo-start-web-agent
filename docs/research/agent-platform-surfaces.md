@@ -56,8 +56,9 @@ Sources: https://code.claude.com/docs/en/claude-code-on-the-web · https://code.
 
 ### Repo connection & PR flow
 - Research preview for Pro/Max/Team (+ Enterprise premium seats). Two GitHub auth methods: **Claude GitHub App** (installed during onboarding at claude.ai/code) or **`/web-setup`** in the CLI (syncs your local `gh` token to your Claude account). Either grants sessions access to *any repo the connected account can see*; App installation is only required for **Auto-fix PRs** (webhooks). (claude-code-on-the-web#github-authentication-options)
+- **Scoping guidance, quoted verbatim**: "With either method, a cloud session can access any repository the connecting GitHub account can see, not just the repositories the Claude GitHub App is installed on. App installation enables PR webhooks for Auto-fix; it is not a session-level access control. To restrict which repositories your team can reach from cloud sessions, restrict access on GitHub itself, for example by limiting team or repository membership for the connected GitHub accounts." (claude-code-on-the-web#github-authentication-options)
 - Session flow: repo cloned into an isolated Anthropic-managed VM (Ubuntu 24.04 x86_64), Claude works, then **pushes a branch**; user reviews the diff and clicks **Create PR** (full PR, draft, or GitHub compose page). Session stays live after PR creation. (web-quickstart#review-and-iterate)
-- Auto-fix: Claude watches a PR for CI failures/review comments and pushes fixes; replies are posted from the *user's* GitHub account, labeled as Claude Code. Requires the GitHub App on the repo. (claude-code-on-the-web#auto-fix-pull-requests)
+- Auto-fix: Claude watches a PR for CI failures/review comments and pushes fixes; replies are posted from the *user's* GitHub account, labeled as Claude Code. Requires the GitHub App on the repo. **Auto-fix is a per-PR toggle, off by default**, turned on per PR via: the CI status bar's **Auto-fix** control on a web-created PR, the **`/autofix-pr`** CLI command run on the PR's branch (detects the open PR via `gh`, spawns a web session, and enables auto-fix in one step), telling Claude in the mobile app, or pasting the PR URL into any session and asking. "Auto-fix is a per-PR toggle. To stop monitoring, open the CI status bar in the web session and clear the Auto-fix toggle, or tell Claude to stop watching the PR." (claude-code-on-the-web#auto-fix-pull-requests)
 - Permission modes in cloud: Auto / Accept edits / Plan only (no Manual/Bypass).
 
 ### What config the cloud session reads (exact table from cloud-environments#what-carries-over-from-your-setup)
@@ -124,6 +125,7 @@ Source: https://cursor.com/docs/context/ignore-files
 Sources: https://cursor.com/docs/cloud-agent · https://cursor.com/docs/cloud-agent/setup · https://cursor.com/docs/integrations/github
 
 - Providers: GitHub (Cloud + Enterprise Server), GitLab (Cloud + Self-Hosted), Bitbucket Cloud, Azure DevOps. Agents clone the repo, "work on a separate branch, then push changes to your repo for handoff" and produce merge-ready PRs. Needs read-write repo privileges. Launch from Cursor Web (cursor.com/agents), Desktop, iOS/PWA, Slack (`@cursor`), **GitHub/Bitbucket PR or issue comments (`@cursor`)**, Linear, or the Cloud Agents API (public beta). Auto-fixes CI failures on its PRs (GitHub Actions only). Paid plans only.
+- GitHub App setup presents an explicit repo-scoping choice, quoted verbatim: "Choose All repositories or Selected repositories." (cursor.com/docs/integrations/github)
 - Environment: **`.cursor/environment.json`** (commit for team sharing). Fields: `snapshot` (snapshot ID) or `build: { dockerfile, context }`, `install` (idempotent dependency script, cached in "Builds"), `start`, `terminals`. Resolution: repo `.cursor/environment.json` → personal saved env → team saved env. Secrets via dashboard (env-scoped). Hooks from `.cursor/hooks.json` run in cloud.
 
 ---
@@ -165,6 +167,17 @@ Source: https://agents.md/
 - Listed supporters (20+): **OpenAI Codex**, Google Jules, Gemini CLI, Cursor, GitHub Copilot / VS Code, Zed, Windsurf, Devin, Factory, Aider, goose, opencode, JetBrains Junie, Warp, Amp, RooCode, Kilo Code, Phoenix, Semgrep, Ona, Augment Code, UiPath.
 - **Not on the list and confirmed non-readers**: Claude Code (reads CLAUDE.md only — official import/symlink bridge), Replit (replit.md only), Lovable, Bolt, v0.
 - Note: Codex layers extra semantics on top of the plain spec (AGENTS.override.md, fallback filenames, 32 KiB cap, root-down concatenation) — see §3.
+
+---
+
+## 7. GitHub repository rules (rulesets/branch protection) — plan tiers
+
+Sources: https://github.com/pricing (plan comparison table, "Repository rules" row) · https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
+
+- GitHub's plan comparison table lists **"Repository rules"** with different scope per plan: **Free** — repository rules are limited to **public** repositories only; **Team** — repository rules are available for **all** repositories, public and private ("Enforce restrictions on how code branches are merged, including requiring reviews by selected collaborators, or allowing only specific contributors to work on a particular branch"); **Enterprise** — the same, plus enterprise-wide rule insights ("Enforce branch and tag protections, as well as push rules across your enterprise. Rule insights allow you to assess impact of rules before and during enforcement").
+- The rulesets reference doc corroborates from the product-docs side: "A ruleset is a named list of rules that applies to a repository or to multiple repositories in an organization for customers on GitHub Team and GitHub Enterprise plans."
+- Net: enforcing a ruleset or branch-protection rule on a **private** repo requires the owning organization to be on GitHub Team or Enterprise. On a **public** repo, the same enforcement is available on any plan, including Free.
+- Used by all three runbooks' "Branch protection: what you can actually rely on" section (`docs/platforms/claude-code.md`, `docs/platforms/replit.md`, `docs/platforms/cursor.md`).
 
 ---
 

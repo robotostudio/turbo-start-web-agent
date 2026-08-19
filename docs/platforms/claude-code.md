@@ -151,9 +151,17 @@ or `CLAUDE.md` at all, the bridge isn't wired up; re-check step 0.
   hook, not a devcontainer.** Cloud environments have no devcontainer
   support; a claude.ai environment (configured in the web UI, not a repo
   file) provisions the VM's toolchains, and a `SessionStart` hook in
-  `.claude/settings.json` — typically gated on `CLAUDE_CODE_REMOTE=true` —
-  handles project setup like installing dependencies. This repo does not
-  currently ship a `SessionStart` hook (there is no `.claude/settings.json`
-  yet); running `scripts/preflight.sh` automatically at cloud session
-  start, the way Replit's `onBoot` does, would need one added deliberately
-  — it doesn't happen on its own today.
+  `.claude/settings.json` handles project setup.
+
+  This repo ships that hook. `.claude/settings.json` runs
+  `scripts/preflight.sh` at session start, gated on
+  `CLAUDE_CODE_REMOTE=true` so it fires in cloud sessions and stays out of
+  the way locally. That gives Claude Code the same capability report
+  Replit gets from its `onBoot` — which matters, because the report is
+  what stops an agent telling a client it published a change when it never
+  had push credentials.
+
+  The hook covers the capability report only. Anything heavier — installing
+  dependencies, provisioning toolchains — belongs in the claude.ai
+  environment's setup script, since that runs once and is cached, while a
+  `SessionStart` hook runs every session.

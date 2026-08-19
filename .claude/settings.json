@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ \"$CLAUDE_CODE_REMOTE\" = \"true\" ]; then sh \"$CLAUDE_PROJECT_DIR/scripts/preflight.sh\"; fi",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

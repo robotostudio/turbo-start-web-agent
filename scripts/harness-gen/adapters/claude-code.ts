@@ -89,6 +89,13 @@ platform-neutral file.
   \`.claude/skills/\`, \`.claude/agents/\`, and \`.claude/commands/\` from that
   clone — nothing under \`~/.claude/\` on anyone's own machine carries over.
   Commit anything a cloud session needs to see.
+- **A \`SessionStart\` hook in \`.claude/settings.json\` runs
+  \`scripts/preflight.sh\`**, gated on \`CLAUDE_CODE_REMOTE=true\` so it only
+  fires in cloud sessions, and its report (git remote reachability, \`gh\`
+  PR ability, \`pnpm\` usability, plus every capability declared in
+  \`harness.config.json\`) is added to context before you make any claim
+  about what you can push, publish, or open a PR for. Locally, run
+  \`sh scripts/preflight.sh\` by hand for the same report.
 - **\`.claude/skills/\` is a generated, byte-identical copy of
   \`.agents/skills/\`** (see \`.claude/skills/README.md\`), not a symlink.
   Edit skills under \`.agents/skills/\` and run \`pnpm harness\` to refresh the
@@ -104,8 +111,28 @@ platform-neutral file.
 
   const skillsSrcDir = join(repoRoot, ".agents", "skills");
   const skillsDestDir = join(".claude", "skills");
-  for (const absSrc of listFilesRecursive(skillsSrcDir)) {
-    const relFromSkillsDir = relative(skillsSrcDir, absSrc);
+  const mirroredSkillFiles = listFilesRecursive(skillsSrcDir).map((absSrc) => ({
+    absSrc,
+    relFromSkillsDir: relative(skillsSrcDir, absSrc),
+  }));
+
+  // This adapter unconditionally appends its own generated README.md to
+  // skillsDestDir below, as the mirror's "this is generated" note. If
+  // .agents/skills/ ever contains its own README.md, that mirrors straight
+  // to the same output path and two entries would claim one file — --check
+  // would then compare that path against two different contents and could
+  // never pass, unfixable by regenerating. Fail loudly here instead, so the
+  // collision can't reach --check at all.
+  if (mirroredSkillFiles.some(({ relFromSkillsDir }) => relFromSkillsDir === "README.md")) {
+    throw new Error(
+      ".agents/skills/README.md exists, but scripts/harness-gen/adapters/claude-code.ts also generates " +
+        ".claude/skills/README.md as the mirror's own generated note — the two would collide at the same " +
+        "output path. Rename or remove .agents/skills/README.md (e.g. to .agents/skills/OVERVIEW.md); " +
+        '"README.md" is reserved for the generated mirror note.',
+    );
+  }
+
+  for (const { absSrc, relFromSkillsDir } of mirroredSkillFiles) {
     files.push({
       path: join(skillsDestDir, relFromSkillsDir),
       content: readFileSync(absSrc, "utf8"),

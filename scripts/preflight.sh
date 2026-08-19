@@ -73,17 +73,22 @@ echo
 # --- Built-in probe 1/3: git reachability -----------------------------
 # Presence of a remote is not the same as being able to reach it. Probe the
 # real thing with `ls-remote`, not just `git remote -v`.
-remote_url=$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null)
-if [ -z "$remote_url" ]; then
-  report_cannot "reach the git remote (no 'origin' remote is configured)" \
-"-> Do not claim to push, pull, fetch, or open a PR against a remote. Tell the operator no git remote is configured here and ask them to add one (git remote add origin <url>) before you attempt any git network operation."
+if ! command -v git >/dev/null 2>&1; then
+  report_cannot "reach the git remote (git not found)" \
+"-> Do not claim to push, pull, fetch, or open a PR — there is no git to do it with. Ask the operator to install git before you attempt any git operation."
 else
-  if with_timeout "$TIMEOUT_SECS" git -c core.askpass=true \
-       -C "$REPO_ROOT" ls-remote --exit-code "$remote_url" HEAD >/dev/null 2>&1; then
-    report_can "reach the git remote ($remote_url)"
+  remote_url=$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null)
+  if [ -z "$remote_url" ]; then
+    report_cannot "reach the git remote (no 'origin' remote is configured)" \
+"-> Do not claim to push, pull, fetch, or open a PR against a remote. Tell the operator no git remote is configured here and ask them to add one (git remote add origin <url>) before you attempt any git network operation."
   else
-    report_cannot "reach the git remote ($remote_url)" \
+    if with_timeout "$TIMEOUT_SECS" git -c core.askpass=true \
+         -C "$REPO_ROOT" ls-remote --exit-code "$remote_url" HEAD >/dev/null 2>&1; then
+      report_can "reach the git remote ($remote_url)"
+    else
+      report_cannot "reach the git remote ($remote_url)" \
 "-> Do not claim to have pushed, pulled, fetched, or opened a PR. Work locally, tell the operator that git networking or credentials are unavailable in this environment, and wait for them to restore access before retrying."
+    fi
   fi
 fi
 
@@ -104,8 +109,8 @@ else
 fi
 
 # --- Built-in probe 3/3: package manager usability ---------------------
-if command -v pnpm >/dev/null 2>&1 && with_timeout "$TIMEOUT_SECS" pnpm --version >/dev/null 2>&1; then
-  report_can "run pnpm commands ($(pnpm --version 2>/dev/null))"
+if command -v pnpm >/dev/null 2>&1 && pnpm_version=$(with_timeout "$TIMEOUT_SECS" pnpm --version 2>/dev/null); then
+  report_can "run pnpm commands ($pnpm_version)"
 else
   report_cannot "run pnpm commands (pnpm not found or not runnable)" \
 "-> Do not run pnpm commands or claim that install/build/lint/test succeeded via pnpm. Ask the operator to install pnpm (corepack enable, per the packageManager field in package.json) before you retry. Do not silently substitute npm or yarn — the lockfile and workspace layout assume pnpm."
@@ -121,7 +126,7 @@ elif [ ! -f "$MANIFEST" ]; then
   report_cannot "read capability probes (harness.config.json not found at $MANIFEST)" \
 "-> Do not assume any optional capability is available. Ask the operator whether harness.config.json was removed or moved before continuing."
 else
-  tmp_caps=$(mktemp 2>/dev/null || echo "/tmp/preflight-caps.$$")
+  tmp_caps=$(mktemp 2>/dev/null || echo "${TMPDIR:-/tmp}/.preflight-caps.$$.$(date +%s 2>/dev/null || echo 0)")
   node -e '
     const fs = require("fs");
     const cfg = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
@@ -131,10 +136,19 @@ else
       process.stdout.write(clean(c.env) + "\t" + clean(c.label) + "\t" + clean(c.fallback) + "\n");
     }
   ' "$MANIFEST" >"$tmp_caps" 2>/dev/null
+  node_status=$?
 
-  if [ ! -s "$tmp_caps" ]; then
-    report_cannot "read capability probes (harness.config.json has no usable \"capabilities\" array, or node failed to parse it)" \
-"-> Do not assume any optional capability is available. Ask the operator to check that harness.config.json is valid JSON with a top-level \"capabilities\" array."
+  # Distinguish "node couldn't parse the manifest at all" (node_status != 0,
+  # e.g. invalid JSON) from "parsed fine, capabilities is just empty"
+  # (node_status == 0, tmp_caps has zero bytes because the array is empty or
+  # absent). The former is a broken manifest worth flagging; the latter is a
+  # completely normal state for a site with no optional capabilities
+  # declared, and reporting it as broken would cry wolf on every session.
+  if [ "$node_status" -ne 0 ]; then
+    report_cannot "read capability probes (harness.config.json is not valid JSON, or node failed to parse it)" \
+"-> Do not assume any optional capability is available. Ask the operator to check that harness.config.json is valid JSON."
+  elif [ ! -s "$tmp_caps" ]; then
+    echo "No optional capabilities declared in harness.config.json (empty \"capabilities\" array) — nothing to probe."
   else
     tab="$(printf '\t')"
     while IFS="$tab" read -r cap_env cap_label cap_fallback; do
