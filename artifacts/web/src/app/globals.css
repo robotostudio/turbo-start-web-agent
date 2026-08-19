@@ -140,6 +140,24 @@
     }
   }
 
+  /* A Block composed into a blog post (see the `Stats` example in
+     content/blog/anatomy-of-a-post.mdx) is already inside the article
+     column's gutter, so its own `page-inset` padding would indent it a second
+     time — visibly out of line with the prose it sits between. Zeroing the
+     inline padding leaves the Block's vertical rhythm and its max-width
+     untouched; only the doubled gutter goes.
+
+     The `section > .page-inset` shape is the Block contract, not a guess:
+     every Block's outermost element is a `<section>` wrapping `.page-inset`
+     exactly one level down (hero.tsx, faq.tsx, stats.tsx, …) — the same
+     invariant the `header + .page-inset` rule below depends on. A Block that
+     broke it would lose this correction, not silently mis-render something
+     else. Scoped to `.article-body` (src/app/blog/[slug]/page.tsx) so page
+     routes, where a Block IS the page-level container, are unaffected. */
+  .article-body > section > .page-inset {
+    padding-inline: 0;
+  }
+
   /* Sets the vendored Drawer's own `--drawer-inset` extension point (see
      `m-(--drawer-inset,0px)` and the closed-transform calcs in
      `@/components/ui/drawer`) so the site header's mobile nav panel floats
@@ -184,6 +202,48 @@
   --tw-prose-pre-bg: var(--muted);
   --tw-prose-th-borders: var(--border);
   --tw-prose-td-borders: var(--border);
+}
+
+/* The plugin decorates every inline `<code>` with literal backtick characters
+   via ::before/::after. That earns its keep in a plain-text-ish rendering
+   where nothing else marks code out; here the mono face (Geist Mono, set by
+   --font-mono) and the plugin's own weight bump already do that job, so the
+   quotes are duplicate signalling — and they are unselectable punctuation
+   glued to filenames and commands readers are meant to copy. Blog posts are
+   dense with inline code, which is where this shows up worst.
+
+   Specificity, since this quietly matters: the plugin's own rule is
+   `.prose :where(code):not(:where(…))::before`, and `:where()` contributes
+   nothing — including inside `:not()` — so it scores (0,1,1). The selector
+   below scores (0,1,2) and wins on merit rather than on source order. */
+.prose code::before,
+.prose code::after {
+  content: "";
+}
+
+/* Markdown images arrive as bare `<img>` with no way for an author to add a
+   class (content carries no markup — see remark-content-lockdown.ts), so the
+   only place to give them the site's card treatment is here. Matches the
+   `rounded-lg` + `border-border` every other surface on the site uses, so a
+   screenshot dropped into a post reads as part of the page rather than as a
+   raw asset. */
+.prose img {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+/* Jump targets for the article side panel (article-toc.tsx). Without this a
+   "#section" link scrolls the heading to y=0, which is underneath the floating
+   sticky header (`sticky top-4`, site-header.tsx) — the reader lands on a
+   section whose title is hidden behind the nav. 6rem clears the header's 1rem
+   offset plus its own height with room to spare.
+
+   Kept in step with `readingLine` in toc-active.tsx: the scrollspy decides a
+   heading has been reached once it passes 140px, so the value here must land
+   ABOVE that line, or clicking an entry would highlight the section before it.
+   Changing one without the other is the bug. */
+.prose :is(h1, h2, h3, h4)[id] {
+  scroll-margin-top: 6rem;
 }
 
 @theme inline {

@@ -126,6 +126,14 @@ export default defineConfig({
           category: s.string(),
           excerpt: s.string().max(300).optional(),
           cover: s.string().regex(ASSET_STORE, "cover must be a full Asset Store URL").optional(),
+          // Build-time table of contents for the article side panel
+          // (src/components/content/article-toc.tsx). Derived from the body's
+          // headings — never authored — so a post's rail can't drift out of
+          // step with the post. Depth 2 means top-level `##` sections only:
+          // the rail lists sections, not every sub-point, and its slugs match
+          // the heading ids stamped by rehype-slug (see `mdx.rehypePlugins`
+          // below), so the jump links resolve with no client JS.
+          toc: s.toc({ maxDepth: 2 }),
           code: s.mdx(),
         })
         .transform((data, { meta }) => ({

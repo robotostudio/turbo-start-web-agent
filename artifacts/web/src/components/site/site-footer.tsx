@@ -1,4 +1,5 @@
 import { footer } from "#velite";
+import { SiteLink } from "@/components/site/site-link";
 
 // Direction: Columns — the conventional multi-column link footer, done in
 // the house voice: no card, no recessed band, just a top border to close the
@@ -59,13 +60,13 @@ export function SiteFooter() {
       <div className="page-inset py-16 sm:py-20">
         <div className="flex flex-col gap-12 sm:flex-row sm:justify-between sm:gap-16">
           <div className="max-w-xs">
-            <a
+            <SiteLink
               href={footer.brand.href}
               aria-label="Homepage"
               className="text-base font-semibold text-foreground"
             >
               {footer.brand.name}
-            </a>
+            </SiteLink>
             {footer.note ? (
               <p className="mt-4 text-base text-pretty text-muted-foreground sm:text-sm">
                 {footer.note}
@@ -75,9 +76,9 @@ export function SiteFooter() {
               {footer.social.map((link) => {
                 const Icon = socialIcons[link.icon];
                 return (
-                  <a key={link.label} href={link.href} aria-label={link.label}>
+                  <SiteLink key={link.label} href={link.href} aria-label={link.label}>
                     <Icon />
-                  </a>
+                  </SiteLink>
                 );
               })}
             </div>
@@ -90,12 +91,12 @@ export function SiteFooter() {
                 <ul className="mt-4 flex flex-col gap-3">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <a
+                      <SiteLink
                         href={link.href}
                         className="text-base font-normal text-muted-foreground hover:text-foreground sm:text-sm"
                       >
                         {link.label}
-                      </a>
+                      </SiteLink>
                     </li>
                   ))}
                 </ul>
@@ -108,13 +109,13 @@ export function SiteFooter() {
           <p className="text-sm text-muted-foreground">{copyright}</p>
           <div className="flex items-center gap-6">
             {footer.legal.map((link) => (
-              <a
+              <SiteLink
                 key={link.label}
                 href={link.href}
                 className="text-sm font-normal text-muted-foreground hover:text-foreground"
               >
                 {link.label}
-              </a>
+              </SiteLink>
             ))}
           </div>
         </div>

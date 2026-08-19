@@ -1,32 +1,68 @@
 ---
 title: Composing pages from Blocks
-description: How a page in this template is just MDX prose interleaved with named Block components.
-pubDate: 2026-08-03
+description: How a page in this template is just MDX prose with named Block components dropped into it, and what happens when you get a prop wrong.
+pubDate: 2026-08-11
 category: Guides
-excerpt: A page here is not a template you fill in — it's an MDX file where prose and Blocks sit side by side.
+excerpt: A page here is not a template you fill in. It's an MDX file where prose and Blocks sit side by side, and the build refuses to ship one that doesn't type-check.
 ---
 
-Every page in this template lives as an `.mdx` file under `content/pages/`, and its body is just
-Markdown with a handful of capitalised tags dropped in wherever a section needs more structure than a
-paragraph can give it. Write `# Pricing` and get a heading. Write `<Hero title="..." subtitle="..." />`
-and get the same hero section every other page on the site uses, with the same spacing, the same
-responsive behaviour, and the same design tokens.
+Every page in this template is an `.mdx` file under `content/pages/`. The body is Markdown with a
+few capitalised tags dropped in wherever a section needs more structure than a paragraph can carry.
+Write a `#` heading, get a heading. Write a `Hero` tag, get the same hero section every other page
+uses, with the same spacing, the same responsive behaviour, the same tokens.
 
-The trick is that a Block is just a React component with a name the MDX runtime recognises. `MdxContent`
-compiles the page's body and hands it a components map — the full Block registry, plus a handful of
-Markdown element overrides for headings, paragraphs, and lists. When the compiled MDX runs, `<Hero>`
-resolves against that map exactly the way `<h1>` resolves against the browser's built-in tags. No
-per-page import statement, no wiring — the Block is available because its name is in the registry,
-full stop.
+## A whole page
 
-That registry is also the guardrail. Each Block ships with a schema, and a page that passes a Block the
-wrong prop shape — a missing `title`, a `primary` link without an `href` — fails at build time, not in
-a client's browser three weeks after launch. The failure is loud and specific, pointing at the file and
-the prop, which matters more than it sounds like it should: content that only breaks quietly is content
-nobody trusts enough to edit.
+Frontmatter, one Block, one paragraph. This is complete and it works:
 
-In practice, composing a page means picking Blocks the way you'd pick paragraphs. A landing page might
-run `Hero`, then `FeatureGrid` to lay out what the product does, `Testimonial` for social proof, and
-`CTA` to close. An about page might skip Blocks almost entirely and just be prose. Nothing forces either
-choice — the same MDX file can mix both freely, which is the point. Check `/blocks-gallery` for every
-Block currently in the registry, rendered live with the props it expects.
+```mdx
+---
+title: Pricing
+description: Simple plans that scale with your team.
+---
+
+<Hero
+  variant="centered"
+  title="Pricing that stays out of the way"
+  lede="Start free. Upgrade when the team outgrows it."
+/>
+
+Every plan includes unlimited projects and a 30-day trial. Cancel from the billing
+page whenever you like. We do not ask why.
+```
+
+No import statement. No layout file to register it in.
+
+## Why there are no imports
+
+`MdxContent` compiles the body and hands it a components map: the Block registry, plus overrides for
+Markdown headings, paragraphs, lists, tables, and the rest. When the compiled MDX runs, a `Hero` tag
+resolves against that map the way an `h1` resolves against the browser's built-in tags.
+
+A Block is available because its name is in the registry. Nothing else is going on. That is also why
+content files may not import anything: an import would be a second, unaudited route for code onto a
+page, and the registry exists so there is only one.
+
+## Getting a prop wrong
+
+Each Block ships a Zod schema and validates when it renders. Miss a `title`, or pass a `primary` link
+with no `href`, and the build stops with the file and the prop named:
+
+```
+Error: Hero: invalid props
+  - title: Required
+  - primary.href: Required
+```
+
+We wanted that loud. Content which breaks quietly is content nobody trusts enough to edit, and an
+agent reading an error message can fix its own mistake before a human ever sees it. If a page
+renders, its props were valid.
+
+## Picking Blocks
+
+Composing a page means picking Blocks roughly the way you would pick paragraphs. A landing page might
+run `Hero`, then `FeatureGrid` for what the product does, `Testimonial` for proof, `CTA` to close. An
+about page might be almost entirely prose. The same file mixes both freely, which is the point.
+
+[The blocks gallery](/blocks-gallery) has every Block in the registry, rendered live with the props it
+expects. [The style guide](/style-guide) has the type scale and tokens they are built from.

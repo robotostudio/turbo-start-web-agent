@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navigation } from "#velite";
 
+import { SiteLink } from "@/components/site/site-link";
 import {
   Drawer,
   DrawerClose,
@@ -211,7 +213,25 @@ function DrilldownLevel({
             <li key={item.label}>
               <DrawerClose
                 nativeButton={false}
-                render={<a href={item.href} />}
+                // `render` clones this element and merges the props below onto
+                // it, so a next/link element works here exactly as a raw <a>
+                // did — the drawer still closes on click, but the navigation
+                // is now client-side. Written inline rather than through
+                // SiteLink because `render` merges props onto the element it
+                // is given, and a custom wrapper would have to forward
+                // className, ref, and the drawer's own handlers by hand.
+                render={
+                  item.href.startsWith("/") ? (
+                    <Link href={item.href} />
+                  ) : (
+                    // This element is a template for `render`, not the anchor
+                    // that ships: DrawerClose clones it with this component's
+                    // children (the nav label) attached, so it never reaches
+                    // the DOM without content.
+                    // biome-ignore lint/a11y/useAnchorContent: DrawerClose supplies the children
+                    <a href={item.href} />
+                  )
+                }
                 className={cn(
                   "flex items-center rounded-lg px-3 py-3 text-base text-foreground hover:bg-muted",
                   focusRing,
@@ -236,25 +256,29 @@ export function SiteHeader() {
       <div className="page-inset">
         <div className="flex items-center gap-6 rounded-lg border border-border bg-background px-4 py-3 sm:px-6">
           <div className="flex flex-1 items-center">
-            <a href="/" aria-label="Homepage" className="text-base font-semibold text-foreground">
+            <Link
+              href="/"
+              aria-label="Homepage"
+              className="text-base font-semibold text-foreground"
+            >
               Harbour
-            </a>
+            </Link>
           </div>
 
           <nav aria-label="Primary" className="hidden items-center gap-8 xl:flex">
             {navItems.map((item) => (
-              <a
+              <SiteLink
                 key={item.label}
                 href={item.href}
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 {item.label}
-              </a>
+              </SiteLink>
             ))}
           </nav>
 
           <div className="flex flex-1 items-center justify-end gap-3">
-            <a
+            <Link
               href="/style-guide"
               className={cn(
                 "hidden rounded-lg border border-border px-4 py-2 text-sm text-foreground xl:inline-block",
@@ -262,7 +286,7 @@ export function SiteHeader() {
               )}
             >
               Read the docs
-            </a>
+            </Link>
 
             <Drawer
               swipeDirection={isSidePanel ? "right" : "down"}
@@ -350,7 +374,7 @@ export function SiteHeader() {
                 <div className="shrink-0 border-t border-border p-4">
                   <DrawerClose
                     nativeButton={false}
-                    render={<a href="/style-guide" />}
+                    render={<Link href="/style-guide" />}
                     className={cn(
                       "flex w-full items-center justify-center rounded-lg border border-border px-4 py-3 text-base text-foreground",
                       focusRing,

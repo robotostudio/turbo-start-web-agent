@@ -1,13 +1,60 @@
 ---
 title: Introducing Harbour
-description: A starter for agent-native marketing sites.
+description: A starter for marketing sites a client can edit through an AI agent, without the developers giving up git.
 pubDate: 2026-08-17
 category: Product
-excerpt: Why we built a marketing-site starter that any AI agent can edit safely.
+excerpt: Most client sites end up with two bad options. A CMS nobody wants to maintain, or a queue of small copy changes sitting in a developer's inbox. This is the third one.
 ---
 
-Harbour is a starting point for marketing sites that a non-technical team can
-edit through an AI agent, while developers keep working locally in git.
+Every client site ends up with the same small problem. The build goes well, everyone signs off, and
+three weeks later somebody emails to ask whether the pricing page can say "from £4,000" instead of
+"£4,000". Thirty seconds of typing. An hour of somebody's day once you count picking it up,
+branching, pushing, and waiting on the deploy.
 
-The trick is that content is code-free by construction, so an agent editing a
-page cannot reach past the page.
+The usual answer is a CMS. That works. It also means a schema to keep, a bill to pay, a migration
+path to worry about, and a client learning an admin panel they will open four times a year.
+
+Harbour goes the other way. Content is plain MDX in the repository, and the client edits it by asking
+whichever AI agent they already have open: Claude Code, Replit, Cursor, Codex. The agent branches,
+edits, and opens a pull request. Nothing lands on `main` without review.
+
+## What the client does
+
+They describe the change the way they would describe it to you.
+
+> Can you change the second stat on the homepage to 3.6 hours, and swap the last FAQ for one about
+> our onboarding call?
+
+The agent finds `content/pages/home.mdx`, makes the edit, opens a PR. The client gets a preview URL.
+You get a diff. Nobody had to explain what a Block is.
+
+## What you keep
+
+All of it. This is an ordinary Next.js monorepo:
+
+- Content in `content/`, as MDX and YAML
+- Sections from a registry of typed Blocks in `src/components/blocks/`
+- Design tokens in one file, `src/app/globals.css`
+- CI that fails on a bad edit before anyone sees the page
+
+Clone it, run `pnpm dev`, work the way you already work. The agent is not a parallel system you have
+to keep in sync. It is another contributor pushing branches at the same repository.
+
+## Why the content can't hurt you
+
+MDX compiles to JavaScript. So "the agent may only edit `content/`" guarantees nothing by itself. A
+content file can contain code, and code can do anything.
+
+Harbour handles that at the source. A remark plugin reads every content file during the build and
+rejects anything executable: imports, function calls, event handlers, raw HTML, unsafe URLs. It works
+as an allowlist, so syntax nobody thought of fails the build instead of slipping through.
+[The lockdown post](/blog/what-content-cannot-contain) walks the rules one at a time.
+
+So the deal is narrow. Your client writes the site in their own words, and the worst edit they can
+make is bad copy. Bad copy shows up in a pull request, where somebody reads it.
+
+## Where to start
+
+[Composing pages from Blocks](/blog/composing-pages) covers how a page is put together.
+[The blocks gallery](/blocks-gallery) shows every section in the registry, rendered live. When you are
+ready to hand the site over, the runbooks in `docs/platforms/` cover connecting each agent.

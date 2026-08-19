@@ -78,6 +78,13 @@ posts additionally require `pubDate` (ISO date, e.g. `2026-08-17`) and
 `category` (string), with optional `excerpt` (max 300 chars) and `cover` (must
 be a full `https://*.public.blob.vercel-storage.com/...` URL).
 
+A blog post's side panel ("On this page") is **derived, never authored**: it
+is built at build time from the post's top-level `##` headings, so there is no
+list to write or keep in step. Two consequences when writing a post: use `##`
+for the sections a reader might jump to (`###` and below stay out of the
+panel), and a post with no `##` headings renders full-width with no panel at
+all, which is the right shape for a short note.
+
 ## 4. Compose Blocks with literal props
 
 ```mdx

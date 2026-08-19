@@ -1,0 +1,123 @@
+---
+title: Anatomy of a post
+description: Headings, lists, quotes, code, tables, images and Blocks. Every formatting tool a post in this template has, shown in the order you would reach for them.
+pubDate: 2026-08-03
+category: Guides
+excerpt: A reference post that uses every feature it describes. Read it in the browser, then open the source beside it. The file is short enough to hold in your head.
+---
+
+This post is a specimen. Everything it describes, it also does, so you can open
+`content/blog/anatomy-of-a-post.mdx` next to the rendered page and match one to the other. Copy from
+it freely.
+
+Only the frontmatter has rules you cannot see from the page. `title`, `description`, `pubDate` and
+`category` are required, `excerpt` and `draft` are optional, and a missing or malformed one fails the
+build with the field named.
+
+## Headings build the side panel
+
+The panel beside this text is not authored. It comes from the `##` headings in this file, read at
+build time, which is why it cannot fall out of step with the post. There is no second list to
+remember.
+
+One consequence worth internalising: a heading promises that a section follows it. Use `##` for the
+sections a reader might jump to, `###` for subdivisions inside them, and the panel takes care of
+itself.
+
+### Third-level headings
+
+These render smaller and stay out of the side panel, which makes them right for a point that belongs
+under a section rather than beside it.
+
+## Lists
+
+Unordered, for things with no sequence:
+
+- Content lives in `content/`, never in a database
+- Sections come from a registry of typed Blocks
+- Design tokens live in one file
+
+Ordered, for things that genuinely happen in order:
+
+1. The agent opens a branch
+2. It edits the MDX and commits
+3. CI runs the build, the content lockdown, and the type check
+4. A pull request appears for review
+
+Nested, when a step has steps of its own:
+
+- Before handing the site over
+  - Fill in `harness.config.json`
+  - Run `pnpm harness` so every platform file regenerates
+- After handing it over
+  - Watch the first pull request land before you stop paying attention
+
+## Quotes
+
+A blockquote is for somebody else's words. If you want emphasis, **bold** is the tool.
+
+> We used to quote four weeks for a rebrand. With the token file doing the heavy lifting we shipped
+> the last one in three days, and the client couldn't tell.
+
+## Code
+
+Inline code marks a filename, a command, or a prop name: `content/pages/home.mdx`, `pnpm dev`,
+`variant`. Use it for things you would type, not for things you want to look technical.
+
+Fenced blocks take a language and are completely literal. Nothing inside one is parsed as MDX, so a
+sample can safely contain the same tags a real page uses.
+
+```bash
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm content:check
+```
+
+```json
+{
+  "slug": "harbour",
+  "commands": { "dev": "pnpm dev", "build": "pnpm build" }
+}
+```
+
+## Tables
+
+Tables are GitHub-flavoured Markdown. A wide one scrolls sideways inside its own box instead of
+pushing the page out of shape on a phone.
+
+| Change             | Who makes it | Where it lands        |
+| ------------------ | ------------ | --------------------- |
+| Homepage copy      | The client   | A pull request        |
+| A new section type | A developer  | `src/components/`     |
+| Brand colours      | A developer  | `src/app/globals.css` |
+| A blog post        | Either       | A pull request        |
+
+## Images
+
+Images go in by full URL, because the repository deliberately holds no binaries. `docs/images.md`
+covers the upload flow. Alt text is not optional.
+
+![A dashboard interface with a sidebar and a wide data table](https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mist)
+
+## Blocks, inside a post
+
+A post is MDX, so the Blocks that build a landing page work here too. Reach for one when a section
+needs structure prose cannot carry: figures, a comparison, a run of numbers.
+
+<Stats
+  title="What the starter ships with"
+  stats={[
+    { value: "14", label: "Blocks in the registry" },
+    { value: "5", label: "Starter posts, this one included" },
+    { value: "3", label: "Agent platform runbooks" },
+    { value: "0kb", label: "Client JS on a plain post" },
+  ]}
+/>
+
+Go easy on this. A post is mostly a voice, and a Block interrupts it.
+
+---
+
+That is the whole vocabulary. If a post needs something this page does not show, what it probably
+needs is a new Block, which is [four files and a schema](/blog/composing-pages) rather than a fork of
+the template.

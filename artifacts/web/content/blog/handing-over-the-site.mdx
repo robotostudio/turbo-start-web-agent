@@ -1,0 +1,77 @@
+---
+title: Handing over the site
+description: What to do before you give a client's AI agent access to the repository, and which part of it people skip.
+pubDate: 2026-07-15
+category: Field notes
+excerpt: The build is the easy half. Handover is where a template earns its keep, and most of it comes down to four things you do once.
+---
+
+Connecting an agent to the repository takes about ten minutes. Getting to the point where you are
+comfortable doing it takes a little longer, and it is mostly unglamorous setup you do once.
+
+## Protect the branch first
+
+Do this before anything else, because every other safeguard assumes it. On GitHub, require a pull
+request for `main` and require the checks to pass. Whatever the agent does after that lands as a
+branch and a PR by construction, not by good behaviour.
+
+Required checks on a private repository need a paid plan. If the client's repo is private and on the
+free tier, you get the PR requirement but not enforced checks, and you review manually. Worth knowing
+before you promise it.
+
+## Fill in the manifest
+
+`harness.config.json` is the one file the generator reads. Project name, live host, commands, which
+platforms are in play, and the capability probes.
+
+Those probes matter more than they look. An agent asked to add a contact form will happily wire one
+up and tell the client it works. The probe is what makes it say the opposite:
+
+```
+Form submissions: CANNOT (SLACK_WEBHOOK_URL is not set)
+  -> ask the site owner to add it in the Vercel dashboard
+```
+
+`scripts/preflight.sh` runs those probes at session start and puts the results in front of the agent
+before it can claim anything. Run it yourself with `sh scripts/preflight.sh`.
+
+## Regenerate the platform files
+
+Run `pnpm harness`. It writes `CLAUDE.md`, `replit.md`, `.replit`, `.cursorignore`, and the mirrored
+skills under `.claude/skills/` from one source: `AGENTS.md` plus the manifest.
+
+Do not hand-edit the generated files. `pnpm harness:check` fails CI on a drift, which is deliberate.
+Replit's own agent occasionally rewrites `replit.md` in place, so expect that check to catch it at
+some point and re-run the generator when it does.
+
+## Then watch the first pull request
+
+Have the client make a real change on their own, and read what comes back. You are looking for three
+things:
+
+1. The change landed on a branch, never on `main`
+2. Only files under `content/` were touched
+3. The preview deployment built
+
+If all three hold, the setup is right. If the first one fails, the branch protection isn't on. If the
+second fails, the agent didn't read `AGENTS.md`, which usually means the platform file for that agent
+was never generated.
+
+## What clients actually ask for
+
+Mostly copy. Prices, dates, a stat that went up, a testimonial from a customer who finally agreed to
+be quoted, a blog post about a launch. All of it is a paragraph in an MDX file, which is exactly the
+kind of change that used to arrive as an email and sit for a day.
+
+The requests that need you are the ones asking for a shape that doesn't exist yet: a comparison
+table, a case study layout, a pricing page with a third column. That is a new Block, it takes an
+afternoon, and afterwards the client can use it as freely as the rest.
+
+## The part people skip
+
+Read `AGENTS.md` yourself, start to finish, before you hand it to anyone. It is the ruleset every
+agent on every platform reads, and it ships with an empty appendix at the bottom for the incidents
+and quirks specific to your project.
+
+Fill that appendix in as things go wrong. A rule with a story attached survives contact with the next
+agent session. A rule without one gets rewritten by the next person who thinks they know better.

@@ -1,0 +1,79 @@
+---
+title: What content cannot contain
+description: MDX compiles to JavaScript, so "the agent may only edit content" guarantees nothing on its own. Here is the rule that makes it mean something.
+pubDate: 2026-07-24
+category: Engineering
+excerpt: The content lockdown is the one piece of this template that has to be right. It's a remark plugin, it runs at build time, and it's an allowlist. That last part is the only detail that really matters.
+---
+
+Give an AI agent write access to `content/` and it sounds like a contained permission. It isn't. MDX
+is not a document format, it is a JavaScript module with pleasant syntax. A file under `content/` can
+import, call, and execute. "Only content" is a boundary drawn on a map, and the territory doesn't
+agree.
+
+The content lockdown is what makes the boundary real. It is a remark plugin wired into the Velite
+pipeline, it runs over every content file at build time, and it fails the build on anything
+executable.
+
+## What it rejects
+
+```mdx
+import { exec } from "node:child_process"     ← imports
+<script>alert(1)</script>                     ← raw HTML elements
+<Hero onClick={doThing} />                    ← event-handler props
+<Hero title={process.env.SECRET} />           ← identifiers
+<Hero href="javascript:alert(1)" />           ← unsafe URL schemes
+<Card dangerouslySetInnerHTML={html} />       ← props that inject markup
+```
+
+What survives is a Block name, a prop name, and a literal value:
+
+```mdx
+<Hero
+  variant="centered"
+  title="Your website, editable by any AI agent"
+  primary={{ label: "Read the docs", href: "/about" }}
+/>
+```
+
+Strings, numbers, booleans, arrays, objects, template literals with nothing interpolated into them,
+and nested Blocks. Nothing that runs.
+
+## Why it's an allowlist
+
+A blocklist is a list of the attacks somebody thought of. Every syntax nobody anticipated walks
+straight past it.
+
+The lockdown inverts that. It walks the syntax tree and rejects any node type it does not explicitly
+understand, so new MDX syntax, a new expression form, or an ECMAScript feature that ships next year
+all fail loudly on the next build rather than passing because nobody had added them to a list yet.
+Every other rule in the plugin follows from that one.
+
+## Where the second gate is
+
+The lockdown proves content contains no code. It says nothing about whether the content is *right*: a
+Block still has to be handed the props it needs.
+
+Zod does that job. Each Block validates its props when it renders, so the two gates catch different
+failures.
+
+| Gate             | Runs at | Catches                             |
+| ---------------- | ------- | ----------------------------------- |
+| Content lockdown | Build   | Executable code in a content file   |
+| Zod schema       | Render  | A Block given props it cannot use   |
+| Zod on YAML      | Build   | An unsafe `href` in a settings file |
+
+That third row is easy to miss, so here it is plainly: YAML never passes through remark. The
+navigation, footer, and announcement files under `content/settings/` are not MDX and the lockdown
+never sees them. Their `href` fields are checked by a Zod refinement using the same URL rule, and
+that refinement is the only thing between a settings edit and an unsafe URL in production. Do not
+replace it with a plain string field.
+
+## What it doesn't do
+
+The lockdown is a content-integrity mechanism. It is not a permissions system, it is not a sandbox,
+and it has no opinion on who may edit what. Branch protection, review, and the platform runbooks in
+`docs/platforms/` cover those.
+
+What it does give you is narrower and more useful. Whatever an agent writes into `content/`, the
+worst case is bad copy, and bad copy arrives as a pull request that somebody reads.

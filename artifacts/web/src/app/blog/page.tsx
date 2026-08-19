@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getEntries } from "@/lib/content/loader";
+import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -12,31 +13,45 @@ export const metadata: Metadata = {
 const sortedPosts = () =>
   [...getEntries("blog")].sort((a, b) => (a.data.pubDate < b.data.pubDate ? 1 : -1));
 
-// pubDate serializes as a full ISO datetime ("2026-08-17T00:00:00.000Z"); the
-// frontmatter is date-only, so only the date portion is meaningful to show.
-const formatDate = (pubDate: string) => pubDate.slice(0, 10);
-
 export default function BlogIndex() {
   const posts = sortedPosts();
   return (
-    <div className="page-inset font-sans">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="mb-4 text-4xl font-semibold tracking-tight text-foreground">Blog</h1>
-        {posts.map((post) => (
-          <article key={post.slug} className="border-t border-border py-6 first:border-t-0">
-            <h2 className="text-xl font-semibold">
-              <Link href={`/blog/${post.slug}`} className="hover:underline">
-                {post.data.title}
-              </Link>
-            </h2>
-            <p className="mt-1 font-mono text-sm text-muted-foreground">
-              {formatDate(post.data.pubDate)}
-            </p>
-            {post.data.excerpt ? (
-              <p className="mt-3 text-muted-foreground">{post.data.excerpt}</p>
-            ) : null}
-          </article>
-        ))}
+    <div className="page-inset pb-24 font-sans">
+      {/* Left-aligned at the page gutter, not centred in it. Every other
+          prose route lines up there — /privacy and /terms via ProseBlock
+          (mdx-content.tsx), and an article via its own two-column grid — so
+          an `mx-auto` here would make the index the one page whose text
+          jumps sideways when you navigate to or from it. */}
+      <div className="max-w-3xl">
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground">Blog</h1>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Five starter posts, each one demonstrating what a post in this template can do. Replace
+          them with the client's own writing. The shapes stay.
+        </p>
+        <div className="mt-12">
+          {posts.map((post) => (
+            <article key={post.slug} className="border-t border-border py-8 first:border-t-0">
+              {/* Category and date read as one meta line rather than a
+                  free-floating label above the title — same reasoning as the
+                  article header's breadcrumb (article-header.tsx). */}
+              <p className="flex flex-wrap items-center gap-2 font-mono text-sm text-muted-foreground">
+                <span>{post.data.category}</span>
+                <span aria-hidden="true" className="text-muted-foreground/50">
+                  /
+                </span>
+                <time dateTime={post.data.pubDate}>{formatDate(post.data.pubDate)}</time>
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+                <Link href={`/blog/${post.slug}`} className="hover:underline">
+                  {post.data.title}
+                </Link>
+              </h2>
+              {post.data.excerpt ? (
+                <p className="mt-3 text-pretty text-muted-foreground">{post.data.excerpt}</p>
+              ) : null}
+            </article>
+          ))}
+        </div>
       </div>
     </div>
   );
