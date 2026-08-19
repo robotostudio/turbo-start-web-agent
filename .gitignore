@@ -9,3 +9,5 @@ dist/
 .env.*.local
 .DS_Store
 docs/superpowers/
+.vercel
+.env*
