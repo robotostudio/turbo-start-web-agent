@@ -303,3 +303,47 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 />
 
 </BlockSpec>
+
+<BlockSpec name="Pricing">
+
+<Pricing
+  title="One template, three ways to license it."
+  subtitle="Start free, upgrade the day you take on a second client."
+  plans={[
+    {
+      name: "Starter",
+      price: "Free",
+      description: "For a single portfolio or personal project.",
+      features: ["1 site", "Full block library", "Community support", "MIT-licensed"],
+      cta: { label: "Clone the repo", href: "https://github.com" },
+    },
+    {
+      name: "Studio",
+      price: "$249",
+      period: "one-time",
+      description: "For agencies shipping client sites every month.",
+      features: [
+        "Unlimited sites",
+        "Block registry updates",
+        "Figma kit included",
+        "Priority support",
+      ],
+      cta: { label: "Get Studio", href: "/pricing" },
+      emphasized: true,
+    },
+    {
+      name: "Agency",
+      price: "Custom",
+      description: "For teams running a full client roster.",
+      features: [
+        "Everything in Studio",
+        "Custom blocks on request",
+        "Dedicated Slack channel",
+        "Single sign-on",
+      ],
+      cta: { label: "Talk to us", href: "/about" },
+    },
+  ]}
+/>
+
+</BlockSpec>

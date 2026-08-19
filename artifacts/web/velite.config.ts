@@ -1,7 +1,7 @@
 import { relative } from "node:path";
 import rehypeSlug from "rehype-slug";
 import { defineConfig, s } from "velite";
-import { remarkContentLockdown } from "./src/lib/content/remark-content-lockdown";
+import { isSafeUrl, remarkContentLockdown } from "./src/lib/content/remark-content-lockdown";
 
 // The Collection Registry, expressed as velite collections. Velite watches
 // content/, validates frontmatter, compiles MDX bodies (s.mdx() -> code), and
@@ -37,6 +37,43 @@ const base = {
   noindex: s.boolean().default(false),
 };
 
+// `navigation` and `footer` are singleton YAML collections (site chrome, not
+// content/pages entries) — see content/settings/*.yml. YAML has no MDX body,
+// so it never reaches `remarkContentLockdown` above: that plugin is a remark
+// plugin wired into the `mdx:` pipeline below, and frontmatter/YAML never
+// passes through remark at all. Zod's `.refine()` is therefore the ONLY gate
+// standing between a YAML edit and an unsafe URL (e.g. `javascript:alert(1)`)
+// reaching production — hence `href` is never a bare `s.string()` here.
+// `.describe()` is required alongside every `.refine()`: Velite/Zod
+// `.refine()` predicates carry no machine-readable rule, so the prose in
+// `.describe()` is what documents the constraint for an authoring agent.
+const HREF_RULE =
+  "Must be an http(s), mailto, or tel URL, or a relative/anchor path (/about, #section, ?query, ./file) — javascript:, data:, and protocol-relative //host URLs are rejected.";
+
+const href = () =>
+  s.string().min(1, "must not be blank").refine(isSafeUrl, HREF_RULE).describe(HREF_RULE);
+
+const navLink = s.object({
+  label: s.string().min(1),
+  href: href(),
+});
+
+const navItem = s.object({
+  label: s.string().min(1),
+  href: href(),
+  children: s.array(navLink).optional(),
+});
+
+const footerLink = s.object({
+  label: s.string().min(1),
+  href: href(),
+});
+
+const footerColumn = s.object({
+  title: s.string().min(1),
+  links: s.array(footerLink),
+});
+
 export default defineConfig({
   root: "content",
   strict: true,
@@ -70,6 +107,24 @@ export default defineConfig({
           ...data,
           slug: slugFromPath(meta.path, meta.config.root),
         })),
+    },
+    navigation: {
+      name: "Navigation",
+      pattern: "settings/navigation.yml",
+      single: true,
+      schema: s.object({
+        items: s.array(navItem),
+      }),
+    },
+    footer: {
+      name: "Footer",
+      pattern: "settings/footer.yml",
+      single: true,
+      schema: s.object({
+        columns: s.array(footerColumn),
+        legal: s.array(footerLink),
+        note: s.string().optional(),
+      }),
     },
   },
   mdx: {

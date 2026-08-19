@@ -1,0 +1,17 @@
+# Primary site navigation. Rendered by src/components/site/site-header.tsx.
+# Every `href` is validated by velite.config.ts (Zod .refine(isSafeUrl, ...))
+# because YAML never passes through the MDX content-lockdown remark plugin.
+items:
+  - label: Home
+    href: /
+  - label: About
+    href: /about
+  - label: Blog
+    href: /blog
+  - label: Design system
+    href: /style-guide
+    children:
+      - label: Style guide
+        href: /style-guide
+      - label: Blocks gallery
+        href: /blocks-gallery

@@ -21,7 +21,8 @@ test("getEntry throws a named error for an unknown slug", () => {
 test("getEntries returns blog posts", () => {
   const entries = getEntries("blog");
   assert.ok(entries.length >= 1);
-  assert.equal(entries[0].data.category, "Product");
+  const introducing = entries.find((e) => e.slug === "introducing-harbour");
+  assert.equal(introducing?.data.category, "Product");
 });
 
 test("getSlugs includes a noindex page so its route still builds", () => {

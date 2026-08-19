@@ -1,0 +1,31 @@
+# Site footer: link columns, legal row, and a short note. Rendered by
+# src/components/site/site-footer.tsx. Every `href` is validated by
+# velite.config.ts (Zod .refine(isSafeUrl, ...)) because YAML never passes
+# through the MDX content-lockdown remark plugin.
+columns:
+  - title: Site
+    links:
+      - label: Home
+        href: /
+      - label: About
+        href: /about
+      - label: Blog
+        href: /blog
+  - title: Design system
+    links:
+      - label: Style guide
+        href: /style-guide
+      - label: Blocks gallery
+        href: /blocks-gallery
+  - title: Resources
+    links:
+      - label: GitHub
+        href: https://github.com
+      - label: X
+        href: https://x.com
+legal:
+  - label: Privacy
+    href: /privacy
+  - label: Terms
+    href: /terms
+note: Harbour is MIT-licensed. Clone it, edit the content in Git, and ship your own site.

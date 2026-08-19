@@ -7,7 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages = getIndexableSlugs("pages").map((slug) => ({
     url: slug === "home" ? SITE_URL : `${SITE_URL}/${slug}`,
   }));
-  // Blog posts are deliberately omitted: there is no /blog route yet, so
-  // advertising blog URLs here would 404. Re-add once a blog route exists.
-  return [...pages];
+  const posts = getIndexableSlugs("blog").map((slug) => ({
+    url: `${SITE_URL}/blog/${slug}`,
+  }));
+  return [...pages, ...posts];
 }

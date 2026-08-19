@@ -15,6 +15,8 @@
     "lint": "pnpm --filter @workspace/web run lint",
     "test": "pnpm --filter @workspace/web run test",
     "content:check": "pnpm --filter @workspace/web run content:check",
+    "catalog:check": "pnpm --filter @workspace/web run catalog:check",
+    "gallery:check": "pnpm --filter @workspace/web run gallery:check",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
   },

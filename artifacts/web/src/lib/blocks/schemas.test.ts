@@ -14,6 +14,7 @@ import {
   logoCloudSchema,
   newsletterSchema,
   parseBlock,
+  pricingSchema,
   safeUrl,
   statsSchema,
   teamSchema,
@@ -482,6 +483,83 @@ test("Newsletter rejects an unsafe action URL", () => {
 
 test("the action URL rule survives into the JSON Schema", () => {
   const json = z.toJSONSchema(newsletterSchema, { io: "input" });
+  assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
+});
+
+// --- Pricing --------------------------------------------------------
+
+test("Pricing parses valid props", () => {
+  const parsed = parseBlock("Pricing", pricingSchema, {
+    title: "One template, three ways to license it.",
+    subtitle: "Start free, upgrade the day you take on a second client.",
+    plans: [
+      {
+        name: "Starter",
+        price: "Free",
+        description: "For a single portfolio or personal project.",
+        features: ["1 site", "Full block library"],
+        cta: { label: "Clone the repo", href: "/pricing" },
+      },
+      {
+        name: "Studio",
+        price: "$249",
+        period: "one-time",
+        description: "For agencies shipping client sites every month.",
+        features: ["Unlimited sites", "Priority support"],
+        cta: { label: "Get Studio", href: "/pricing" },
+        emphasized: true,
+      },
+    ],
+  });
+  assert.equal(parsed.plans.length, 2);
+  assert.equal(parsed.plans[1].emphasized, true);
+});
+
+test("Pricing applies the emphasized default", () => {
+  const parsed = parseBlock("Pricing", pricingSchema, {
+    title: "x",
+    plans: [{ name: "Starter", price: "Free" }],
+  });
+  assert.equal(parsed.plans[0].emphasized, false);
+});
+
+test("Pricing rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("Pricing", pricingSchema, {}),
+    (error: Error) => error.message.includes("<Pricing>") && error.message.includes("title"),
+  );
+});
+
+test("Pricing rejects a plan missing its price", () => {
+  assert.throws(
+    () => parseBlock("Pricing", pricingSchema, { title: "x", plans: [{ name: "Starter" }] }),
+    /price/,
+  );
+});
+
+test("Pricing rejects an empty plans array", () => {
+  assert.throws(() => parseBlock("Pricing", pricingSchema, { title: "x", plans: [] }), /plans/);
+});
+
+test("Pricing rejects an unsafe plan CTA href", () => {
+  assert.throws(
+    () =>
+      parseBlock("Pricing", pricingSchema, {
+        title: "x",
+        plans: [
+          {
+            name: "Starter",
+            price: "Free",
+            cta: { label: "Go", href: "javascript:alert(1)" },
+          },
+        ],
+      }),
+    /href/,
+  );
+});
+
+test("the plan CTA URL rule survives into the JSON Schema", () => {
+  const json = z.toJSONSchema(pricingSchema, { io: "input" });
   assert.match(JSON.stringify(json), /http\(s\), mailto, tel, or relative/);
 });
 

@@ -9,6 +9,7 @@ import { Hero } from "./hero";
 import { ImageCards } from "./image-cards";
 import { LogoCloud } from "./logo-cloud";
 import { Newsletter } from "./newsletter";
+import { Pricing } from "./pricing";
 import { Stats } from "./stats";
 import { Team } from "./team";
 import { Testimonial } from "./testimonial";
@@ -29,4 +30,5 @@ export const blockComponents: Record<string, ComponentType<never>> = {
   Team,
   Stats,
   Newsletter,
+  Pricing,
 };

@@ -228,6 +228,29 @@ export const statsSchema = z
   );
 export type StatsProps = z.input<typeof statsSchema>;
 
+export const pricingSchema = z
+  .object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    plans: z
+      .array(
+        z.object({
+          name: z.string(),
+          price: z.string(),
+          period: z.string().optional(),
+          description: z.string().optional(),
+          features: z.array(z.string()).optional(),
+          cta: link.optional(),
+          emphasized: z.boolean().default(false),
+        }),
+      )
+      .min(1),
+  })
+  .describe(
+    "A row of pricing plan cards, each with a name, price, optional feature list, and call to action, with one plan visually raised as the recommended choice — the only bordered, carded Block in this set. Use to compare plan tiers side by side on a pricing page or section; not for a single fixed price.",
+  );
+export type PricingProps = z.input<typeof pricingSchema>;
+
 // The registry the catalog generator reads. Keep in step with blockComponents
 // in src/components/blocks/index.ts — a schema with no component renders
 // nothing, and a component with no schema cannot be validated.
@@ -245,6 +268,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "Team", schema: teamSchema },
   { name: "Stats", schema: statsSchema },
   { name: "Newsletter", schema: newsletterSchema },
+  { name: "Pricing", schema: pricingSchema },
 ];
 
 // Validate a Block's props at render. Every Block calls this first, so invalid

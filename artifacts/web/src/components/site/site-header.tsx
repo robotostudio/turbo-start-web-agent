@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { navigation } from "#velite";
 
 import {
   Drawer,
@@ -26,27 +27,17 @@ import { cn } from "@/lib/utils";
 // swipe-to-dismiss, close animation timing) are fully delegated to the
 // vendored `@/components/ui/drawer` (Base UI). Only the drill-down stack
 // stays as plain local React state — that part was never the problem.
+//
+// This is the ONE client component in the site-chrome system: it needs
+// `useState`/`useEffect` for the drill-down stack and the `sm`-breakpoint
+// media query. Nav items themselves are content, not state — they come from
+// the `navigation` singleton collection (content/settings/navigation.yml),
+// validated at build time by velite.config.ts.
 
-type NavNode = {
-  label: string;
-  href: string;
-  children?: NavNode[];
-};
+type NavLink = { label: string; href: string };
+type NavNode = NavLink & { children?: NavLink[] };
 
-const navItems: NavNode[] = [
-  {
-    label: "Product",
-    href: "/product",
-    children: [
-      { label: "Blocks gallery", href: "/blocks-gallery" },
-      { label: "Style guide", href: "/style-guide" },
-      { label: "Templates", href: "/templates" },
-    ],
-  },
-  { label: "Docs", href: "/docs" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" },
-];
+const navItems: NavNode[] = navigation.items;
 
 type Level = { title: string; items: NavNode[] };
 type Direction = "forward" | "back";
@@ -236,7 +227,7 @@ function DrilldownLevel({
   );
 }
 
-export function SiteHeaderDrawer() {
+export function SiteHeader() {
   const nav = useDrilldown();
   const isSidePanel = useSidePanel();
 
@@ -264,7 +255,7 @@ export function SiteHeaderDrawer() {
 
           <div className="flex flex-1 items-center justify-end gap-3">
             <a
-              href="/docs"
+              href="/style-guide"
               className={cn(
                 "hidden rounded-lg border border-border px-4 py-2 text-sm text-foreground xl:inline-block",
                 focusRing,
@@ -359,7 +350,7 @@ export function SiteHeaderDrawer() {
                 <div className="shrink-0 border-t border-border p-4">
                   <DrawerClose
                     nativeButton={false}
-                    render={<a href="/docs" />}
+                    render={<a href="/style-guide" />}
                     className={cn(
                       "flex w-full items-center justify-center rounded-lg border border-border px-4 py-3 text-base text-foreground",
                       focusRing,

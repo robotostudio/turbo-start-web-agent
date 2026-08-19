@@ -1,35 +1,13 @@
+import { footer } from "#velite";
+
 // Direction: Columns — the conventional multi-column link footer, done in
 // the house voice: no card, no recessed band, just a top border to close the
 // page and generous column gaps instead of dividers between them.
-
-const columns = [
-  {
-    title: "Product",
-    links: [
-      { label: "Blocks gallery", href: "/blocks-gallery" },
-      { label: "Style guide", href: "/style-guide" },
-      { label: "Templates", href: "/templates" },
-      { label: "Pricing", href: "/pricing" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Docs", href: "/docs" },
-      { label: "Changelog", href: "/changelog" },
-      { label: "Blog", href: "/blog" },
-      { label: "GitHub", href: "https://github.com" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Careers", href: "/careers" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-] satisfies Array<{ title: string; links: Array<{ label: string; href: string }> }>;
+//
+// Server component: columns, legal links, and the note come from the
+// `footer` singleton collection (content/settings/footer.yml), validated at
+// build time by velite.config.ts. Brand name, social links, and the
+// copyright line are presentation, not content, and stay in the component.
 
 function XIcon() {
   return (
@@ -61,7 +39,7 @@ function GitHubIcon() {
   );
 }
 
-export function FooterColumns() {
+export function SiteFooter() {
   return (
     <footer className="border-t border-border font-sans">
       <div className="page-inset py-16 sm:py-20">
@@ -70,9 +48,11 @@ export function FooterColumns() {
             <a href="/" aria-label="Homepage" className="text-base font-semibold text-foreground">
               Harbour
             </a>
-            <p className="mt-4 text-base text-pretty text-muted-foreground sm:text-sm">
-              A block-based marketing site template built for agencies to clone and re-skin.
-            </p>
+            {footer.note ? (
+              <p className="mt-4 text-base text-pretty text-muted-foreground sm:text-sm">
+                {footer.note}
+              </p>
+            ) : null}
             <div className="mt-6 flex items-center gap-5">
               <a href="https://x.com" aria-label="Harbour on X">
                 <XIcon />
@@ -84,7 +64,7 @@ export function FooterColumns() {
           </div>
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 sm:gap-16">
-            {columns.map((column) => (
+            {footer.columns.map((column) => (
               <div key={column.title}>
                 <p className="text-sm font-medium text-foreground">{column.title}</p>
                 <ul className="mt-4 flex flex-col gap-3">
@@ -109,18 +89,15 @@ export function FooterColumns() {
             &copy; 2026 Harbour. Released under the MIT license.
           </p>
           <div className="flex items-center gap-6">
-            <a
-              href="/privacy"
-              className="text-sm font-normal text-muted-foreground hover:text-foreground"
-            >
-              Privacy
-            </a>
-            <a
-              href="/terms"
-              className="text-sm font-normal text-muted-foreground hover:text-foreground"
-            >
-              Terms
-            </a>
+            {footer.legal.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm font-normal text-muted-foreground hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
       </div>
