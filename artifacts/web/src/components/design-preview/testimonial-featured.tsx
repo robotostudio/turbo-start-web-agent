@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { featuredTestimonial } from "@/components/design-preview/data";
 
 // Direction: Even Field, single quote as the whole section. Real type
@@ -14,9 +15,11 @@ export function TestimonialFeatured() {
             </p>
           </blockquote>
           <figcaption className="mt-10 flex items-center gap-4">
-            <img
+            <Image
               src={featuredTestimonial.avatar}
               alt=""
+              width={48}
+              height={48}
               className="size-12 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
             />
             <div>

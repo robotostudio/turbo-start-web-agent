@@ -18,11 +18,11 @@ export function NewsletterStacked() {
             required
             placeholder="you@company.com"
             aria-label="Email address"
-            className="rounded-card border border-border px-4 py-3 text-base text-foreground placeholder:text-muted-foreground"
+            className="rounded-lg border border-border px-4 py-3 text-base text-foreground placeholder:text-muted-foreground"
           />
           <button
             type="submit"
-            className="rounded-card bg-brand px-6 py-3 text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="rounded-lg bg-primary px-6 py-3 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Subscribe
           </button>

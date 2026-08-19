@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Even Grid — uniform 3-column tiles, generous gutter, no size
 // variation. The airy baseline reading of the Gallery block.
 export function GalleryGrid() {
@@ -22,12 +24,18 @@ export function GalleryGrid() {
         </p>
         <div className="mt-14 grid grid-cols-2 gap-6 sm:mt-20 lg:grid-cols-3">
           {tiles.map((tile) => (
-            <img
+            <div
               key={tile.variant}
-              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${tile.variant}`}
-              alt={tile.label}
-              className="aspect-4/3 w-full rounded-card object-cover"
-            />
+              className="relative aspect-4/3 w-full overflow-hidden rounded-lg"
+            >
+              <Image
+                src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${tile.variant}`}
+                alt={tile.label}
+                fill
+                sizes="(min-width: 1024px) 33vw, 50vw"
+                className="object-cover"
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -24,13 +24,18 @@
     "gallery:check": "node --experimental-strip-types scripts/generate-gallery.ts --check"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@mdx-js/mdx": "^3.1.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "geist": "^1.7.2",
+    "lucide-react": "^1.31.0",
     "next": "16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "shadcn": "^4.18.0",
     "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0",
     "velite": "^0.3.1",
     "zod": "^4.4.3"
   },

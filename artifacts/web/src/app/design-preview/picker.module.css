@@ -13,9 +13,14 @@
  * instance on the page (each is scoped by its own DOM subtree, not by a
  * per-group generated id/class).
  *
- * Only plain CSS values and var(--color-*)/var(--radius-*) tokens are used
- * here (no Tailwind functions like --spacing() — CSS Modules are not run
- * through Tailwind's engine, so a Tailwind function would ship unresolved).
+ * Only plain CSS values and var(--bare-token)/var(--radius-*) tokens are
+ * used here (no Tailwind functions like --spacing() — CSS Modules are not
+ * run through Tailwind's engine, so a Tailwind function would ship
+ * unresolved). Bare tokens (var(--primary), var(--ring), ...) are used
+ * instead of the --color-* Tailwind namespace: shadcn's @theme inline
+ * convention only inlines --color-* into generated utility classes, it does
+ * not emit a --color-* custom property at :root, so var(--color-primary)
+ * would resolve to nothing here.
  */
 
 .panel {
@@ -33,15 +38,15 @@
 .group:has(.toolbar input:nth-of-type(2):checked) .toolbar .option:nth-of-type(2),
 .group:has(.toolbar input:nth-of-type(3):checked) .toolbar .option:nth-of-type(3),
 .group:has(.toolbar input:nth-of-type(4):checked) .toolbar .option:nth-of-type(4) {
-  background-color: var(--color-brand);
-  border-color: var(--color-brand);
-  color: var(--color-brand-foreground);
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .group:has(.toolbar input:nth-of-type(1):focus-visible) .toolbar .option:nth-of-type(1),
 .group:has(.toolbar input:nth-of-type(2):focus-visible) .toolbar .option:nth-of-type(2),
 .group:has(.toolbar input:nth-of-type(3):focus-visible) .toolbar .option:nth-of-type(3),
 .group:has(.toolbar input:nth-of-type(4):focus-visible) .toolbar .option:nth-of-type(4) {
-  outline: 2px solid var(--color-ring);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }

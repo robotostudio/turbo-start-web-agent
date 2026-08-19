@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Bleed Split — visual sits left and runs flush to the viewport
 // edge, past the shared page-inset gutter, instead of stopping at the
 // container. Text is a single running paragraph, not a list.
@@ -5,11 +7,13 @@ export function FeatureSplitBleed() {
   return (
     <section className="font-sans">
       <div className="grid grid-cols-1 lg:grid-cols-2 lg:items-stretch">
-        <div className="order-2 lg:order-1">
-          <img
+        <div className="relative order-2 aspect-3/2 h-full w-full overflow-hidden lg:order-1 lg:aspect-auto">
+          <Image
             src="https://assets.ui.sh/screenshots/1.webp?color=mist"
             alt=""
-            className="aspect-3/2 h-full w-full object-cover lg:aspect-auto"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
           />
         </div>
         <div className="order-1 flex flex-col justify-center px-6 py-16 sm:px-8 sm:py-20 lg:order-2 lg:px-16 lg:py-24 xl:px-24">

@@ -15,13 +15,13 @@ export function HeroLeft() {
         <div className="mt-8 flex flex-wrap gap-4">
           <a
             href="/about"
-            className="rounded-card bg-brand px-6 py-3 text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="rounded-lg bg-primary px-6 py-3 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Read the docs
           </a>
           <a
             href="/blocks-gallery"
-            className="rounded-card border border-border px-6 py-3 text-foreground"
+            className="rounded-lg border border-border px-6 py-3 text-foreground"
           >
             View the blocks
           </a>

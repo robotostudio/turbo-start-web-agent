@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { testimonials } from "@/components/design-preview/data";
 
 // Direction: contrast variant — Ledger rhythm, denser than the rest of the
@@ -18,9 +19,11 @@ export function TestimonialLedger() {
               className="flex flex-col gap-4 py-8 first:pt-0 last:pb-0 sm:flex-row sm:gap-10"
             >
               <div className="flex items-center gap-3 sm:w-64 sm:shrink-0">
-                <img
+                <Image
                   src={testimonial.avatar}
                   alt=""
+                  width={40}
+                  height={40}
                   className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
                 />
                 <div>

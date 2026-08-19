@@ -48,3 +48,109 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 ```
 
 </BlockSpec>
+
+<BlockSpec name="FeatureGrid">
+
+<FeatureGrid
+  title="A template that stays out of your way once the client signs off."
+  subtitle="Six pieces, each one doing a single job well."
+  features={[
+    {
+      title: "Block system.",
+      description: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
+    },
+    {
+      title: "Bring your own content.",
+      description: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+    },
+    {
+      title: "One token file.",
+      description: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
+    },
+    {
+      title: "Schemas that catch mistakes.",
+      description: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
+    },
+    {
+      title: "No client JS by default.",
+      description: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+    },
+    {
+      title: "Ships in an afternoon.",
+      description: "Clone the repo, swap the tokens and copy, push. Most rebuilds go live the same day.",
+    },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="FeatureSplit">
+
+<FeatureSplit
+  title="Every block ships with real content, not lorem ipsum."
+  body="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
+  points={[
+    "Every block preview ships with client-ready copy",
+    "Content stays wired to the same schema in production",
+    "Nothing on the page reads like a placeholder",
+  ]}
+  image={{
+    src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right",
+    alt: "",
+  }}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="ImageCards">
+
+<ImageCards
+  title="Built on the same six blocks."
+  cards={[
+    {
+      title: "Agency portfolio",
+      body: "A five-page site for a three-person studio, live two days after the kickoff call.",
+      image: {
+        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mauve",
+        alt: "",
+      },
+    },
+    {
+      title: "SaaS marketing site",
+      body: "Pricing, changelog, and docs pulled from three different content sources.",
+      image: {
+        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mist",
+        alt: "",
+      },
+    },
+    {
+      title: "Client rebrand",
+      body: "Same block tree, new tokens — the whole site retheme took an afternoon.",
+      image: {
+        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=olive",
+        alt: "",
+      },
+    },
+  ]}
+/>
+
+</BlockSpec>
+
+<BlockSpec name="Gallery">
+
+<Gallery
+  title="Wallpapers, ready for a hero background."
+  subtitle="A wide crop for full-bleed heroes, square crops for everything smaller."
+  images={[
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=arctic-fjord", alt: "Arctic fjord wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=basalt-plateau", alt: "Basalt plateau wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=fossil-cliffs", alt: "Fossil cliffs wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=highland-moors", alt: "Highland moors wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=hills", alt: "Rolling hills wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=pampas-grassland", alt: "Pampas grassland wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=limestone-karst", alt: "Limestone karst wallpaper" },
+    { src: "https://assets.ui.sh/wallpapers/landscapes.webp?variant=misty-marshland", alt: "Misty marshland wallpaper" },
+  ]}
+/>
+
+</BlockSpec>

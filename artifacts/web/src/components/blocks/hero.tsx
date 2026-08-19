@@ -37,13 +37,13 @@ export function Hero(raw: HeroProps) {
             {primary && (
               <ActionLink
                 link={primary}
-                className="rounded-card bg-brand px-6 py-3 text-brand-foreground"
+                className="rounded-lg bg-primary px-6 py-3 text-primary-foreground"
               />
             )}
             {secondary && (
               <ActionLink
                 link={secondary}
-                className="rounded-card border border-border px-6 py-3 text-foreground"
+                className="rounded-lg border border-border px-6 py-3 text-foreground"
               />
             )}
           </div>

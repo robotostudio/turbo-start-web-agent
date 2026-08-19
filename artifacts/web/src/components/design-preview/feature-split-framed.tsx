@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Framed Split — deliberate contrast against the house "no
 // chrome" rule. The visual sits in a bordered frame instead of resting on
 // bare whitespace; used sparingly, only here across the FeatureSplit set.
@@ -28,13 +30,14 @@ export function FeatureSplitFramed() {
               ))}
             </ul>
           </div>
-          <div className="rounded-card border border-border p-3">
-            <img
+          <div className="rounded-lg border border-border p-3">
+            <Image
               src="https://assets.ui.sh/screenshots/1.webp?top=1200&left=1600&position=bottom-right"
               alt=""
               width={1600}
               height={1200}
-              className="aspect-4/3 w-full rounded-card object-cover"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="aspect-4/3 w-full rounded-lg object-cover"
             />
           </div>
         </div>

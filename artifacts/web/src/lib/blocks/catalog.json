@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 2,
+  "blockCount": 6,
   "blocks": {
     "Hero": {
       "schema": {
@@ -103,6 +103,180 @@
           "title"
         ],
         "description": "A closing prompt to take one action: a short heading, optional body text, and a single button."
+      }
+    },
+    "FeatureGrid": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "features": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "description"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "features"
+        ],
+        "description": "An unbordered grid of short title/description pairs enumerating several capabilities at a glance, with no icons or cards. Use mid-page to list what the product does when each point needs only a sentence."
+      }
+    },
+    "FeatureSplit": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              },
+              "alt": {
+                "default": "",
+                "type": "string"
+              }
+            },
+            "required": [
+              "src"
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "image"
+        ],
+        "description": "A two-column section pairing a headline, supporting copy, and an optional bullet list against a single supporting image. Use mid-page to explain one capability in more depth than a feature grid allows."
+      }
+    },
+    "ImageCards": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "cards": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Must be an http(s), mailto, tel, or relative URL."
+                    },
+                    "alt": {
+                      "default": "",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src"
+                  ]
+                }
+              },
+              "required": [
+                "title",
+                "body",
+                "image"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "cards"
+        ],
+        "description": "A row of cards, each pairing an image with a short title and body copy. Use to showcase several examples, case studies, or products side by side."
+      }
+    },
+    "Gallery": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "images": {
+            "minItems": 8,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Must be an http(s), mailto, tel, or relative URL."
+                },
+                "alt": {
+                  "default": "",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "src"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "images"
+        ],
+        "description": "An eight-image mosaic of varying tile sizes, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. Use when the goal is browsing images, not reading copy."
       }
     }
   }

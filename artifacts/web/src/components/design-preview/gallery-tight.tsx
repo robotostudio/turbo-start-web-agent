@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Tight Grid — two columns, near-zero gutter, tiles pressed
 // against each other. Deliberate contrast against the airy default gutter
 // used everywhere else in the Gallery set.
@@ -20,12 +22,15 @@ export function GalleryTight() {
         </p>
         <div className="mt-14 grid grid-cols-2 gap-1 sm:mt-20">
           {tiles.map((tile) => (
-            <img
-              key={tile.variant}
-              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${tile.variant}`}
-              alt={tile.label}
-              className="aspect-square w-full object-cover"
-            />
+            <div key={tile.variant} className="relative aspect-square w-full overflow-hidden">
+              <Image
+                src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${tile.variant}`}
+                alt={tile.label}
+                fill
+                sizes="50vw"
+                className="object-cover"
+              />
+            </div>
           ))}
         </div>
       </div>

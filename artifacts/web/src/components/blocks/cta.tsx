@@ -11,7 +11,7 @@ export function CTA(raw: CtaProps) {
         <div
           className={cn(
             "flex flex-col items-center gap-4 text-center",
-            variant === "boxed" && "rounded-card border border-border bg-muted px-8 py-16",
+            variant === "boxed" && "rounded-lg border border-border bg-muted px-8 py-16",
           )}
         >
           <h2 className="font-sans text-3xl text-foreground">{title}</h2>
@@ -20,14 +20,14 @@ export function CTA(raw: CtaProps) {
             (primary.href.startsWith("/") ? (
               <Link
                 href={primary.href}
-                className="rounded-card bg-brand px-6 py-3 text-brand-foreground"
+                className="rounded-lg bg-primary px-6 py-3 text-primary-foreground"
               >
                 {primary.label}
               </Link>
             ) : (
               <a
                 href={primary.href}
-                className="rounded-card bg-brand px-6 py-3 text-brand-foreground"
+                className="rounded-lg bg-primary px-6 py-3 text-primary-foreground"
               >
                 {primary.label}
               </a>

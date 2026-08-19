@@ -18,8 +18,8 @@ export function PricingPodium() {
             <div
               key={plan.name}
               className={cn(
-                "flex flex-col justify-between gap-8 rounded-card border p-8 lg:row-start-2",
-                plan.emphasized ? "border-brand" : "border-border",
+                "flex flex-col justify-between gap-8 rounded-lg border p-8 lg:row-start-2",
+                plan.emphasized ? "border-primary" : "border-border",
                 plan.emphasized && "lg:row-span-full",
               )}
             >
@@ -27,7 +27,7 @@ export function PricingPodium() {
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
                   {plan.emphasized && (
-                    <span className="font-mono text-xs tracking-wide text-brand uppercase">
+                    <span className="font-mono text-xs tracking-wide text-primary uppercase">
                       Popular
                     </span>
                   )}
@@ -58,9 +58,9 @@ export function PricingPodium() {
               <a
                 href={plan.cta.href}
                 className={cn(
-                  "rounded-card px-6 py-3 text-center",
+                  "rounded-lg px-6 py-3 text-center",
                   plan.emphasized
-                    ? "bg-brand text-brand-foreground"
+                    ? "bg-primary text-primary-foreground"
                     : "border border-border text-foreground",
                 )}
               >

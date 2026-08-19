@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { team } from "@/components/design-preview/data";
 
 // Direction: Even Field, spacious. Two-column list, larger portrait
@@ -13,9 +14,11 @@ export function TeamList() {
         <ul className="mt-16 grid grid-cols-1 gap-x-12 gap-y-14 sm:mt-20 sm:grid-cols-2">
           {team.map((person) => (
             <li key={person.name} className="flex items-center gap-6">
-              <img
+              <Image
                 src={person.avatar}
                 alt=""
+                width={96}
+                height={96}
                 className="aspect-square size-24 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
               />
               <div>

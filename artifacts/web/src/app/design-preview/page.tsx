@@ -99,7 +99,7 @@ function Pick({ label, options }: { label: string; options: PickOption[] }) {
             <label
               key={`label-${option.name}`}
               className={cn(
-                "cursor-pointer rounded-card border border-border bg-muted px-3 py-1.5 font-mono text-xs uppercase tracking-wide text-muted-foreground",
+                "cursor-pointer rounded-lg border border-border bg-muted px-3 py-1.5 font-mono text-xs uppercase tracking-wide text-muted-foreground",
                 picker.option,
               )}
               htmlFor={id}

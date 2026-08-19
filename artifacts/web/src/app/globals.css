@@ -1,37 +1,46 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 
 /* ==========================================================================
    DESIGN TOKENS
-   Blocks and primitives only ever reference these tokens, never raw hex or px.
-   Re-theming a client project means editing values here — never renaming or
-   removing a token, which would break every Block that references it.
+   Blocks and primitives only ever reference these tokens, never raw hex or
+   px. Re-theming a client project means editing values here — never renaming
+   or removing a token, which would break every Block that references it.
+
+   Follows the shadcn/ui token contract: raw values live on :root/.dark as
+   bare custom properties (--primary, --secondary, --card, ...); the
+   `@theme inline` block below maps them into Tailwind's --color-* namespace
+   so utilities like `bg-primary` work, and so any `npx shadcn add` component
+   — including from v0 or third-party registries — lands already themed to
+   these values instead of shadcn's stock zinc palette.
    ========================================================================== */
 
 @theme {
-  --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.21 0.006 285.9);
-  --color-muted: oklch(0.967 0.001 286.4);
-  --color-muted-foreground: oklch(0.552 0.016 285.9);
-  --color-brand: oklch(0.55 0.22 264);
-  --color-brand-foreground: oklch(1 0 0);
-  --color-border: oklch(0.92 0.004 286.3);
-  --color-ring: oklch(0.55 0.22 264);
-
-  /* Plain @theme (not @theme inline) is correct here: next/font's variable and
+  /* Plain @theme (not inline) is correct here: next/font's variable and
      Tailwind's theme variable both resolve on <html>, so the var() reference
-     works. Verified by compiling through the installed Tailwind engine. */
+     works. @theme inline resolves var() at PARSE time, and the `geist`
+     package's actual font-family value is a build-time hash only known via
+     the className shadcn/next attach to <html> at runtime — an inline
+     self-reference here would silently fall back to a system font with a
+     passing build. Verified by computed style in the browser, not by
+     reading source. */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
-
-  --radius-card: 0.75rem;
 }
 
 @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
+    @apply bg-background text-foreground;
   }
 }
 
@@ -43,32 +52,159 @@
     max-width: 80rem;
     padding-inline: 1.5rem;
   }
+
+  /* Sets the vendored Drawer's own `--drawer-inset` extension point (see
+     `m-(--drawer-inset,0px)` and the closed-transform calcs in
+     `@/components/ui/drawer`) so the site header's mobile nav panel floats
+     inset from the viewport edge with margin on every side, instead of the
+     primitive's edge-flush default. Matches the floating header panel's
+     gutter for a consistent shape. */
+  .drawer-panel-inset {
+    --drawer-inset: 0.75rem;
+  }
 }
 
 /* ==========================================================================
    TYPOGRAPHY PLUGIN TOKEN WIRING
    @tailwindcss/typography ships its own --tw-prose-* custom properties,
    defaulting to a hardcoded grey palette. Remapping them to our design
-   tokens here means a client re-theming --color-foreground/--color-brand/etc.
-   above automatically restyles every .prose block — nothing plugin-owned is
-   ever set directly. Deliberately unlayered (not @layer base) so it beats
-   the plugin's own .prose declaration in the cascade regardless of source
-   order, the same technique the plugin's docs use for custom color themes. */
+   tokens here means a client re-theming --foreground/--primary/etc. below
+   automatically restyles every .prose block — nothing plugin-owned is ever
+   set directly. Deliberately unlayered (not @layer base) so it beats the
+   plugin's own .prose declaration in the cascade regardless of source order,
+   the same technique the plugin's docs use for custom color themes.
+
+   NOTE: these reference the BARE tokens (--foreground, --primary, ...), not
+   the --color-* Tailwind theme keys. `@theme inline` below only inlines
+   --color-* into generated utility classes — it does not emit a --color-*
+   custom property at :root — so `var(--color-foreground)` would resolve to
+   nothing here. The bare tokens are real :root/.dark custom properties and
+   stay resolvable regardless of Tailwind's inline optimization. */
 .prose {
-  --tw-prose-body: var(--color-foreground);
-  --tw-prose-headings: var(--color-foreground);
-  --tw-prose-lead: var(--color-muted-foreground);
-  --tw-prose-links: var(--color-brand);
-  --tw-prose-bold: var(--color-foreground);
-  --tw-prose-counters: var(--color-muted-foreground);
-  --tw-prose-bullets: var(--color-border);
-  --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-foreground);
-  --tw-prose-quote-borders: var(--color-border);
-  --tw-prose-captions: var(--color-muted-foreground);
-  --tw-prose-code: var(--color-foreground);
-  --tw-prose-pre-code: var(--color-foreground);
-  --tw-prose-pre-bg: var(--color-muted);
-  --tw-prose-th-borders: var(--color-border);
-  --tw-prose-td-borders: var(--color-border);
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--border);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+@theme inline {
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.006 285.9);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.006 285.9);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.006 285.9);
+  --primary: oklch(0.55 0.22 264);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.967 0.001 286.4);
+  --secondary-foreground: oklch(0.21 0.006 285.9);
+  --muted: oklch(0.967 0.001 286.4);
+  --muted-foreground: oklch(0.552 0.016 285.9);
+  --accent: oklch(0.967 0.001 286.4);
+  --accent-foreground: oklch(0.21 0.006 285.9);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.3);
+  --input: oklch(0.92 0.004 286.3);
+  --ring: oklch(0.55 0.22 264);
+  --radius: 0.75rem;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.21 0.006 285.9);
+  --sidebar-primary: oklch(0.55 0.22 264);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.4);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.9);
+  --sidebar-border: oklch(0.92 0.004 286.3);
+  --sidebar-ring: oklch(0.55 0.22 264);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.65 0.2 264);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.65 0.2 264);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.65 0.2 264);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.65 0.2 264);
 }

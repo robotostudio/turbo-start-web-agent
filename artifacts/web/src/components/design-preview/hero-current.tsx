@@ -13,12 +13,12 @@ export function HeroCurrent() {
           through the agent they already use.
         </p>
         <div className="flex flex-wrap gap-4">
-          <a href="/about" className="rounded-card bg-brand px-6 py-3 text-brand-foreground">
+          <a href="/about" className="rounded-lg bg-primary px-6 py-3 text-primary-foreground">
             Read the docs
           </a>
           <a
             href="/blocks-gallery"
-            className="rounded-card border border-border px-6 py-3 text-foreground"
+            className="rounded-lg border border-border px-6 py-3 text-foreground"
           >
             View the blocks
           </a>

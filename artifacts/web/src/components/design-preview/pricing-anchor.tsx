@@ -16,8 +16,8 @@ export function PricingAnchor() {
             <div
               key={plan.name}
               className={cn(
-                "flex flex-col justify-between gap-10 rounded-card border p-8",
-                plan.emphasized ? "border-brand" : "border-border",
+                "flex flex-col justify-between gap-10 rounded-lg border p-8",
+                plan.emphasized ? "border-primary" : "border-border",
               )}
             >
               <div>
@@ -26,7 +26,7 @@ export function PricingAnchor() {
                     {plan.name}
                   </span>
                   {plan.emphasized && (
-                    <span className="font-mono text-xs tracking-wide text-brand uppercase">
+                    <span className="font-mono text-xs tracking-wide text-primary uppercase">
                       Popular
                     </span>
                   )}
@@ -57,9 +57,9 @@ export function PricingAnchor() {
               <a
                 href={plan.cta.href}
                 className={cn(
-                  "rounded-card px-6 py-3 text-center",
+                  "rounded-lg px-6 py-3 text-center",
                   plan.emphasized
-                    ? "bg-brand text-brand-foreground"
+                    ? "bg-primary text-primary-foreground"
                     : "border border-border text-foreground",
                 )}
               >

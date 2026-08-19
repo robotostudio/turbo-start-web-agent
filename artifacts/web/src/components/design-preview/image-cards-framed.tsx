@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Framed Cards — deliberate contrast against the house "no
 // chrome" rule. Each card gets a real border and inset padding around the
 // image instead of resting on bare whitespace; used sparingly, only here
@@ -29,13 +31,14 @@ export function ImageCardsFramed() {
         </h2>
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3 sm:mt-20">
           {cards.map((card) => (
-            <div key={card.title} className="group rounded-card border border-border p-4">
-              <div className="aspect-4/3 w-full overflow-hidden rounded-card">
-                <img
+            <div key={card.title} className="group rounded-lg border border-border p-4">
+              <div className="aspect-4/3 w-full overflow-hidden rounded-lg">
+                <Image
                   src={`https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=${card.color}`}
                   alt=""
                   width={1200}
                   height={900}
+                  sizes="(min-width: 640px) 33vw, 100vw"
                   className="size-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-110"
                 />
               </div>

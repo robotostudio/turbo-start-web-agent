@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { testimonials } from "@/components/design-preview/data";
 
 // Direction: Even Field, multi-quote. Three quotes in a symmetric row,
@@ -21,9 +22,11 @@ export function TestimonialField() {
                 </p>
               </blockquote>
               <div className="flex items-center gap-3">
-                <img
+                <Image
                   src={testimonial.avatar}
                   alt=""
+                  width={40}
+                  height={40}
                   className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
                 />
                 <div>

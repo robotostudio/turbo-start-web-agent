@@ -26,11 +26,11 @@ export function NewsletterSplit() {
                 name="email"
                 required
                 placeholder="you@company.com"
-                className="min-w-0 flex-1 rounded-card border border-border px-4 py-3 text-base text-foreground placeholder:text-muted-foreground"
+                className="min-w-0 flex-1 rounded-lg border border-border px-4 py-3 text-base text-foreground placeholder:text-muted-foreground"
               />
               <button
                 type="submit"
-                className="shrink-0 rounded-card bg-brand px-6 py-3 text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                className="shrink-0 rounded-lg bg-primary px-6 py-3 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Subscribe
               </button>

@@ -80,7 +80,7 @@ export function FooterSignoff() {
           </p>
           <a
             href="https://github.com"
-            className="rounded-card bg-brand px-6 py-3 text-brand-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:shrink-0"
+            className="rounded-lg bg-primary px-6 py-3 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:shrink-0"
           >
             Clone the repo
           </a>

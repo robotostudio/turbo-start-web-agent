@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Overlay Cards — title and body sit on top of the image behind a
 // bottom scrim instead of underneath it. Each card links out, and the crop is
 // a taller portrait ratio to leave room for the scrim.
@@ -34,13 +36,14 @@ export function ImageCardsOverlay() {
             <a
               key={card.title}
               href={card.href}
-              className="group relative block overflow-hidden rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="group relative block overflow-hidden rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <img
+              <Image
                 src={`https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=${card.color}`}
                 alt=""
                 width={1200}
                 height={900}
+                sizes="(min-width: 640px) 33vw, 100vw"
                 className="aspect-4/5 w-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-110 motion-safe:group-focus-visible:scale-110"
               />
               <div

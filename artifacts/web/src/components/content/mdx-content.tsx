@@ -65,11 +65,14 @@ const proseComponents = {
   ),
   li: (props: ComponentProps<"li">) => <li className="leading-7" {...props} />,
   a: (props: ComponentProps<"a">) => (
-    <a className="text-brand underline underline-offset-4 hover:text-muted-foreground" {...props} />
+    <a
+      className="text-primary underline underline-offset-4 hover:text-muted-foreground"
+      {...props}
+    />
   ),
   code: (props: ComponentProps<"code">) => (
     <code
-      className="rounded-card border border-border bg-muted px-1.5 py-0.5 text-foreground text-sm"
+      className="rounded-lg border border-border bg-muted px-1.5 py-0.5 text-foreground text-sm"
       {...props}
     />
   ),

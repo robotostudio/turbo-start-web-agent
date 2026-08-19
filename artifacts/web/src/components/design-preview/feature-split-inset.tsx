@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Inset Split — visual sits right, held inside the container edge
 // with a soft outline, close against the text column. Supporting detail is a
 // short list rather than prose.
@@ -32,12 +34,13 @@ export function FeatureSplitInset() {
               ))}
             </ul>
           </div>
-          <div className="overflow-hidden rounded-card outline-1 -outline-offset-1 outline-black/10">
-            <img
+          <div className="overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-black/10">
+            <Image
               src="https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right"
               alt=""
               width={1200}
               height={900}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="aspect-4/3 w-full object-cover"
             />
           </div>

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // Direction: Mosaic — tiles vary in size instead of sitting on a uniform
 // grid. Size comes from each tile's own aspect ratio plus a column span, not
 // from row-spanning, so the layout stays simple at every breakpoint.
@@ -25,46 +27,78 @@ export function GalleryMosaic() {
           A wide crop for full-bleed heroes, square crops for everything smaller.
         </p>
         <div className="mt-14 grid grid-cols-2 gap-4 sm:mt-20 sm:grid-cols-4">
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${wide[0].variant}`}
-            alt={wide[0].label}
-            className="col-span-2 aspect-16/9 w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[0].variant}`}
-            alt={square[0].label}
-            className="aspect-square w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[1].variant}`}
-            alt={square[1].label}
-            className="aspect-square w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[2].variant}`}
-            alt={square[2].label}
-            className="aspect-square w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[3].variant}`}
-            alt={square[3].label}
-            className="aspect-square w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${wide[1].variant}`}
-            alt={wide[1].label}
-            className="col-span-2 aspect-16/9 w-full rounded-card object-cover"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[4].variant}`}
-            alt={square[4].label}
-            className="col-span-2 aspect-16/9 w-full rounded-card object-cover sm:col-span-1 sm:aspect-square"
-          />
-          <img
-            src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[5].variant}`}
-            alt={square[5].label}
-            className="col-span-2 aspect-16/9 w-full rounded-card object-cover sm:col-span-1 sm:aspect-square"
-          />
+          <div className="relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${wide[0].variant}`}
+              alt={wide[0].label}
+              fill
+              sizes="(min-width: 640px) 50vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[0].variant}`}
+              alt={square[0].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[1].variant}`}
+              alt={square[1].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[2].variant}`}
+              alt={square[2].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[3].variant}`}
+              alt={square[3].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${wide[1].variant}`}
+              alt={wide[1].label}
+              fill
+              sizes="(min-width: 640px) 50vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg sm:col-span-1 sm:aspect-square">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[4].variant}`}
+              alt={square[4].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg sm:col-span-1 sm:aspect-square">
+            <Image
+              src={`https://assets.ui.sh/wallpapers/landscapes.webp?variant=${square[5].variant}`}
+              alt={square[5].label}
+              fill
+              sizes="(min-width: 640px) 25vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>

@@ -31,7 +31,7 @@ export function PricingLedger() {
                   )}
                 </dd>
                 {plan.emphasized && (
-                  <span className="mt-2 inline-block font-mono text-xs tracking-wide text-brand uppercase">
+                  <span className="mt-2 inline-block font-mono text-xs tracking-wide text-primary uppercase">
                     Recommended
                   </span>
                 )}
@@ -49,9 +49,9 @@ export function PricingLedger() {
               <a
                 href={plan.cta.href}
                 className={cn(
-                  "rounded-card px-6 py-3 text-center sm:self-start",
+                  "rounded-lg px-6 py-3 text-center sm:self-start",
                   plan.emphasized
-                    ? "bg-brand text-brand-foreground"
+                    ? "bg-primary text-primary-foreground"
                     : "border border-border text-foreground",
                 )}
               >

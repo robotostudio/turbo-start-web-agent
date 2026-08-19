@@ -21,14 +21,14 @@ export function PricingStacked() {
               className={cn(
                 "flex flex-col gap-6 border-t border-foreground/10 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10",
                 index === 0 && "border-t-0",
-                plan.emphasized && "rounded-card border border-brand px-6 py-8 sm:px-8",
+                plan.emphasized && "rounded-lg border border-primary px-6 py-8 sm:px-8",
               )}
             >
               <div className="sm:w-64 sm:shrink-0">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold text-foreground">{plan.name}</h3>
                   {plan.emphasized && (
-                    <span className="font-mono text-xs tracking-wide text-brand uppercase">
+                    <span className="font-mono text-xs tracking-wide text-primary uppercase">
                       Recommended
                     </span>
                   )}
@@ -55,9 +55,9 @@ export function PricingStacked() {
               <a
                 href={plan.cta.href}
                 className={cn(
-                  "rounded-card px-6 py-3 text-center sm:shrink-0",
+                  "rounded-lg px-6 py-3 text-center sm:shrink-0",
                   plan.emphasized
-                    ? "bg-brand text-brand-foreground"
+                    ? "bg-primary text-primary-foreground"
                     : "border border-border text-foreground",
                 )}
               >

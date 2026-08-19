@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { team } from "@/components/design-preview/data";
 
 // Direction: Even Field, dense. Full 6-up grid at desktop, small circular
@@ -12,9 +13,11 @@ export function TeamDense() {
         <ul className="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 sm:mt-20 sm:grid-cols-6">
           {team.map((person) => (
             <li key={person.name} className="flex flex-col items-start gap-3">
-              <img
+              <Image
                 src={person.avatar}
                 alt=""
+                width={64}
+                height={64}
                 className="size-16 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
               />
               <div className="flex flex-wrap items-baseline gap-x-1.5">
