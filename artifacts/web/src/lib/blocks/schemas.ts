@@ -97,7 +97,7 @@ export const heroSchema = z
     secondary: link.optional(),
   })
   .describe(
-    "The page-opening banner: a large headline, an optional supporting line, and up to two calls to action. Use once per page, at the top.",
+    "The page-opening section: a large headline, an optional supporting line, and up to two calls to action. Use once per page, at the top.",
   );
 export type HeroProps = z.input<typeof heroSchema>;
 
@@ -107,7 +107,7 @@ export const bannerSchema = z
     link: link.optional(),
   })
   .describe(
-    "A full-bleed, brand-colored strip pinned above the page content, carrying one short announcement and an optional link. Use for a single site-wide notice — a launch, an incident, a promotion — not for content that repeats or scrolls.",
+    "An in-page, full-bleed, brand-colored callout strip carrying one short message and an optional link — placed wherever it earns attention within a page's own content, like any other Block. NOT the site-wide announcement bar: this Block is composed into page content, so it can never render above the header. For a single notice shown above the header on every page (a launch, an incident, a promotion), edit content/settings/announcement.yml instead — see src/components/site/announcement-bar.tsx.",
   );
 export type BannerProps = z.input<typeof bannerSchema>;
 

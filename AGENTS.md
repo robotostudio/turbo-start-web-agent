@@ -44,6 +44,8 @@ everything below is relative to that directory, not the repo root.
 | Blog posts (MDX) | `artifacts/web/content/blog/*.mdx` |
 | Site navigation (YAML, not MDX) | `artifacts/web/content/settings/navigation.yml` |
 | Site footer (YAML, not MDX) | `artifacts/web/content/settings/footer.yml` |
+| Site-wide announcement bar, above the header (YAML, not MDX) | `artifacts/web/content/settings/announcement.yml` |
+| Overscroll easter-egg lines (YAML, not MDX) | `artifacts/web/content/settings/overscroll.yml` |
 | Block schemas (Zod — the source of truth) | `artifacts/web/src/lib/blocks/schemas.ts` |
 | Block catalog (generated prop reference) | `artifacts/web/src/lib/blocks/catalog.json` |
 | Block components | `artifacts/web/src/components/blocks/*.tsx` |
@@ -133,11 +135,20 @@ attempts, instead of a rule an agent could simply choose to break.
   excludes the entry from a production build and the sitemap; see README.md
   for the `VERCEL_ENV`/`PREVIEW_DRAFTS` preview-vs-production distinction),
   and `noindex` (publishes the page but excludes it from the sitemap).
-- **Site chrome (header nav, footer) is not MDX** — it's YAML at
-  `artifacts/web/content/settings/navigation.yml` and `footer.yml`. Every
-  `href` there is checked by the same `isSafeUrl` rule via a Zod `.refine()`
-  in `velite.config.ts`, because YAML never passes through the MDX lockdown
+- **Site chrome (header nav, footer, announcement bar, overscroll easter
+  egg) is not MDX** — it's YAML at
+  `artifacts/web/content/settings/navigation.yml`, `footer.yml`,
+  `announcement.yml`, and `overscroll.yml`. Every `href` among them is
+  checked by the same `isSafeUrl` rule via a Zod `.refine()` in
+  `velite.config.ts`, because YAML never passes through the MDX lockdown
   remark plugin above.
+- **The announcement bar is not the Banner Block.** The announcement bar
+  (`announcement.yml`) is site-wide chrome rendered above the header on every
+  page — the switch a client's agent flips for a single site-wide notice is
+  `enabled: true`/`false` there, never deleting the content. `Banner` (a
+  Block, chosen from `catalog.json` like any other) is for an in-page callout
+  composed into one page's own content, and can never render above the
+  header — see its `.describe()` in `catalog.json` for the same distinction.
 
 After editing, run `pnpm content:check` (§5), then view the page.
 

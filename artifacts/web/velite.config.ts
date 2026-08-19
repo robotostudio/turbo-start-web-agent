@@ -37,13 +37,14 @@ const base = {
   noindex: s.boolean().default(false),
 };
 
-// `navigation` and `footer` are singleton YAML collections (site chrome, not
-// content/pages entries) — see content/settings/*.yml. YAML has no MDX body,
-// so it never reaches `remarkContentLockdown` above: that plugin is a remark
-// plugin wired into the `mdx:` pipeline below, and frontmatter/YAML never
-// passes through remark at all. Zod's `.refine()` is therefore the ONLY gate
-// standing between a YAML edit and an unsafe URL (e.g. `javascript:alert(1)`)
-// reaching production — hence `href` is never a bare `s.string()` here.
+// `navigation`, `footer`, and `announcement` are singleton YAML collections
+// (site chrome, not content/pages entries) — see content/settings/*.yml. YAML
+// has no MDX body, so it never reaches `remarkContentLockdown` above: that
+// plugin is a remark plugin wired into the `mdx:` pipeline below, and
+// frontmatter/YAML never passes through remark at all. Zod's `.refine()` is
+// therefore the ONLY gate standing between a YAML edit and an unsafe URL
+// (e.g. `javascript:alert(1)`) reaching production — hence `href` is never a
+// bare `s.string()` here.
 // `.describe()` is required alongside every `.refine()`: Velite/Zod
 // `.refine()` predicates carry no machine-readable rule, so the prose in
 // `.describe()` is what documents the constraint for an authoring agent.
@@ -86,6 +87,15 @@ const footerSocialLink = s.object({
 
 const footerBrand = s.object({
   name: s.string().min(1),
+  href: href(),
+});
+
+// The site-wide announcement bar's optional link — same {label, href} shape
+// as navLink/footerLink, kept as its own named schema for the same reason
+// those two are separate: each chrome surface owns its shape independently
+// even where the shapes currently coincide.
+const announcementLink = s.object({
+  label: s.string().min(1),
   href: href(),
 });
 
@@ -144,6 +154,35 @@ export default defineConfig({
         // Trailing legal text after the auto-generated "© {year} {brand}."
         // (the year and brand name are never content — see site-footer.tsx).
         copyrightNote: s.string().optional(),
+      }),
+    },
+    // Lines for the overscroll easter egg (src/components/site/
+    // overscroll-easter-egg.tsx) — a hidden, decorative strip revealed only
+    // in the native rubber-band gap when the page bounces past the top. One
+    // line is shown at random per reveal, so content-driven like everything
+    // else rather than hardcoded in the component.
+    overscroll: {
+      name: "Overscroll",
+      pattern: "settings/overscroll.yml",
+      single: true,
+      schema: s.object({
+        lines: s.array(s.string().min(1)).min(1),
+      }),
+    },
+    // Site-wide announcement bar, rendered above SiteHeader in
+    // src/app/layout.tsx (see announcement-bar.tsx) — structurally outside
+    // the page content flow, unlike the in-page Banner Block. `enabled` is
+    // required (no default): a client's agent must make an explicit choice
+    // to turn it on or off rather than inherit a silent default, and turning
+    // it off must not require deleting the message/link content underneath.
+    announcement: {
+      name: "Announcement",
+      pattern: "settings/announcement.yml",
+      single: true,
+      schema: s.object({
+        enabled: s.boolean(),
+        message: s.string().min(1),
+        link: announcementLink.optional(),
       }),
     },
   },

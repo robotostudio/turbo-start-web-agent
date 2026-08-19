@@ -20,9 +20,14 @@ tells you what to do instead.
   `blocks-gallery.mdx`). A new page is a new file here.
 - Blog posts: `artifacts/web/content/blog/*.mdx` (e.g.
   `introducing-harbour.mdx`, `composing-pages.mdx`).
-- The header nav and footer are **not** a page — they're YAML at
-  `artifacts/web/content/settings/navigation.yml` and
-  `artifacts/web/content/settings/footer.yml`, not covered by this skill.
+- The header nav, footer, and site-wide announcement bar are **not** a page —
+  they're YAML at `artifacts/web/content/settings/navigation.yml`,
+  `artifacts/web/content/settings/footer.yml`, and
+  `artifacts/web/content/settings/announcement.yml`, not covered by this
+  skill. The announcement bar is chrome rendered above the header on every
+  page (`enabled: true`/`false` there turns it on or off); it is a different
+  thing from the `Banner` Block below, which is in-page content for a single
+  page and can never render above the header.
 - The URL slug is derived automatically from the file path (`pages/about.mdx`
   → `/about`) — there is no `slug` frontmatter field to set.
 

@@ -1,0 +1,12 @@
+# Site-wide announcement bar: chrome rendered above the header on every page
+# (src/components/site/announcement-bar.tsx), not page content and not the
+# Banner Block. `enabled` is the on/off switch a client's agent flips without
+# deleting `message`/`link` — set it false to remove the bar entirely (no
+# empty element left behind), true to show it. Every `href` here is validated
+# by velite.config.ts (Zod .refine(isSafeUrl, ...)) because YAML never passes
+# through the MDX content-lockdown remark plugin.
+enabled: true
+message: "New: Introducing Harbour — a starter for agent-native marketing sites."
+link:
+  label: Read the post
+  href: /blog/introducing-harbour

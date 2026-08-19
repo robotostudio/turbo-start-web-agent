@@ -37,6 +37,61 @@
      reading source. */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Drives the announcement bar's below-`sm` marquee (announcement-bar.tsx) —
+     the standard Tailwind v4 way to register an `animate-*` utility from a
+     theme variable, paired with the `@keyframes marquee` below. Gated with
+     `motion-safe:` at the call site, never applied unconditionally: this
+     utility itself has no opinion on `prefers-reduced-motion`. */
+  --animate-marquee: marquee 20s linear infinite;
+}
+
+/* Slides a track exactly half its own width — the track renders its content
+   twice (see `announcement-bar.tsx`'s duplicate `aria-hidden` copy), so a
+   50% translate lines the second copy up exactly where the first started,
+   looping with no visible seam or jump. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Two-tone overscroll canvas: drives the ROOT (<html>) background across
+   scroll progress so the native rubber-band bounce shows the announcement
+   bar's color near the top and the footer's color near the bottom, instead
+   of a single fixed color that can only ever match one edge. `body` keeps
+   its own solid `bg-background` (`@layer base` below) — this only ever
+   repaints the canvas beyond the edges, never page content.
+
+   Guarded twice, and both guards are the entire safety story:
+   `prefers-reduced-motion: no-preference` excludes reduced-motion users
+   (a scroll-driven color animation is exactly the kind of motion that
+   preference exists to suppress), and `@supports (animation-timeline:
+   scroll())` excludes browsers with no scroll-driven-animations support
+   (Firefox, at time of writing). `OverscrollColorFallback`
+   (site/overscroll-color-fallback.tsx) covers both excluded cases with an
+   instant, non-animated background-color swap at the scroll midpoint — see
+   --color-overscroll-top/--color-overscroll-bottom below for what the two
+   endpoints resolve to and why. */
+@keyframes overscroll-color-transition {
+  from {
+    background-color: var(--color-overscroll-top);
+  }
+  to {
+    background-color: var(--color-overscroll-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    html {
+      animation: overscroll-color-transition linear both;
+      animation-timeline: scroll(root y);
+    }
+  }
 }
 
 @layer base {
@@ -179,4 +234,22 @@
   --input: oklch(0.92 0.004 286.3);
   --ring: oklch(0.55 0.22 264);
   --radius: 0.75rem;
+
+  /* Endpoints for the two-tone overscroll canvas above — verified against
+     what actually renders at each edge, not guessed. Top matches the
+     announcement bar's `bg-primary` (content/settings/announcement.yml
+     ships `enabled: true`, rendered above SiteHeader in layout.tsx — the
+     topmost thing on the page today). Bottom matches the footer, which
+     sets no `bg-*` of its own (site-footer.tsx) and so inherits body's
+     `bg-background`. The top token follows whatever is actually topmost:
+     the announcement bar (`bg-primary`) when it is enabled, otherwise the
+     header (`bg-background`). `layout.tsx` sets `data-announcement` on
+     <html> from `announcement.yml`, so flipping `enabled` cannot leave the
+     bounce gap showing a colour nothing on the page uses. */
+  --color-overscroll-top: var(--background);
+  --color-overscroll-bottom: var(--background);
+}
+
+:root[data-announcement="on"] {
+  --color-overscroll-top: var(--primary);
 }

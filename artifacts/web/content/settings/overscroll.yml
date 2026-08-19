@@ -1,0 +1,11 @@
+# Lines for the hidden overscroll easter egg
+# (src/components/site/overscroll-easter-egg.tsx) — revealed only in the
+# native rubber-band gap when the page bounces past the top. Purely
+# decorative and aria-hidden; one line is shown at random per reveal. Keep
+# entries short, they render as a single line of text.
+lines:
+  - "You've hit the top. Nothing more up here."
+  - "Nice scroll. That's the whole secret."
+  - "Nowhere left to go but back down."
+  - "You found the hidden line. Well played."
+  - "This is as far up as the page goes."
