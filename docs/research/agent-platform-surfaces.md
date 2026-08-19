@@ -177,7 +177,7 @@ Sources: https://github.com/pricing (plan comparison table, "Repository rules" r
 - GitHub's plan comparison table lists **"Repository rules"** with different scope per plan: **Free** — repository rules are limited to **public** repositories only; **Team** — repository rules are available for **all** repositories, public and private ("Enforce restrictions on how code branches are merged, including requiring reviews by selected collaborators, or allowing only specific contributors to work on a particular branch"); **Enterprise** — the same, plus enterprise-wide rule insights ("Enforce branch and tag protections, as well as push rules across your enterprise. Rule insights allow you to assess impact of rules before and during enforcement").
 - The rulesets reference doc corroborates from the product-docs side: "A ruleset is a named list of rules that applies to a repository or to multiple repositories in an organization for customers on GitHub Team and GitHub Enterprise plans."
 - Net: enforcing a ruleset or branch-protection rule on a **private** repo requires the owning organization to be on GitHub Team or Enterprise. On a **public** repo, the same enforcement is available on any plan, including Free.
-- Used by all three runbooks' "Branch protection: what you can actually rely on" section (`docs/platforms/claude-code.md`, `docs/platforms/replit.md`, `docs/platforms/cursor.md`).
+- Used by all four runbooks' branch-protection section (`docs/platforms/claude-code.md`, `docs/platforms/replit.md`, `docs/platforms/codex.md`, `docs/platforms/cursor.md`).
 
 ---
 

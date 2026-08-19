@@ -11,9 +11,10 @@ and a smoke test.
 
 - [`replit.md`](./replit.md)
 - [`claude-code.md`](./claude-code.md)
+- [`codex.md`](./codex.md)
 - [`cursor.md`](./cursor.md)
 
-Every platform-behavior claim in these three files traces to
+Every platform-behavior claim in these four files traces to
 [`docs/research/agent-platform-surfaces.md`](../research/agent-platform-surfaces.md)
 or to a primary source verified while writing them. If a platform's
 documented behavior changes, that research file — and these runbooks — need
@@ -21,10 +22,19 @@ a re-check, not a guess.
 
 ## Supported vs. not
 
-Three platforms have a runbook because all three can import an *existing*
+Four platforms have a runbook because all four can import an *existing*
 repository and land changes as a reviewable branch — the two properties
 this template's review-before-publish premise depends on. Three more were
 considered and are deliberately out of scope:
+
+Codex is the odd one out among the four: it reads `AGENTS.md` natively, so
+`harness-gen` emits nothing for it and `"codex"` is deliberately absent from
+`harness.config.json`'s `platforms` array (that array drives the generator,
+and every entry must match an adapter). Its runbook is entirely about the
+environment configuration that lives in the Codex cloud UI rather than in
+the repo — including two behaviours that will cost an afternoon each if met
+by surprise: agent-phase internet is off by default, and secrets are stripped
+before the agent runs, which silently breaks the capability probes.
 
 | Platform | Status | Why |
 |---|---|---|
