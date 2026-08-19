@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { test } from "node:test";
 
 // Run from the repo root, same as `pnpm harness` / `pnpm harness:check`.
@@ -34,21 +35,32 @@ test("harness:check names the file that drifted, same as catalog:check", () => {
   }
 });
 
-test("harness:check reports a skill removed from .agents/skills/ as stale, not just missing", () => {
-  // find-skills is one of the three project-authored skills mirrored into
-  // .claude/skills/ (see .agents/skills/find-skills/SKILL.md). Deleting only
-  // its mirror (not the source) simulates the drift a stale .claude/skills/
-  // file would show: present on disk, no longer expected.
-  const mirrorPath = ".claude/skills/find-skills/SKILL.md";
-  const original = readFileSync(mirrorPath, "utf8");
-  writeFileSync(mirrorPath, `${original}\ntampered\n`);
+test("harness:check reports a file left behind in .claude/skills/ as stale, and `pnpm harness` deletes it", () => {
+  // .claude/skills/ is an "owned dir" (claude-code.ts's ownedDirs) — index.ts
+  // sweeps it for files on disk that are no longer in the generated set and
+  // reports/removes them as *stale*, distinct from a file whose *content*
+  // drifted (covered by the CLAUDE.md test above). A file with no
+  // corresponding source under .agents/skills/ — e.g. a skill that was
+  // deleted there but whose mirror was never cleaned up — is exactly that
+  // case, so create one directly under the owned dir rather than editing an
+  // existing mirrored file's content.
+  const staleRelPath = ".claude/skills/ghost-skill/SKILL.md";
+  const staleDir = dirname(staleRelPath);
+  mkdirSync(staleDir, { recursive: true });
+  writeFileSync(staleRelPath, "---\nname: ghost-skill\n---\n\nNot a real skill.\n");
   try {
     assert.throws(runCheck, (error: unknown) => {
       const stderr = (error as { stderr?: Buffer }).stderr?.toString() ?? "";
-      assert.match(stderr, /find-skills/);
+      assert.match(stderr, /stale, no longer generated/);
+      assert.match(stderr, /ghost-skill/);
       return true;
     });
+
+    // The non-`--check` path (`pnpm harness`) must actually delete the
+    // stale file via rmSync, not just report it in --check's diff.
+    execFileSync("node", ["--experimental-strip-types", INDEX], { stdio: "pipe" });
+    assert.equal(existsSync(staleRelPath), false);
   } finally {
-    writeFileSync(mirrorPath, original);
+    rmSync(staleDir, { recursive: true, force: true });
   }
 });

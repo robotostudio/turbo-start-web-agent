@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateClaudeCode } from "./adapters/claude-code.ts";
@@ -24,9 +24,15 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 //
 // NOTE: no timestamp field anywhere in generated output, same reasoning as
 // generate-catalog.ts and generate-gallery.ts — every generated file here
-// is a pure function of (AGENTS.md, harness.config.json, .agents/skills/),
-// which is what keeps --check honest and every regeneration diff
-// meaningful instead of noise.
+// is a pure function of its declared inputs (AGENTS.md, harness.config.json,
+// and/or .agents/skills/, per adapter — see each adapter's own comments for
+// which it reads), never of wall-clock time. That's what keeps --check
+// honest and every regeneration diff meaningful instead of noise. It also
+// means an edit to AGENTS.md must change at least one generated file's
+// bytes and trip harness:check — replit.ts quotes AGENTS.md §1 verbatim
+// into replit.md specifically so that's true in practice, not just in
+// principle (see its own comment for why restating the rules in
+// independently hand-written prose would have been the wrong fix).
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "..", "..");

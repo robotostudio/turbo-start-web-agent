@@ -56,9 +56,22 @@ everything below is relative to that directory, not the repo root.
 | Catalog/gallery generators | `artifacts/web/scripts/generate-catalog.ts`, `artifacts/web/scripts/generate-gallery.ts` |
 | Verify commands (delegate into `artifacts/web`) | root `package.json` |
 
-Deeper how-to procedures (the full page-composition workflow, session-start
-git discipline) belong in `.agents/skills/`, not in this file — see the
-harness plan's Task 2. Nothing there yet as of this writing.
+Deeper how-to procedures belong in `.agents/skills/`, not in this file. Three
+skills ship in this repo today:
+
+| Skill | Use it for |
+|---|---|
+| `.agents/skills/compose-page/SKILL.md` | The full page-composition workflow: locating the right MDX file, choosing Blocks from `catalog.json`, writing frontmatter (including the blog-only fields §3 doesn't cover), and composing Blocks with literal props. |
+| `.agents/skills/sync-changes/SKILL.md` | Session-start git discipline: pull before editing, branch → commit → PR, never push to `main`, and how to confirm a push actually reached the remote on platforms where the shell has no git credentials. |
+| `.agents/skills/find-skills/SKILL.md` | How to review and install a third-party skill safely before adding it to `.agents/skills/` and `skills-lock.json`. |
+
+Codex, Cursor, Copilot/VS Code, Zed, and most of the rest of the ecosystem
+read only this file and never load `.agents/skills/` — for those platforms
+the table above, not the skill files themselves, is the documentation.
+Claude Code and Replit also load these by description at the paths shown.
+`.claude/skills/` is a generated, byte-identical mirror of `.agents/skills/`
+for Claude Code, refreshed by `pnpm harness` (§5) — edit skills under
+`.agents/skills/`, never under `.claude/skills/` directly.
 
 ## 3. Compose (the common case)
 
@@ -162,14 +175,15 @@ working as intended.
 
 ## 5. Verify
 
-From the repo root (each delegates into `artifacts/web`):
+From the repo root (each delegates into `artifacts/web`, except the first):
 
 ```sh
+pnpm run harness:check    # generated per-platform surfaces are in sync with AGENTS.md, harness.config.json, and .agents/skills/
 pnpm run content:check    # frontmatter, MDX syntax, and the content lockdown
 pnpm run catalog:check    # catalog.json is in sync with src/lib/blocks/schemas.ts
 pnpm run gallery:check    # blocks-gallery.mdx has a section for every registered Block
-pnpm run lint              # biome check
-pnpm run test              # lockdown, loader, and Block-prop unit tests
+pnpm run lint              # biome check (artifacts/web, plus scripts/ and harness.config.json at the root)
+pnpm run test              # lockdown, loader, and Block-prop unit tests, plus the harness generator's own tests
 pnpm run typecheck
 pnpm run build             # renders every page; bad Block props fail here
 ```
@@ -177,6 +191,17 @@ pnpm run build             # renders every page; bad Block props fail here
 This is the exact sequence CI runs (`.github/workflows/ci.yml`), in the same
 order. All of it must pass before a change is considered done — but passing
 is not the same as correct: always click through the built site afterward.
+
+**Regenerating the platform surfaces.** `pnpm harness` regenerates
+`CLAUDE.md`, the `.claude/skills/` mirror, `replit.md`, `.replit`, and
+`.cursorignore` from `AGENTS.md`, `harness.config.json`, and
+`.agents/skills/` (see `scripts/harness-gen/`) — run it any time you edit
+any of those three inputs, including after adding, editing, or removing a
+skill under `.agents/skills/`, then include the regenerated files in your
+change (§1 rule 7 still applies: land them via a PR, not a direct commit).
+`pnpm harness:check` (above) is the read-only version CI runs:
+it writes nothing and fails naming exactly which generated file is out of
+date or which file under `.claude/skills/` is stale.
 
 ## 6. Incidents and quirks
 

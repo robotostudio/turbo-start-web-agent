@@ -19,10 +19,10 @@ it, assume the worst case (that the branch you're on ships live) rather
 than the permissive one. Committing directly to the live branch publishes
 to whoever is looking at the live site, with nobody having reviewed it
 first. This repo's own CI (`.github/workflows/ci.yml`) runs
-`content:check`, `catalog:check`, `gallery:check`, `lint`, `test`,
-`typecheck`, and `build` on every pull request — that gate only fires on a
-PR, so a direct push to any branch that skips the PR step skips it
-entirely.
+`harness:check`, `content:check`, `catalog:check`, `gallery:check`, `lint`,
+`test`, `typecheck`, and `build` on every pull request — that gate only
+fires on a PR, so a direct push to any branch that skips the PR step skips
+it entirely.
 
 ## The workflow
 

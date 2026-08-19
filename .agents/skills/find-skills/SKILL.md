@@ -39,12 +39,17 @@ there.
 2. **Copy** the skill directory into `.agents/skills/<name>/`, keeping its
    `SKILL.md` name field matching the new parent directory name (required by
    the agentskills.io spec).
-3. **Hash it.** Compute a content hash over the installed `SKILL.md` (and any
+3. **Run `pnpm harness`** from the repo root. `.agents/skills/` is mirrored
+   into `.claude/skills/` for Claude Code (AGENTS.md §2) — skip this and the
+   new skill is invisible to Claude Code cloud sessions, and CI's
+   `harness:check` (AGENTS.md §5) fails on a gate this step never warned
+   about.
+4. **Hash it.** Compute a content hash over the installed `SKILL.md` (and any
    bundled files), e.g. `shasum -a 256 .agents/skills/<name>/SKILL.md`.
-4. **Add an entry to `skills-lock.json`** — source repo, the path within that
-   repo, the ref/commit it was installed from, and the hash from step 3. See
+5. **Add an entry to `skills-lock.json`** — source repo, the path within that
+   repo, the ref/commit it was installed from, and the hash from step 4. See
    the worked example already in that file.
-5. **Re-verify before trusting an update.** If the upstream skill changes,
+6. **Re-verify before trusting an update.** If the upstream skill changes,
    its hash changes — that mismatch is the signal to re-review before
    re-installing, the same way a lockfile mismatch flags a changed dependency.
 

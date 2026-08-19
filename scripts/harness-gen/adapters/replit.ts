@@ -1,5 +1,38 @@
 import type { Adapter, GeneratedFile } from "../types.ts";
 
+// Pulls the body of a `## N. Heading` section out of AGENTS.md — everything
+// between that heading line and the next `##` heading (or end of file).
+//
+// This is what makes replit.md's client-facing prose about the rules a
+// genuine function of AGENTS.md instead of independently hand-written text
+// that happens to agree with it today: the golden rules are quoted
+// verbatim below rather than re-described, so editing AGENTS.md §1 changes
+// this generator's output and trips `harness:check` on the next run — the
+// exact drift `index.ts`'s "pure function of AGENTS.md" comment claims for
+// every generated file.
+function extractSection(agentsMd: string, heading: string): string {
+  const lines = agentsMd.split("\n");
+  const startIdx = lines.findIndex((line) => line.trim() === heading);
+  if (startIdx === -1) {
+    throw new Error(
+      `replit.ts: could not find "${heading}" in AGENTS.md — has the heading text changed? Update the heading string in adapters/replit.ts to match.`,
+    );
+  }
+  const rest = lines.slice(startIdx + 1);
+  const nextHeadingOffset = rest.findIndex((line) => /^##\s/.test(line));
+  const body = nextHeadingOffset === -1 ? rest : rest.slice(0, nextHeadingOffset);
+  return body.join("\n").trim();
+}
+
+// Renders a Markdown section as a blockquote, so it reads as a quotation of
+// AGENTS.md rather than replit.md's own prose.
+function asBlockquote(markdown: string): string {
+  return markdown
+    .split("\n")
+    .map((line) => (line.length > 0 ? `> ${line}` : ">"))
+    .join("\n");
+}
+
 // Replit adapter.
 //
 // Replit only reads `replit.md`, and only from the project root
@@ -40,8 +73,9 @@ const REPLIT_MD_HEADER = `<!--
 
 `;
 
-export const generateReplit: Adapter = ({ config }) => {
+export const generateReplit: Adapter = ({ config, agentsMd }) => {
   const { name } = config.project;
+  const goldenRules = asBlockquote(extractSection(agentsMd, "## 1. Golden rules"));
 
   const replitMd = `${REPLIT_MD_HEADER}# ${name}
 
@@ -54,26 +88,31 @@ editing; you don't need to read or write any code yourself.
 ## Where the rules live
 
 The full rulebook for how this site may safely be edited lives in
-\`AGENTS.md\` at the root of this project. You don't need to read it
-yourself — the Agent does — but if it ever proposes editing code instead of
-content, or skipping a check below, point it at that file and ask it to
-follow it.
+\`AGENTS.md\` at the root of this project — the Agent reads it, you don't
+need to. Its golden rules, quoted directly from that file so this page
+can't quietly drift from it:
+
+${goldenRules}
+
+If the Agent ever proposes editing code instead of content, or skipping a
+check below, point it at rule 2 or rule 4 above and ask it to follow it.
 
 ## Before you trust a change
 
-Every change has to pass the checks listed in \`AGENTS.md\` (content
-validation, lint, tests, a full build) before it's safe to publish. Ask the
-Agent to run them and show you the result. A clean pass is necessary but
-not sufficient — always ask the Agent to also open the page it just changed
-in preview and confirm it actually looks right, since some mistakes only
-show up when you look.
+Rule 4 above is not just a suggestion: every change has to pass the checks
+listed in \`AGENTS.md\` §5 before it's safe to publish. Ask the Agent to run
+them and show you the result. A clean pass is necessary but not sufficient
+— always ask the Agent to also open the page it just changed in preview and
+confirm it actually looks right, since some mistakes only show up when you
+look.
 
 ## Shipping a change
 
-Changes should land as a branch and a pull request, never a direct push to
-\`main\` — \`main\` is what the live site serves, so a direct push publishes
-before anyone has reviewed it. Ask the Agent to open a pull request (or use
-the Git pane yourself) rather than merging straight to \`main\`.
+Rule 7 above means changes land as a branch and a pull request, never a
+direct push to \`main\` — \`main\` is what the live site serves, so a direct
+push publishes before anyone has reviewed it. Ask the Agent to open a pull
+request (or use the Git pane yourself) rather than merging straight to
+\`main\`.
 
 ## On boot
 

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@11.17.0",
   "engines": {
     "node": ">=24"
@@ -12,8 +13,8 @@
     "dev": "pnpm --filter @workspace/web run dev",
     "start": "pnpm --filter @workspace/web run start",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "lint": "pnpm --filter @workspace/web run lint",
-    "test": "pnpm --filter @workspace/web run test",
+    "lint": "biome check scripts harness.config.json && pnpm --filter @workspace/web run lint",
+    "test": "node --experimental-strip-types --test \"scripts/**/*.test.ts\" && pnpm --filter @workspace/web run test",
     "content:check": "pnpm --filter @workspace/web run content:check",
     "catalog:check": "pnpm --filter @workspace/web run catalog:check",
     "gallery:check": "pnpm --filter @workspace/web run gallery:check",
@@ -23,6 +24,8 @@
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.5",
+    "@types/node": "^24",
     "typescript": "~5.9.3"
   }
 }
