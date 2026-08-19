@@ -6,8 +6,8 @@
     "//name": "Display name shown to an agent/operator. This is the template's own demo brand (see artifacts/web/content/settings/footer.yml). An adopter forking this template for a real client replaces it with the client's name."
   },
   "site": {
-    "host": "https://example.com",
-    "//host": "Placeholder — replace with the deployed origin and set NEXT_PUBLIC_SITE_URL to match (see .env.example at the repo root). Left unset/unreplaced, artifacts/web/src/app/sitemap.ts silently falls back to this same placeholder and ships a sitemap of example.com URLs. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh."
+    "host": "https://turbo-start-web-agent.vercel.app",
+    "//host": "This template's own demo deployment — an adopter replaces it with the client's origin, same as project.name above. Whatever it says here, the value that actually builds the sitemap is the NEXT_PUBLIC_SITE_URL environment variable (see .env.example at the repo root): artifacts/web/src/app/sitemap.ts falls back to https://example.com when that is unset, and ships a sitemap of example.com URLs without failing the build. Set both, and set them to the same origin. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh."
   },
   "commands": {
     "dev": "pnpm run dev",
