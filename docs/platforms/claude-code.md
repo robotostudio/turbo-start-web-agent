@@ -29,6 +29,11 @@ reachability is a *read* — it does not prove write access. Confirm the write
 side explicitly on a fresh connection: ask the session to push a throwaway
 branch before you give it real work, and check the branch appears on GitHub.
 
+This particular test is **Claude Code specific**, because it assumes the
+shell can push at all. Do not carry it to Codex, whose containers have no
+`origin` remote by design — there the push failure is expected and proves
+nothing (see [`codex.md`](./codex.md) §3).
+
 If it 403s, reconnect the repository from inside claude.ai/code (§2). Note
 that `/web-setup` — running a local `gh`-authenticated terminal to sync its
 token — is a **developer fallback only**. It works, but it requires a machine

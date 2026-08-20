@@ -24,19 +24,25 @@ read this file directly; it reads `CLAUDE.md`, which imports this one.
    them by name).
 4. **The build is the gate.** If the commands in §5 pass, the content is
    valid. Fix the content, not the schema. A green build is necessary but
-   not sufficient — click through the built site (nav, footer, every linked
-   page) before calling a change done.
+   not sufficient — check the rendered page before calling a change done.
+   Where you have a browser, click through it (nav, footer, every linked
+   page). Where you do not, serve the build and assert on the returned HTML
+   for the strings you changed; that catches wrong-content far better than a
+   green build alone, even without a screenshot.
 5. **`const` only.** Never `let` or `var`, except where a loop genuinely
    reassigns.
 6. **kebab-case filenames.** Exports keep PascalCase (component names,
    types).
-7. **Being asked for a change authorizes the branch, not the pull request.**
-   Commit and push the work you were asked to do — a branch publishes
-   nothing. Then pause and ask before opening the PR, which is
-   outward-facing: it creates a review artifact, notifies people, and starts
-   CI. Never a direct push to `main`, and never merge your own PR. Commit
-   trailers are `Requested-by:` and `Agent:`; never `Co-Authored-By:` or a
-   session URL — see `.agents/skills/sync-changes/SKILL.md`.
+7. **Being asked for a change authorizes the commit, not the pull request.**
+   Commit the work you were asked to do — a branch publishes nothing. Then
+   pause and ask before opening the PR, which is outward-facing. Where a
+   platform's own instructions require opening the PR immediately, follow
+   the platform: its instructions outrank this file, and the PR was never
+   the gate — merging is. Never a direct push to `main`, and never merge
+   your own PR. Commit trailers are `Requested-by:` and `Agent:`; never
+   `Co-Authored-By:` or a session URL. Delivery channels differ per platform
+   (some have no `origin` remote at all) —
+   see `.agents/skills/sync-changes/SKILL.md`.
 
 ## 2. Where things live
 
@@ -269,6 +275,29 @@ this deliberately per project: give the client a seat on the Vercel project
 (needs a paid plan; Hobby supports no team members at all), issue a
 protection-bypass link, or make previews public. Do not assume a preview link
 just works.
+
+**2026-08-20 — Codex cloud containers have no git remote.** A push there
+fails with `fatal: 'origin' does not appear to be a git repository`, which
+reads like a broken connection and is not one: Codex delivers the task's
+diff through its own **Create PR** control rather than through a push. Do not
+diagnose it as a credentials problem and do not retry. A `403` is the
+credentials problem; a missing `origin` is the platform's design.
+
+**2026-08-20 — A platform's own instructions outrank this file.** Codex
+reported that its environment tells it to create a PR straight after
+committing, which contradicts rule 7's pause, and correctly followed the
+platform. Nothing here is sovereign: rules in this repo are one input among
+several, below the system and developer instructions of whatever is running.
+Write rules whose *failure* is tolerable — the pause is a nicety, and the
+merge gate, enforced by GitHub rather than by instruction, is what actually
+protects the live branch.
+
+**2026-08-20 — Schemas enforce shape, not meaning.** Asked to drop a stat,
+an agent hit `statsSchema`'s exactly-four rule, correctly refused to widen
+the schema, and substituted `MIT` / "License for client reuse" into a Block
+titled "The numbers behind the pitch." Every gate passed; the section read as
+three numbers and a licence. No realistic schema change catches that. It is
+the clearest argument for why the PR review step is not ceremony.
 
 **A green build is not a rendered page.** Several defects here passed
 `typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
