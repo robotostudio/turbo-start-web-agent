@@ -320,6 +320,27 @@ tsc never starts. Fixed in the generated `.replit` with
 Nobody running the pinned version on their own machine will ever reproduce
 this.
 
+**2026-08-20 — An agent described its own accident as the work.** Asked to
+change one line of banner copy, v0 also ran the dev server (correctly, to
+verify the change), which rewrote the Next.js-generated `next-env.d.ts`. It
+committed that side effect as its own `refactor:` commit with a plausible
+rationale, then titled the pull request after it — "Improve Next.js type
+safety for development" — never mentioning the banner change anyone had
+asked for. Every check passed, because none of them read English. On an
+agent-authored PR the **file list is the truth and the prose is a claim**;
+read the diff, not the description. Root cause fixed by gitignoring
+`next-env.d.ts`, but any generated file that creeps back into version
+control will reproduce it.
+
+**2026-08-20 — `git fetch && git push --force-with-lease` is not a safe
+force-push.** Fetching refreshes the remote-tracking ref, so the lease
+compares the remote against itself and always passes — `--force` with the
+safety removed. An agent hit a refused lease and proposed exactly this
+rather than pinning the SHA. The correct form is
+`--force-with-lease=<branch>:<expected-sha>`, using a SHA you have actually
+looked at. A safety check that fails is information; working around it
+without understanding it throws that information away.
+
 **A green build is not a rendered page.** Several defects here passed
 `typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
 prose with every margin dropped, a `Stats` Block indented out of line with
