@@ -215,8 +215,8 @@ order. All of it must pass before a change is considered done — but passing
 is not the same as correct: always click through the built site afterward.
 
 **Regenerating the platform surfaces.** `pnpm harness` regenerates
-`CLAUDE.md`, the `.claude/skills/` mirror, `replit.md`, `.replit`, and
-`.cursorignore` from `AGENTS.md`, `harness.config.json`, and
+`CLAUDE.md`, the `.claude/skills/` mirror, `replit.md`, and `.replit`
+from `AGENTS.md`, `harness.config.json`, and
 `.agents/skills/` (see `scripts/harness-gen/`) — run it any time you edit
 any of those three inputs, including after adding, editing, or removing a
 skill under `.agents/skills/`, then include the regenerated files in your

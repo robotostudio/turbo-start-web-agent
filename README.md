@@ -103,15 +103,15 @@ build-is-the-gate rule, git discipline — read natively by Codex, Cursor,
 GitHub Copilot/VS Code, Zed, and most of the rest of the ecosystem.
 
 Claude Code and Replit don't read `AGENTS.md` on their own, so
-**`CLAUDE.md`, `replit.md`, `.replit`, and `.cursorignore` bridge that
-gap — and all four are generated**, by `pnpm harness`, from `AGENTS.md`,
+**`CLAUDE.md`, `replit.md`, and `.replit` bridge that gap — and all three
+are generated**, by `pnpm harness`, from `AGENTS.md`,
 `harness.config.json`, and `.agents/skills/`. Never hand-edit a generated
 file (each one says so at the top); edit the inputs and regenerate.
 `pnpm harness:check` is the read-only drift gate CI runs — it fails,
 naming exactly which generated file is stale, instead of writing anything.
 
 `docs/platforms/` holds a connection runbook per supported platform
-(Replit, Claude Code, Codex, v0, Cursor): scoping a client repo to one
+(v0, Replit, Claude Code, Codex): scoping a client repo to one
 platform, a write-only push identity, turning off platform-side automation
 that would fight this template's review-before-publish model, and a smoke
 test.

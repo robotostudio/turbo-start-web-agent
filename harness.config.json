@@ -26,8 +26,8 @@
     ],
     "//check": "Exact order CI runs them in (.github/workflows/ci.yml), harness:check first. All must pass — the build is the gate. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh; the actual order lives in .github/workflows/ci.yml and AGENTS.md §5, this is a restatement for anyone scanning the manifest."
   },
-  "platforms": ["replit", "claude-code", "cursor"],
-  "//platforms": "Consumed: drives which harness-gen adapters run (scripts/harness-gen/index.ts). Each entry must match a key in that file's ADAPTERS map (currently \"replit\", \"claude-code\", \"cursor\") — an unrecognized entry fails generation with a named error instead of silently doing nothing.",
+  "platforms": ["replit", "claude-code"],
+  "//platforms": "Consumed: drives which harness-gen adapters run (scripts/harness-gen/index.ts). Each entry must match a key in that file's ADAPTERS map (currently \"replit\", \"claude-code\") — an unrecognized entry fails generation with a named error instead of silently doing nothing.",
   "capabilities": [
     {
       "env": "SLACK_WEBHOOK_URL",
