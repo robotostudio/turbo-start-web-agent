@@ -44,6 +44,19 @@ Do not hand-edit the generated files. `pnpm harness:check` fails CI on a drift, 
 Replit's own agent occasionally rewrites `replit.md` in place, so expect that check to catch it at
 some point and re-run the generator when it does.
 
+## Check the client can open a preview
+
+The client's half of the loop is looking at the change before it merges, and
+that is the step most likely to be broken on day one. Preview deployments are
+usually protected by default: the URL works for you, because you are signed
+in, and returns a login wall for them.
+
+Open a preview URL in a private browser window. If it asks you to sign in, so
+will the client. Fix it before handover by giving them access to the hosting
+project, issuing a bypass link, or making previews public. Which one is right
+depends on the client and the content, but the wrong answer is finding out on
+their first request.
+
 ## Then watch the first pull request
 
 Have the client make a real change on their own, and read what comes back. You are looking for three

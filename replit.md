@@ -48,8 +48,13 @@ can't quietly drift from it:
 >    reassigns.
 > 6. **kebab-case filenames.** Exports keep PascalCase (component names,
 >    types).
-> 7. **Never commit unless asked.** When you do land a change, it goes on a
->    branch with a pull request — never a direct push to `main`.
+> 7. **Being asked for a change authorizes the branch, not the pull request.**
+>    Commit and push the work you were asked to do — a branch publishes
+>    nothing. Then pause and ask before opening the PR, which is
+>    outward-facing: it creates a review artifact, notifies people, and starts
+>    CI. Never a direct push to `main`, and never merge your own PR. Commit
+>    trailers are `Requested-by:` and `Agent:`; never `Co-Authored-By:` or a
+>    session URL — see `.agents/skills/sync-changes/SKILL.md`.
 
 If the Agent ever proposes editing code instead of content, or skipping a
 check below, point it at rule 2 or rule 4 above and ask it to follow it.

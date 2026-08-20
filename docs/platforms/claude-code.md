@@ -14,7 +14,29 @@ optional**: Claude Code does not read `AGENTS.md` on its own at all; without
 content model, the build-is-the-gate rule, branch-and-PR discipline — is
 simply invisible to Claude Code, cloud or local.
 
-## 1. Connect the repo, scoped to one repository
+## 1. Verify write access before the first real task
+
+Do this first, because getting it wrong is expensive in a way that is not
+obvious. **On a public repository, a session with no GitHub App installed
+still clones the repo successfully** — anonymously, read-only. It will read
+`CLAUDE.md`, follow every rule, make a correct change, run the checks, and
+only discover it cannot ship when `git push` returns `403`. On a private repo
+the same misconfiguration fails at clone in seconds; public visibility turns a
+fast, loud failure into a slow, silent one that wastes a whole task.
+
+`scripts/preflight.sh` reports whether the git remote is reachable, but
+reachability is a *read* — it does not prove write access. Confirm the write
+side explicitly on a fresh connection: ask the session to push a throwaway
+branch before you give it real work, and check the branch appears on GitHub.
+
+If it 403s, reconnect the repository from inside claude.ai/code (§2). Note
+that `/web-setup` — running a local `gh`-authenticated terminal to sync its
+token — is a **developer fallback only**. It works, but it requires a machine
+with a GitHub CLI logged in, which the client this template exists for does
+not have. Any fix that routes through a developer's terminal defeats the
+premise; prefer the in-product reconnect, which a client can do in a browser.
+
+## 2. Connect the repo, scoped to one repository
 
 Cloud sessions need GitHub access to clone and push. There are two ways to
 grant it — the **Claude GitHub App**, authorized during onboarding at
@@ -34,10 +56,10 @@ installer does not by itself stop a session from reaching a client's other
 repos if the connecting account can see them — the identity you connect is
 what has to be scoped, exactly as in step 2.
 
-## 2. Use a push identity with write-only access
+## 3. Use a push identity with write-only access
 
 Don't connect Claude Code using the agency's own everyday GitHub account —
-per the caveat above, sessions inherit whatever that account can see, which
+per the caveat in §2, sessions inherit whatever that account can see, which
 for a working agency account is likely every client repo it manages.
 Instead:
 
@@ -49,9 +71,9 @@ Instead:
    both of which Write access covers.
 3. Authorize the Claude GitHub App, or run `/web-setup`, as *that* identity
    — not the agency's own account. This is what actually bounds sessions to
-   this one repo, per step 1.
+   this one repo, per §2.
 
-## 3. Keep auto-fix off (this platform's analogue of "auto-sync")
+## 4. Keep auto-fix off (this platform's analogue of "auto-sync")
 
 Claude Code doesn't have a background auto-sync feature — pushes only
 happen when Claude pushes a branch it's working on, and PR creation is an
@@ -72,7 +94,7 @@ Auto-fix's replies to review threads post from *your* GitHub account and
 can trigger that automation — reason enough on its own to leave it off
 unless someone has deliberately decided otherwise for this project.
 
-## 4. Disable platform-side rules that fight this template's conventions
+## 5. Disable platform-side rules that fight this template's conventions
 
 Two places Claude Code layers instructions on top of a repo's own
 `CLAUDE.md`, and both are worth checking before the first real session:
@@ -80,8 +102,10 @@ Two places Claude Code layers instructions on top of a repo's own
 - **Organization-level managed policy `CLAUDE.md`.** Claude Code's load
   order is managed policy → user `~/.claude/CLAUDE.md` → project
   `CLAUDE.md`, all concatenated (nothing overrides; everything applies).
-  If the agency's Claude Code organization has a managed policy configured
-  in admin settings, it loads for every session regardless of repo and can
+  Organization settings require a Claude Team or Enterprise plan — on a
+  personal plan the page is unreachable, and there is no managed policy to
+  worry about. If the agency's Claude Code organization *does* have one
+  configured, it loads for every session regardless of repo and can
   carry generic conventions (a different commit-message style, a different
   default git workflow) that read as contradicting this template's rules
   even though neither file is wrong on its own. Check claude.ai's admin
@@ -95,13 +119,14 @@ Two places Claude Code layers instructions on top of a repo's own
   rules there can still apply and should be checked for conflicts the same
   way.
 
-There's nothing to disable in the repo itself — no `.claude/settings.json`,
-`.claude/rules/`, or `.mcp.json` ships with this template, so there's no
-project-committed configuration fighting `AGENTS.md`/`CLAUDE.md`; anything
-that does conflict is coming from outside the repo, per the two bullets
-above.
+In the repo itself there is one committed piece of Claude configuration and
+it is not in conflict with anything: `.claude/settings.json`, whose single
+`SessionStart` hook runs `scripts/preflight.sh` (see the caveats section
+below). No `.claude/rules/` and no `.mcp.json` ship with this template, so
+nothing project-committed fights `AGENTS.md`/`CLAUDE.md`; anything that does
+conflict is coming from outside the repo, per the two bullets above.
 
-## 5. Branch protection: what you can actually rely on
+## 6. Branch protection: what you can actually rely on
 
 GitHub's branch protection / repository rules are **free on public
 repositories, on any plan** — but on a **private** repo (the normal case
@@ -123,7 +148,7 @@ GitHub Free's rules apply to public repos only). Two honest postures:
   explicit with the client about which posture their plan actually gives
   them.
 
-## 6. Smoke test
+## 7. Smoke test
 
 Start a fresh session on the connected repo — cloud or local — and ask
 *"What are your rules for making changes in this repo, and where do they
@@ -132,7 +157,7 @@ come from?"* A correct answer references `AGENTS.md`'s golden rules
 PR, never push straight to the live branch) and, if asked, can explain that
 it's reading them via the `@AGENTS.md` import in `CLAUDE.md` — not from
 memory or from generic Claude Code defaults. If it can't name `AGENTS.md`
-or `CLAUDE.md` at all, the bridge isn't wired up; re-check step 0.
+or `CLAUDE.md` at all, the bridge isn't wired up; re-check §0.
 
 ## Known Claude Code caveats, verified against primary sources
 
