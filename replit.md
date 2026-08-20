@@ -42,19 +42,25 @@ can't quietly drift from it:
 >    them by name).
 > 4. **The build is the gate.** If the commands in §5 pass, the content is
 >    valid. Fix the content, not the schema. A green build is necessary but
->    not sufficient — click through the built site (nav, footer, every linked
->    page) before calling a change done.
+>    not sufficient — check the rendered page before calling a change done.
+>    Where you have a browser, click through it (nav, footer, every linked
+>    page). Where you do not, serve the build and assert on the returned HTML
+>    for the strings you changed; that catches wrong-content far better than a
+>    green build alone, even without a screenshot.
 > 5. **`const` only.** Never `let` or `var`, except where a loop genuinely
 >    reassigns.
 > 6. **kebab-case filenames.** Exports keep PascalCase (component names,
 >    types).
-> 7. **Being asked for a change authorizes the branch, not the pull request.**
->    Commit and push the work you were asked to do — a branch publishes
->    nothing. Then pause and ask before opening the PR, which is
->    outward-facing: it creates a review artifact, notifies people, and starts
->    CI. Never a direct push to `main`, and never merge your own PR. Commit
->    trailers are `Requested-by:` and `Agent:`; never `Co-Authored-By:` or a
->    session URL — see `.agents/skills/sync-changes/SKILL.md`.
+> 7. **Being asked for a change authorizes the commit, not the pull request.**
+>    Commit the work you were asked to do — a branch publishes nothing. Then
+>    pause and ask before opening the PR, which is outward-facing. Where a
+>    platform's own instructions require opening the PR immediately, follow
+>    the platform: its instructions outrank this file, and the PR was never
+>    the gate — merging is. Never a direct push to `main`, and never merge
+>    your own PR. Commit trailers are `Requested-by:` and `Agent:`; never
+>    `Co-Authored-By:` or a session URL. Delivery channels differ per platform
+>    (some have no `origin` remote at all) —
+>    see `.agents/skills/sync-changes/SKILL.md`.
 
 If the Agent ever proposes editing code instead of content, or skipping a
 check below, point it at rule 2 or rule 4 above and ask it to follow it.

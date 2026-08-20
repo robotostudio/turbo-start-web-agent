@@ -67,13 +67,23 @@ during the task. Dependency installation already does (see above). What this
 means for this template specifically:
 
 - `pnpm install` — setup phase, fine.
-- `pnpm run build` — expected to work offline once dependencies are present:
-  fonts come from the `geist` npm package rather than a font CDN, and
-  `next/image` optimises remote images on request rather than at build time,
-  so a static build should touch no host. **This is reasoned from how the
-  stack is wired, not verified on a network-disabled machine** — if a Codex
-  task fails at the build step with a DNS or fetch error, an allowlist entry
-  is the fix, and this line should be corrected to say so.
+- `pnpm run build` — **observed green in a Codex container** (2026-08-20):
+  the full eight-command check sequence, build included, completed
+  successfully during the agent phase. That is strong evidence and not yet
+  proof: it only demonstrates the build needs no network if that container
+  had agent-phase internet switched off, which was not checked at the time.
+  The reasoning still holds independently — fonts come from the `geist` npm
+  package rather than a font CDN, and `next/image` optimises remote images on
+  request rather than at build time — so a static build should touch no host.
+  To close it properly, confirm the environment's internet setting is off and
+  re-run. If a task ever fails at the build step with a DNS or fetch error,
+  an allowlist entry is the fix.
+
+  The same run also served the site with `pnpm dev` and asserted on the
+  returned HTML over `localhost`, so **rendered-output checking does work
+  here** even though screenshots do not (`playwright` is not installed). An
+  earlier attempt timed out because the dev server was still compiling — give
+  it time rather than concluding it cannot be done.
 
 ### Trap 2: secrets are gone before the agent runs
 
@@ -92,7 +102,36 @@ a form cannot be wired up when it can.
 Also note that in a setup script, `export FOO=bar` does not survive into the
 agent phase; values must be written to `~/.bashrc` to persist.
 
-## 3. Keeping automatic behaviour off
+## 3. Delivery: there is no git remote
+
+A Codex cloud container has **no `origin` configured**. A push fails with:
+
+```
+fatal: 'origin' does not appear to be a git repository
+fatal: Could not read from remote repository.
+```
+
+That is the platform working as designed, not a broken connection, and it is
+worth knowing before you spend a task's worth of work discovering it. Codex
+delivers the **task's diff**: the agent commits locally, and a **Create PR**
+control appears on the finished task in the Codex UI. A human clicks it, and
+the branch and pull request are created from the diff.
+
+Two consequences:
+
+- **Do not verify write access by asking Codex to push a throwaway branch.**
+  That test works on Claude Code and produces a false negative here, because
+  it exercises a channel Codex does not have. On Codex the equivalent check
+  is simply that the Create PR control appears and works.
+- **An agent reporting "I could not push and no PR tool is available" has
+  not failed.** It is describing the container accurately. The delivery step
+  is yours, in the UI.
+
+If the agent later amends its commit in response to review, the PR does not
+update itself — the task's control changes to **Update branch**, and that has
+to be clicked too.
+
+## 4. Keeping automatic behaviour off
 
 Codex has no background auto-sync equivalent: a task produces a summary and a
 diff, and opening a pull request is an explicit action taken after review. The
@@ -103,7 +142,7 @@ mention-on-PR flow. Anyone who can comment on a pull request can start a Codex
 task from it. On a public repository — which this template's own repo is —
 that is worth understanding before turning it on for a client project.
 
-## 4. Project config, and why this repo ships none
+## 5. Project config, and why this repo ships none
 
 Codex supports a repo-committed `.codex/config.toml` for project overrides
 (`project_doc_max_bytes`, MCP servers, and similar). This template does not
@@ -116,7 +155,7 @@ trust setting made elsewhere is a poor place to put anything load-bearing.
 If a client project does need one, treat it as a per-project addition and
 document it in that project's `AGENTS.md` §6, not as a template default.
 
-## 5. Branch protection
+## 6. Branch protection
 
 Same reality as every other platform, and it is what makes the review
 guarantee real rather than advisory. Repository rules are free on **public**
@@ -133,7 +172,7 @@ Configure it with **no bypass actors**. An admin bypass would let a task
 authenticated as an admin push straight to the live branch, which is exactly
 the path the protection exists to close.
 
-## 6. Smoke test
+## 7. Smoke test
 
 Start a task on the connected repo and ask *"What are your rules for making
 changes in this repo, and where do they come from?"*

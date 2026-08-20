@@ -35,34 +35,52 @@ it entirely.
    hyphenated, prefixed by kind of change).
 3. **Commit** your change with a message describing *why*, not just what
    changed.
-4. **Push the branch.** Being asked to make a change is authorization to
-   commit and push it — the branch is not the live site, and nothing is
-   published by it existing. Do not stop and ask permission to commit work
-   you were just asked to do.
-5. **Then pause, and ask before opening the pull request.** A PR is
-   outward-facing: it creates a review artifact, notifies people, and starts
-   CI. Say the branch is pushed, say what is in it, and ask whether to open
-   the PR. Opening one is a single step once the answer is yes.
-6. **Let CI run and let a human merge it.** This is the review step that
-   makes "an agent may edit this site" safe to say at all. Never merge your
-   own pull request.
+4. **Commit it.** Being asked to make a change is authorization to commit
+   it — a commit on a branch is not the live site, and nothing is published
+   by it existing. Do not stop and ask permission to commit work you were
+   just asked to do.
+5. **Deliver it by whatever channel this platform actually has** (see
+   below), then let CI run and let a human merge. This is the review step
+   that makes "an agent may edit this site" safe to say at all. Never merge
+   your own pull request.
 
-### Opening the PR when `gh` is not installed
+### Delivery: find your channel before concluding you have none
 
-`gh pr create` is the obvious route and it is frequently unavailable —
-several hosted agent platforms ship no `gh` binary at all, and the
-capability report at session start (`scripts/preflight.sh`) says so. Not
-having `gh` does not mean the PR cannot be opened. In order of preference:
+`git push` and `gh pr create` are the obvious routes and neither is
+universal. Work down this list and say which one you used:
 
-1. A GitHub MCP tool, if one is connected to the session.
-2. The platform's own PR control — Claude Code's **Create PR** action after
-   a branch is pushed, or Codex's "open a pull request" step on a finished
-   task. These exist precisely because the shell may have no GitHub CLI.
-3. Ask the operator to open it from the branch, and give them the branch
-   name.
+1. **`git push`**, where the shell has a working `origin`.
+2. **A GitHub MCP tool**, if one is connected to the session.
+3. **The platform's own control.** Claude Code shows a **Create PR** action
+   once a branch is pushed; Codex shows one on a finished task, built from
+   the task's diff rather than from a pushed branch.
+4. **Ask the operator**, and tell them the branch name and what is on it.
 
-Report which of these you used. "I pushed a branch but could not open a PR"
-is only true after all three have failed.
+Two failures look alarming and are not:
+
+- **No `gh` binary.** Several platforms ship none. It is not a permissions
+  problem and it does not block delivery — use route 2 or 3.
+- **`fatal: 'origin' does not appear to be a git repository`.** Codex cloud
+  containers have **no git remote at all**, by design: the task's diff is
+  what gets delivered, through the platform, not through a push. Seeing this
+  does not mean the repository connection is broken, and it is not worth
+  retrying — go to route 3.
+
+A `403` on push is different from both: that one *is* a credentials problem,
+and it means the session has read access only. Say so plainly rather than
+retrying.
+
+### Pausing before the pull request
+
+Where you control when the PR opens, pause first: say the change is
+committed, say what is in it, and ask. A PR is outward-facing — it creates a
+review artifact, notifies people, and starts CI.
+
+Where the platform's own instructions tell you to create the PR immediately,
+**follow the platform.** Its system and developer instructions outrank this
+file, and there is no safety cost to losing the pause: the PR is not the
+gate. Nothing reaches the live branch without a human merging it, and on a
+protected branch GitHub itself refuses anything that skips that path.
 
 ## Commit trailers
 
