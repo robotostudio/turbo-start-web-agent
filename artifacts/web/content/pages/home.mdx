@@ -73,7 +73,7 @@ description: A starter marketing site you can edit with any AI agent.
   stats={[
     { value: "14", label: "Blocks in the registry today" },
     { value: "2.6 hrs", label: "Average time to reskin a client site" },
-    { value: "94%", label: "Sections shipped without custom code" },
+    { value: "1", label: "Token file to rebrand" },
     { value: "0kb", label: "Client JS shipped by default" },
   ]}
 />
@@ -156,6 +156,10 @@ description: A starter marketing site you can edit with any AI agent.
     {
       question: "Is the block registry locked to a specific CMS?",
       answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time — swap the source and you'd rebuild that check, not just add an adapter.",
+    },
+    {
+      question: "Can we host the site on our own servers?",
+      answer: "Yes. The site builds to a standard Next.js app, so you can host it on your own infrastructure as long as your servers can run the production build and provide the environment variables your project uses.",
     },
     {
       question: "Can I white-label this for resale?",
