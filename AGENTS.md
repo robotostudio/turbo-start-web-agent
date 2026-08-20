@@ -299,6 +299,27 @@ titled "The numbers behind the pitch." Every gate passed; the section read as
 three numbers and a licence. No realistic schema change catches that. It is
 the clearest argument for why the PR review step is not ceremony.
 
+**2026-08-20 — Replit's import offered to rewrite the app, not run it.**
+Importing this template opened an unprompted task titled "Port imported
+Vercel app to Replit" that began converting the Next.js App Router site to
+Vite. For this project that is fatal rather than cosmetic — the content
+pipeline is the Next.js build — and it burned a day of agent credits in
+about a minute before anyone typed a prompt. Nothing reached GitHub. The
+generated `replit.md` now opens with an explicit instruction never to
+migrate the project, because Agent reads that file as standing instructions
+and it is the only lever the repository has over the behaviour. Use
+Assistant rather than Agent for edits: Assistant edits files, Agent
+restructures projects. Full procedure in `docs/platforms/replit.md` §1.
+
+**2026-08-20 — pnpm self-update hangs every command in a Replit
+workspace.** The container ships one pnpm version, `package.json` pins
+another, and the self-update stalls rather than failing, so every `pnpm`
+command hangs — presenting as a mysteriously slow typecheck when in fact
+tsc never starts. Fixed in the generated `.replit` with
+`npm_config_manage_package_manager_versions = "false"` under `[env]`.
+Nobody running the pinned version on their own machine will ever reproduce
+this.
+
 **A green build is not a rendered page.** Several defects here passed
 `typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
 prose with every margin dropped, a `Stats` Block indented out of line with

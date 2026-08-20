@@ -49,6 +49,14 @@ function asBlockquote(markdown: string): string {
 // deployment would stand up a second, duplicate copy of the marketing site
 // for search engines to find.
 //
+// Replit's guided GitHub import may open a task proposing to PORT the app
+// to another framework (observed 2026-08-20: a task titled "Port imported
+// Vercel app to Replit" that set about converting this Next.js app to
+// Vite). The generated replit.md therefore opens with a standing
+// instruction against exactly that — Agent reads replit.md as instructions,
+// so this is the one lever a repo has over the behaviour. See
+// docs/platforms/replit.md §1 for the operator-side procedure.
+//
 // `.replit` also deliberately omits [workflows], [postMerge], and a
 // .replitignore file. The research backing this generator found no primary
 // source documenting any of the three — they're empirically observed in
@@ -84,6 +92,23 @@ workspace to — can ask the built-in Agent to make content changes in plain
 English: "update the homepage headline," "add a new team member to the
 about page," "change the newsletter button text." The Agent does the actual
 editing; you don't need to read or write any code yourself.
+
+## Do not migrate this project
+
+**This is a Next.js App Router project. Do not migrate it to Vite, or to
+any other framework or build tool.** Do not "port" it, "adapt" it, or
+"convert the rendering layer" — not as a setup step, not as an
+optimisation, not to make it fit this platform better. If a task appears
+that proposes any of that, stop and say so rather than starting it.
+
+This is not a preference. The entire content pipeline depends on the
+Next.js build: MDX is compiled by Velite, validated by a remark plugin that
+rejects executable content, and rendered through the App Router as static
+pages. A framework migration destroys all of it, and the site's safety
+guarantee with it.
+
+Editing content is always the job. Changing how the project is built never
+is.
 
 ## Where the rules live
 
@@ -148,14 +173,12 @@ missing and what to do about it.
 #                  hand.
 #
 # "modules" pins the Nix module Replit provisions the workspace with. This
-# project requires Node >=24 (package.json "engines", .nvmrc) — the exact
-# module identifier below is a best-effort match against that requirement,
-# not verified against Replit's live module registry (this generator's
-# research did not have a way to enumerate it). If Replit reports this
-# module as unavailable, check the current list in the workspace's
-# Nix/Modules UI and update this line by hand until a future harness-gen
-# revision can verify it.
+# project requires Node >=24 (package.json "engines", .nvmrc).
+# "nodejs-24" is VERIFIED: it is the module a live, working Replit
+# workspace running this same stack provisions with. If Replit ever reports
+# it unavailable, check the current list in the workspace's Nix/Modules UI.
 modules = ["nodejs-24"]
+
 
 # ${config.commands.dev} delegates to artifacts/web's "dev" script, which
 # already runs \`next dev\` bound to 0.0.0.0 and reads the PORT env var
@@ -168,6 +191,23 @@ run = "${config.commands.dev}"
 # harness.config.json). Always exits 0 — see scripts/preflight.sh's own
 # header for why a capability *report* must never block a boot.
 onBoot = "sh scripts/preflight.sh"
+
+# EVERY top-level key must appear ABOVE this line. TOML tables swallow all
+# keys that follow them, so a bare \`run\`/\`onBoot\` written after [env]
+# silently becomes env.run/env.onBoot — a valid file that parses fine and
+# quietly disables the dev server and this boot report. Caught exactly that
+# way while adding the block below.
+#
+# Stops pnpm trying to self-install the version pinned in package.json's
+# "packageManager" field. Replit's container ships its own pnpm; this repo
+# pins a different one, and the self-update stalls — which hangs EVERY pnpm
+# command in the workspace, not just slow ones. The failure is badly
+# disguised: what looks like a slow typecheck is pnpm stalling before tsc
+# ever starts, so the obvious diagnosis (a big build) is the wrong one. A
+# developer on a machine already running the pinned version never sees it.
+# Diagnosed the hard way on another project running this same stack.
+[env]
+npm_config_manage_package_manager_versions = "false"
 
 [[ports]]
 localPort = 3000
