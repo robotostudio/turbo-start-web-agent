@@ -111,16 +111,59 @@ file (each one says so at the top); edit the inputs and regenerate.
 naming exactly which generated file is stale, instead of writing anything.
 
 `docs/platforms/` holds a connection runbook per supported platform
-(Replit, Claude Code, Cursor): scoping a client repo to one platform, a
-write-only push identity, turning off platform-side automation that would
-fight this template's review-before-publish model, and a smoke test.
+(Replit, Claude Code, Codex, v0, Cursor): scoping a client repo to one
+platform, a write-only push identity, turning off platform-side automation
+that would fight this template's review-before-publish model, and a smoke
+test.
 
 `scripts/preflight.sh` reports what an agent session can actually do —
 git remote reachability, `gh`/`pnpm`/`node` presence, manifest capability
 probes — at session start (wired to Replit's `onBoot`; run it by hand on
-other platforms). The platform mapping itself is verified against each
-vendor's own documentation (`docs/research/agent-platform-surfaces.md`);
-it has not yet been exercised in a live session on any of these platforms.
+other platforms).
+
+### Which platform for which client
+
+The platforms are not interchangeable. All four below were exercised in
+live sessions on 2026-08-20 — a real client-style content change, taken
+through to a merged pull request:
+
+| Platform | Reads the rulebook | Shows the client the site | Opens the PR |
+|---|---|---|---|
+| **v0** | `AGENTS.md` + `.agents/skills/` | **Yes**, in-chat preview | Itself |
+| **Replit** | `replit.md` | **Yes**, workspace preview | No — on GitHub |
+| **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI |
+| **Codex** | `AGENTS.md` | No — diff only | Button in the UI |
+
+The column that decides it for a non-technical client is the middle one.
+On v0 and Replit they watch the site change as they ask for it; on Claude
+Code and Codex they get a diff, and their only view of the result is the
+hosting preview URL — which is behind a login by default on most hosts, so
+it needs configuring rather than assuming. Both of those platforms *do*
+have a preview, but only in their desktop apps, which need a local install
+and a checkout: the developer setup this template exists to spare the
+client.
+
+Pick the platform for whoever is actually driving. `docs/platforms/README.md`
+covers preview access; each runbook covers that platform's specific traps —
+and every one of them has some.
+
+### What live testing changed
+
+Testing moved this from documented to verified, and corrected the docs in
+about a dozen places. Two findings are worth knowing before you connect
+anything:
+
+- **Replit's guided import may offer to *port* the app** rather than run
+  it — a Next.js → Vite conversion, unprompted, which would destroy the
+  content pipeline. The generated `replit.md` now carries a standing
+  instruction against it. See `docs/platforms/replit.md` §1.
+- **On an agent-authored pull request, the file list is the truth and the
+  prose is a claim.** One platform committed a dev-server side effect as
+  its own commit and titled the PR after it, never mentioning the change
+  that had been requested. Every automated check passed, because none of
+  them read English.
+
+`AGENTS.md` §6 records these and the rest, with dates.
 
 ## Licence
 
