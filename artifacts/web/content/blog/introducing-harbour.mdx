@@ -25,8 +25,12 @@ They describe the change the way they would describe it to you.
 > Can you change the second stat on the homepage to 3.6 hours, and swap the last FAQ for one about
 > our onboarding call?
 
-The agent finds `content/pages/home.mdx`, makes the edit, opens a PR. The client gets a preview URL.
-You get a diff. Nobody had to explain what a Block is.
+The agent finds `content/pages/home.mdx`, makes the edit, opens a PR. You get a diff, and the client
+gets a preview of their own change before anyone merges it. Nobody had to explain what a Block is.
+
+That preview is worth setting up deliberately rather than assuming. Hosting platforms tend to put
+preview deployments behind a login by default, which leaves the client staring at a sign-in wall and
+quietly hands the review back to a developer.
 
 ## What you keep
 

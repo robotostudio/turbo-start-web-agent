@@ -30,8 +30,13 @@ read this file directly; it reads `CLAUDE.md`, which imports this one.
    reassigns.
 6. **kebab-case filenames.** Exports keep PascalCase (component names,
    types).
-7. **Never commit unless asked.** When you do land a change, it goes on a
-   branch with a pull request — never a direct push to `main`.
+7. **Being asked for a change authorizes the branch, not the pull request.**
+   Commit and push the work you were asked to do — a branch publishes
+   nothing. Then pause and ask before opening the PR, which is
+   outward-facing: it creates a review artifact, notifies people, and starts
+   CI. Never a direct push to `main`, and never merge your own PR. Commit
+   trailers are `Requested-by:` and `Agent:`; never `Co-Authored-By:` or a
+   session URL — see `.agents/skills/sync-changes/SKILL.md`.
 
 ## 2. Where things live
 
@@ -216,10 +221,58 @@ date or which file under `.claude/skills/` is stale.
 
 ## 6. Incidents and quirks
 
-*(Empty — this is a template.)* Every real project accumulates hard-won
-lessons: a build that passed every gate here but broke in production, a
-platform quirk that cost an afternoon, a rule that exists because of one
-specific incident. Record those here as they happen, with enough detail that
-the next agent (or the next developer) doesn't rediscover them the hard way.
-A rule sticks when it carries the story of why it exists — this section is
-where this project's stories go once it has any.
+Record what actually went wrong here, as it happens, with enough detail that
+the next agent (or the next developer) doesn't rediscover it the hard way. A
+rule sticks when it carries the story of why it exists.
+
+The entries below came out of connecting this template to real agent
+platforms. They are kept in an adopter's copy on purpose: every one of them
+is about wiring a client project up, which is the first thing an adopter
+does.
+
+**2026-08-19 — A public repo hides a broken GitHub connection until push
+time.** A Claude Code cloud session read the repo, found `AGENTS.md`, made a
+correct two-line content edit, ran all eight checks, and browser-verified the
+result — then failed at `git push` with `403`, because no GitHub App was
+installed and it had been cloning the repo *anonymously* the whole time.
+Public visibility is what allowed that: on a private repo the session would
+have failed at clone, in seconds, with an obvious cause. Verify write access
+before the first real task, not after it — `scripts/preflight.sh` reports git
+reachability, but reachability is a read.
+
+**2026-08-19 — `gh` is not installed in Claude Code cloud sessions.** This
+skill told agents to open PRs with `gh pr create` and offered no alternative,
+so a session that had done everything right reported it could not deliver.
+The platform's own **Create PR** control and a GitHub MCP tool both work.
+`sync-changes` now lists all three routes in order.
+
+**2026-08-19 — Claude Code's org-settings route needs a Team or Enterprise
+plan.** On a personal plan that page is simply unreachable, so guidance
+pointing an operator there is a dead end. Reconnecting from inside the
+product restored write access with no local setup. Prefer routes a client can
+complete in a browser: any fix requiring a local terminal with an
+authenticated `gh` defeats the premise that the client edits without a
+developer.
+
+**2026-08-19 — Agent platforms add vendor commit trailers by default.** A
+commit arrived carrying `Co-Authored-By: <model>` and a session URL. The URL
+is not a leak (it 403s for anyone not signed into the account that made it),
+but it is a permanent AI-authorship marker in a public repo's history and it
+records the model vendor instead of who wanted the change. Use
+`Requested-by:` and `Agent:` instead; strip the defaults before pushing.
+
+**2026-08-19 — Vercel preview deployments are SSO-gated by default.** With
+`ssoProtection` set to `all_except_custom_domains`, every preview URL returns
+a login redirect, so the client cannot see their own change before it merges
+— which removes the review step the whole workflow is built around. Decide
+this deliberately per project: give the client a seat on the Vercel project
+(needs a paid plan; Hobby supports no team members at all), issue a
+protection-bypass link, or make previews public. Do not assume a preview link
+just works.
+
+**A green build is not a rendered page.** Several defects here passed
+`typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
+prose with every margin dropped, a `Stats` Block indented out of line with
+the text beside it, literal backticks around inline code, and a
+table-of-contents entry highlighting the wrong section. Rule 4 says click
+through the built site; these are why.

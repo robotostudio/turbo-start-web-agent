@@ -20,6 +20,32 @@ or to a primary source verified while writing them. If a platform's
 documented behavior changes, that research file — and these runbooks — need
 a re-check, not a guess.
 
+## Preview access: the step that is easy to forget
+
+Every runbook here assumes the same review loop — the agent opens a pull
+request, and the client looks at the preview deployment before anyone merges.
+That loop silently breaks if the client cannot open the preview URL, and by
+default they cannot.
+
+Vercel ships **deployment protection on**: with `ssoProtection` set to
+`all_except_custom_domains`, every preview URL returns a login redirect that
+only members of the Vercel team can pass. The developer sees the preview
+fine, the client sees a sign-in wall, and the review step quietly reverts to
+"the developer checks it" — which is the bottleneck this whole template
+exists to remove.
+
+Decide it deliberately, per project:
+
+| Posture | What it costs | When it fits |
+|---|---|---|
+| Client gets a seat on the Vercel project | A paid Vercel plan and a seat per client (**Hobby supports no team members at all**) | Real client work, where previews genuinely shouldn't be public |
+| Protection-bypass link | Nothing, but the client must use a URL with a token appended | A client who won't complete a Vercel signup |
+| Previews public | Nothing; anyone with the link can read them | Demo sites, and any project whose content is already public |
+
+Check it before handover rather than discovering it on the first real
+change: open a preview URL in a private browser window. If it redirects to a
+login, the client's review step does not work yet.
+
 ## Supported vs. not
 
 Four platforms have a runbook because all four can import an *existing*
