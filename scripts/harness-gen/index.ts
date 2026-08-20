@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateClaudeCode } from "./adapters/claude-code.ts";
-import { generateCursor } from "./adapters/cursor.ts";
 import { generateReplit } from "./adapters/replit.ts";
 import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 
@@ -36,13 +35,12 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 
 // Known platform ids -> the adapter that generates their surface. Also the
 // source of truth harness.config.json's "platforms" array is validated
-// against below: an adopter adding a fourth platform name there without
+// against below: an adopter adding a platform name there without
 // adding a matching adapter here gets a named error instead of the entry
 // silently doing nothing (see F8/harness follow-ups).
 const ADAPTERS: Record<string, Adapter> = {
   "claude-code": generateClaudeCode,
   replit: generateReplit,
-  cursor: generateCursor,
 };
 
 function errorMessage(err: unknown): string {
