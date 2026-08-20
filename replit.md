@@ -20,6 +20,23 @@ English: "update the homepage headline," "add a new team member to the
 about page," "change the newsletter button text." The Agent does the actual
 editing; you don't need to read or write any code yourself.
 
+## Do not migrate this project
+
+**This is a Next.js App Router project. Do not migrate it to Vite, or to
+any other framework or build tool.** Do not "port" it, "adapt" it, or
+"convert the rendering layer" — not as a setup step, not as an
+optimisation, not to make it fit this platform better. If a task appears
+that proposes any of that, stop and say so rather than starting it.
+
+This is not a preference. The entire content pipeline depends on the
+Next.js build: MDX is compiled by Velite, validated by a remark plugin that
+rejects executable content, and rendered through the App Router as static
+pages. A framework migration destroys all of it, and the site's safety
+guarantee with it.
+
+Editing content is always the job. Changing how the project is built never
+is.
+
 ## Where the rules live
 
 The full rulebook for how this site may safely be edited lives in

@@ -64,3 +64,28 @@ test("harness:check reports a file left behind in .claude/skills/ as stale, and 
     rmSync(staleDir, { recursive: true, force: true });
   }
 });
+
+// Regression guard for a bug that shipped as valid TOML and would only have
+// surfaced in a live Replit workspace: a `[env]` table was added ABOVE `run`
+// and `onBoot`, and TOML tables swallow every key that follows them — so both
+// silently became `env.run` and `env.onBoot`. The file parsed fine, every gate
+// stayed green, and the dev server and boot-time capability report would both
+// simply never have run.
+//
+// Asserted structurally rather than with a TOML parser (Node ships none): every
+// top-level key must appear before the first `[table]` header.
+test(".replit keeps run and onBoot above the first TOML table", () => {
+  const replit = readFileSync(".replit", "utf8");
+  const lines = replit.split("\n");
+  const firstTableIdx = lines.findIndex((line) => /^\s*\[/.test(line));
+  assert.notEqual(firstTableIdx, -1, "expected .replit to contain at least one table");
+
+  for (const key of ["run", "onBoot"]) {
+    const keyIdx = lines.findIndex((line) => new RegExp(`^\\s*${key}\\s*=`).test(line));
+    assert.notEqual(keyIdx, -1, `expected .replit to set a top-level "${key}"`);
+    assert.ok(
+      keyIdx < firstTableIdx,
+      `"${key}" is at line ${keyIdx + 1}, after the first table at line ${firstTableIdx + 1} — it would be parsed as a member of that table, not a top-level key`,
+    );
+  }
+});

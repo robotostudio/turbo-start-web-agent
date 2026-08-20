@@ -22,14 +22,12 @@
 #                  hand.
 #
 # "modules" pins the Nix module Replit provisions the workspace with. This
-# project requires Node >=24 (package.json "engines", .nvmrc) — the exact
-# module identifier below is a best-effort match against that requirement,
-# not verified against Replit's live module registry (this generator's
-# research did not have a way to enumerate it). If Replit reports this
-# module as unavailable, check the current list in the workspace's
-# Nix/Modules UI and update this line by hand until a future harness-gen
-# revision can verify it.
+# project requires Node >=24 (package.json "engines", .nvmrc).
+# "nodejs-24" is VERIFIED: it is the module a live, working Replit
+# workspace running this same stack provisions with. If Replit ever reports
+# it unavailable, check the current list in the workspace's Nix/Modules UI.
 modules = ["nodejs-24"]
+
 
 # pnpm run dev delegates to artifacts/web's "dev" script, which
 # already runs `next dev` bound to 0.0.0.0 and reads the PORT env var
@@ -42,6 +40,23 @@ run = "pnpm run dev"
 # harness.config.json). Always exits 0 — see scripts/preflight.sh's own
 # header for why a capability *report* must never block a boot.
 onBoot = "sh scripts/preflight.sh"
+
+# EVERY top-level key must appear ABOVE this line. TOML tables swallow all
+# keys that follow them, so a bare `run`/`onBoot` written after [env]
+# silently becomes env.run/env.onBoot — a valid file that parses fine and
+# quietly disables the dev server and this boot report. Caught exactly that
+# way while adding the block below.
+#
+# Stops pnpm trying to self-install the version pinned in package.json's
+# "packageManager" field. Replit's container ships its own pnpm; this repo
+# pins a different one, and the self-update stalls — which hangs EVERY pnpm
+# command in the workspace, not just slow ones. The failure is badly
+# disguised: what looks like a slow typecheck is pnpm stalling before tsc
+# ever starts, so the obvious diagnosis (a big build) is the wrong one. A
+# developer on a machine already running the pinned version never sees it.
+# Diagnosed the hard way on another project running this same stack.
+[env]
+npm_config_manage_package_manager_versions = "false"
 
 [[ports]]
 localPort = 3000
