@@ -1,7 +1,7 @@
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { announcement } from "#velite";
+import { announcement, site } from "#velite";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/site/announcement-bar";
 import { OverscrollColorFallback } from "@/components/site/overscroll-color-fallback";
@@ -9,9 +9,12 @@ import { OverscrollEasterEgg } from "@/components/site/overscroll-easter-egg";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 
+// Read from content/settings/site.yml, never written here. Rebranding a
+// client project must be a content edit; a brand name hardcoded in this file
+// is exactly the thing that makes it a source edit instead.
 export const metadata: Metadata = {
-  title: "Harbour",
-  description: "A starter marketing site you can edit with any AI agent.",
+  title: site.name,
+  description: site.description,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

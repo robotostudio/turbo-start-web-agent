@@ -499,10 +499,10 @@ test("Stats rejects a stat missing its value", () => {
 
 test("Banner parses valid props", () => {
   const parsed = parseBlock("Banner", bannerSchema, {
-    message: "Now shipping: the Harbour block system.",
+    message: "Now shipping: the new block system.",
     link: { label: "Explore the blocks", href: "/blocks-gallery" },
   });
-  assert.equal(parsed.message, "Now shipping: the Harbour block system.");
+  assert.equal(parsed.message, "Now shipping: the new block system.");
   assert.equal(parsed.link?.href, "/blocks-gallery");
 });
 
@@ -652,7 +652,7 @@ test("the plan CTA URL rule survives into the JSON Schema", () => {
 
 test("CTA band parses valid props", () => {
   const parsed = parseBlock("CTA", ctaBandSchema, {
-    title: "Your next client site starts from Harbour.",
+    title: "Your next client site starts here.",
     lede: "Six Blocks, one token file, zero lock-in.",
     primary: { label: "Clone the repo", href: "https://github.com" },
   });

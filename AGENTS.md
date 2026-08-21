@@ -53,6 +53,7 @@ everything below is relative to that directory, not the repo root.
 |---|---|
 | Page content (MDX) | `artifacts/web/content/pages/*.mdx` |
 | Blog posts (MDX) | `artifacts/web/content/blog/*.mdx` |
+| Site name and description (YAML, not MDX) | `artifacts/web/content/settings/site.yml` |
 | Site navigation (YAML, not MDX) | `artifacts/web/content/settings/navigation.yml` |
 | Site footer (YAML, not MDX) | `artifacts/web/content/settings/footer.yml` |
 | Site-wide announcement bar, above the header (YAML, not MDX) | `artifacts/web/content/settings/announcement.yml` |
@@ -146,10 +147,12 @@ attempts, instead of a rule an agent could simply choose to break.
   excludes the entry from a production build and the sitemap; see README.md
   for the `VERCEL_ENV`/`PREVIEW_DRAFTS` preview-vs-production distinction),
   and `noindex` (publishes the page but excludes it from the sitemap).
-- **Site chrome (header nav, footer, announcement bar, overscroll easter
-  egg) is not MDX** — it's YAML at
-  `artifacts/web/content/settings/navigation.yml`, `footer.yml`,
-  `announcement.yml`, and `overscroll.yml`. Every `href` among them is
+- **Site chrome (site name, header nav, footer, announcement bar, overscroll
+  easter egg) is not MDX** — it's YAML at
+  `artifacts/web/content/settings/site.yml`, `navigation.yml`, `footer.yml`,
+  `announcement.yml`, and `overscroll.yml`. `site.yml` holds the site's name
+  and description; the header, the root metadata, and the blog index all read
+  from it, so **no `.tsx` file names the brand**. Never reintroduce one. Every `href` among them is
   checked by the same `isSafeUrl` rule via a Zod `.refine()` in
   `velite.config.ts`, because YAML never passes through the MDX lockdown
   remark plugin above.

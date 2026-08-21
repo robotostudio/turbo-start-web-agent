@@ -18,6 +18,30 @@ pnpm dev
 
 Open http://localhost:3000.
 
+## Make it yours
+
+Everything below is content or config. **Nothing under `src/` names the
+brand** — if you find yourself editing a company name inside a `.tsx` file,
+that is a bug in this template, not a step in the process.
+
+| File | What it sets |
+|---|---|
+| `artifacts/web/content/settings/site.yml` | Site name and description — header, browser tab, blog index |
+| `artifacts/web/content/settings/footer.yml` | Footer wordmark, columns, social and legal links |
+| `artifacts/web/content/settings/navigation.yml` | Header menu |
+| `artifacts/web/content/pages/*.mdx` | Page copy |
+| `artifacts/web/src/app/globals.css` | Design tokens — colours, type, radius |
+| `harness.config.json` | Project name and host for the agent harness; run `pnpm harness` after |
+| `artifacts/web/src/app/icon.svg` | Favicon. An SVG cannot live in YAML, so this one is edited directly |
+
+Then delete the demo content you do not want: the five starter posts under
+`content/blog/`, and `content/pages/style-guide.mdx` and `blocks-gallery.mdx`
+if the client should not see them.
+
+`pnpm test` does not assert on any of this copy, so renaming things will not
+turn the suite red. That was a real failure mode, found by walking this path
+on 2026-08-21 and fixed rather than documented.
+
 ## The Block system
 
 Pages are composed from **Blocks** — pre-built, schema-validated sections such

@@ -1,0 +1,25 @@
+# Site identity: the name and one-line description that appear in the header,
+# the browser tab, and the blog index.
+#
+# This file exists so that rebranding a client site means editing content,
+# never source. Nothing under src/ mentions the site's name — the header
+# (site-header.tsx), the root metadata (layout.tsx), and the blog index
+# (blog/page.tsx) all read from here. If you find yourself editing a brand
+# name inside a .tsx file, that is a bug in the template, not a step in the
+# process.
+#
+# Validated at build time by velite.config.ts, like every other file under
+# content/settings/.
+name: Harbour
+
+# Used as the site-wide meta description and as the fallback description for
+# any page that does not set its own. Keep it to one sentence: search results
+# and link previews truncate.
+description: A starter marketing site you can edit with any AI agent.
+
+# The paragraph under the heading on /blog. Written about this template's own
+# demo posts — replace it when the client's real posts arrive, or the page
+# will describe a set of articles that no longer exists.
+blogIntro: >-
+  Five starter posts, each one demonstrating what a post in this template can
+  do. Replace them with the client's own writing. The shapes stay.
