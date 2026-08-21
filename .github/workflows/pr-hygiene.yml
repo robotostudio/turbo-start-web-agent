@@ -1,0 +1,36 @@
+name: PR hygiene
+
+# Its own workflow rather than a job inside ci.yml, because it needs the
+# `edited` trigger: a PR body can be fixed without touching a commit, and the
+# check has to re-run and go green when it is. Adding `edited` to ci.yml would
+# re-run the entire build — install, velite, tests, typecheck, next build —
+# every time someone corrected a typo in a description.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  pr-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: the check reads every commit on the branch that is
+          # not on the base, which a shallow clone cannot see.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # No dependency install: scripts/pr-hygiene.ts imports nothing outside
+      # Node's standard library, so this job finishes in seconds while the
+      # build job is still installing.
+      - name: Check pull request body and commits
+        run: node --experimental-strip-types scripts/pr-hygiene.ts
+        env:
+          # Passed as an environment variable, never interpolated into a `run:`
+          # string. A pull request body is text an outside contributor
+          # controls, and `run: echo "${{ github.event.pull_request.body }}"`
+          # is a script injection — a body containing a backtick or `$(…)`
+          # would execute on the runner.
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_REF: origin/${{ github.base_ref }}

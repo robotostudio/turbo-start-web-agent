@@ -82,6 +82,46 @@ file, and there is no safety cost to losing the pause: the PR is not the
 gate. Nothing reaches the live branch without a human merging it, and on a
 protected branch GitHub itself refuses anything that skips that path.
 
+## Writing the pull request body
+
+**Never pass a multi-line body as a `--body "…"` argument.** Write it to a
+file and use `--body-file`:
+
+```sh
+cat > /tmp/pr-body.md <<'EOF'
+## The change
+
+What changed, and why.
+EOF
+gh pr create --title "…" --body-file /tmp/pr-body.md
+```
+
+This is a mechanical rule, not advice about being careful, because the
+failure it prevents is invisible until after the fact. A shell does **not**
+expand `\n` inside double quotes — it passes a backslash and the letter `n`.
+GitHub stores them, Markdown has no meaning for them, and the entire
+description renders as one run-on line with the escapes showing. It happened
+here on 2026-08-20 (`AGENTS.md` §6), and the broken command sat visible in an
+approval prompt without anyone spotting it, because nothing about it looks
+wrong unless you know the quoting rule.
+
+`--body-file` has no shell escaping at all, so the defect cannot occur. If
+your platform has a PR tool or UI control instead of a shell, use that and
+this does not apply.
+
+CI enforces it: the `pr-hygiene` workflow fails a pull request whose body
+carries literal `\n` escapes, and re-runs when the body is edited, so fixing
+it turns the check green without a new commit.
+
+Two things the check cannot judge, which are yours:
+
+- **The body must describe the change that was requested.** Not the setup you
+  did along the way, not a side effect you swept up. An agent once titled a
+  pull request after a generated file the dev server had rewritten, never
+  mentioning the change the client asked for. Every automated check passed.
+- **Say what you actually verified.** "Ran the checks" when you ran three of
+  eight is worse than saying nothing.
+
 ## Commit trailers
 
 Land agent-made commits with these two trailers, and no others:

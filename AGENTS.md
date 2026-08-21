@@ -211,7 +211,13 @@ pnpm run build             # renders every page; bad Block props fail here
 ```
 
 This is the exact sequence CI runs (`.github/workflows/ci.yml`), in the same
-order. All of it must pass before a change is considered done — but passing
+order. A second workflow, `.github/workflows/pr-hygiene.yml`, runs on the
+pull request itself rather than the code: it fails a body mangled into
+literal `\n` escapes, an empty description, or a commit carrying a vendor
+attribution trailer. It has no local equivalent because there is no pull
+request to inspect until one exists — run
+`node --experimental-strip-types scripts/pr-hygiene.ts` with `PR_BODY` set
+to try a body by hand. All of it must pass before a change is considered done — but passing
 is not the same as correct: always click through the built site afterward.
 
 **Regenerating the platform surfaces.** `pnpm harness` regenerates
@@ -340,6 +346,18 @@ rather than pinning the SHA. The correct form is
 `--force-with-lease=<branch>:<expected-sha>`, using a SHA you have actually
 looked at. A safety check that fails is information; working around it
 without understanding it throws that information away.
+
+**2026-08-21 — A pull request body arrived as one unreadable line.** An
+agent composed the body as a JavaScript string and passed it through
+`gh pr create --body "…\n…"`. Shells do not expand `\n` inside double
+quotes, so GitHub received literal backslash-n, Markdown ignored it, and the
+whole description rendered as a single run-on line with the escapes visible.
+The broken command was shown in an approval prompt and approved, because
+nothing about it looks wrong unless you know the quoting rule — an approval
+gate only catches what the approver can recognise. Fixed at the source: the
+rule is now "write the body to a file and use `--body-file`", which has no
+escaping to get wrong, and the `pr-hygiene` workflow fails any body carrying
+the defect.
 
 **A green build is not a rendered page.** Several defects here passed
 `typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
