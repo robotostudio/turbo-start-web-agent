@@ -98,8 +98,12 @@ export const checkVendorTrailers = (commitMessages: readonly string[]): Finding[
         `Commit "${message.split("\n")[0]}" carries a vendor attribution trailer ` +
         `(Co-Authored-By, a session URL, or similar).\n` +
         `  Use \`Requested-by:\` and \`Agent:\` instead — see .agents/skills/sync-changes/SKILL.md.\n` +
-        `  Amend the commit to drop it; a trailer is part of the message, so it cannot be ` +
-        `edited after the fact from the GitHub UI.`,
+        `  A trailer is part of the commit message, so this cannot be fixed by editing the pull ` +
+        `request. It needs \`git commit --amend\` and a force-push.\n` +
+        `  If your platform cannot force-push — several push only through their own GitHub ` +
+        `integration, which does not expose it — do not keep retrying. Say so, quote the ` +
+        `corrected message, and ask the operator to push it. Get the trailers right at commit ` +
+        `time and this never arises.`,
     }));
 
 /** Every rule, run over one pull request. */

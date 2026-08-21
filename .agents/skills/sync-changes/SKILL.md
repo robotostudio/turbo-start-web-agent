@@ -166,8 +166,22 @@ actually wants when a surprising line turns up in a content file.
 They credit the model vendor rather than recording who wanted the change,
 they put a permanent AI-authorship marker in the history of what may be a
 public client repo, and the session link is useless to anyone but the
-account that created it. If your platform adds them automatically, amend the
-commit before pushing.
+account that created it.
+
+**Get this right at commit time — you may not get a second chance.** A
+trailer is part of the commit message, so correcting it means
+`git commit --amend` and a force-push, and **not every platform can
+force-push.** Some push only through their own GitHub integration, which
+does not expose it; the shell falls back to plain `git` with no credentials
+and the amend never leaves the container. On 2026-08-21 an agent read the
+failing check, diagnosed it correctly, amended the commit, and still could
+not deliver the fix. The pull request had to be closed and the work redone.
+
+So: check the message *before* you commit. If your platform adds a trailer
+automatically, remove it in the same step rather than planning to fix it
+afterwards. And if you find yourself unable to force-push a correction, do
+not retry — say so plainly, quote the corrected message, and ask the
+operator to push it.
 
 ## Platform caveat — verify the push actually landed
 

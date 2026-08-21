@@ -291,6 +291,19 @@ about it looks wrong unless you already know the quoting rule. Fixed at the
 source — write the body to a file and use `--body-file` — and gated by
 `pr-hygiene`.
 
+**A rule that assumes a capability fails silently on platforms that lack
+it.** Three rules written here turned out to encode one platform's abilities
+as if they were universal: "open a PR with `gh pr create`" (Codex ships no
+`gh`), "verify write access by pushing a throwaway branch" (Codex cloud has
+no git remote at all), and "amend the commit and force-push" (v0 pushes only
+through its GitHub integration, which does not expose force-push). Each read
+as a neutral instruction and each dead-ended an agent that was otherwise
+doing everything right — the failure looks like agent incompetence and is
+actually a rule written from one vantage point. When writing a rule, name
+the capability it needs and give an alternative for platforms without it, or
+write it so the requirement never arises. Getting a commit trailer right at
+commit time needs no force-push; fixing it afterwards does.
+
 **A resumed session brings a stale clone with it.** Continuing a chat from a
 previous day reuses its container: the checkout is as old as the session, and
 the conversation still holds work you believe is unlanded but which merged
