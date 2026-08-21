@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { site } from "#velite";
 import { getEntries } from "@/lib/content/loader";
 import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "News, updates, and writing from the Harbour team.",
+  description: `News, updates, and writing from the ${site.name} team.`,
 };
 
 // Newest first — pubDate is an ISO datetime string (Velite's s.isodate()), so
@@ -24,10 +25,7 @@ export default function BlogIndex() {
           jumps sideways when you navigate to or from it. */}
       <div className="max-w-3xl">
         <h1 className="text-4xl font-semibold tracking-tight text-foreground">Blog</h1>
-        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-          Five starter posts, each one demonstrating what a post in this template can do. Replace
-          them with the client's own writing. The shapes stay.
-        </p>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{site.blogIntro}</p>
         <div className="mt-12">
           {posts.map((post) => (
             <article key={post.slug} className="border-t border-border py-8 first:border-t-0">

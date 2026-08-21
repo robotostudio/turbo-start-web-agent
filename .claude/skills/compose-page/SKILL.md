@@ -20,11 +20,13 @@ tells you what to do instead.
   `blocks-gallery.mdx`). A new page is a new file here.
 - Blog posts: `artifacts/web/content/blog/*.mdx` (e.g.
   `introducing-harbour.mdx`, `composing-pages.mdx`).
-- The header nav, footer, and site-wide announcement bar are **not** a page —
-  they're YAML at `artifacts/web/content/settings/navigation.yml`,
-  `artifacts/web/content/settings/footer.yml`, and
-  `artifacts/web/content/settings/announcement.yml`, not covered by this
-  skill. The announcement bar is chrome rendered above the header on every
+- The site name, header nav, footer, and site-wide announcement bar are
+  **not** a page — they're YAML at
+  `artifacts/web/content/settings/site.yml`, `navigation.yml`, `footer.yml`,
+  and `announcement.yml`, not covered by this skill. `site.yml` is where the
+  site's name and description live; the header, the browser tab title, and
+  the blog index all read from it, so a request like "change the site name"
+  is one edit there and never a change to a `.tsx` file. The announcement bar is chrome rendered above the header on every
   page (`enabled: true`/`false` there turns it on or off); it is a different
   thing from the `Banner` Block below, which is in-page content for a single
   page and can never render above the header.

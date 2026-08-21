@@ -13,10 +13,15 @@ test("getSlugs returns page slugs derived from file paths", () => {
   assert.ok(slugs.includes("about"), `expected "about" in ${JSON.stringify(slugs)}`);
 });
 
+// Asserts the SHAPE of an entry, never its copy. An earlier version checked
+// the about page's exact title, which meant an adopter renaming the demo brand
+// in their own about page got two red tests naming a brand they had just
+// deleted — a trap found by walking the template's own scaffold path
+// (2026-08-21). Content is the adopter's; tests are the template's.
 test("getEntry returns an entry with a compiled body", () => {
   const entry = getEntry("pages", "about");
   assert.equal(entry.slug, "about");
-  assert.equal(entry.data.title, "About Harbour");
+  assert.ok(entry.data.title.length > 0, "expected a non-empty title");
   assert.ok(entry.body.length > 0, "expected a compiled MDX body");
 });
 
@@ -44,7 +49,7 @@ test("getIndexableSlugs excludes noindex entries", () => {
 test("getEntry returns a published entry normally", () => {
   const entry = getEntry("pages", "about");
   assert.equal(entry.slug, "about");
-  assert.equal(entry.data.title, "About Harbour");
+  assert.ok(entry.data.title.length > 0, "expected a non-empty title");
 });
 
 test("getEntry still throws the exact message for an unknown slug", () => {

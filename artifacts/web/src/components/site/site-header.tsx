@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { navigation } from "#velite";
+import { navigation, site } from "#velite";
 
 import { SiteLink } from "@/components/site/site-link";
 import {
@@ -261,7 +261,7 @@ export function SiteHeader() {
               aria-label="Homepage"
               className="text-base font-semibold text-foreground"
             >
-              Harbour
+              {site.name}
             </Link>
           </div>
 

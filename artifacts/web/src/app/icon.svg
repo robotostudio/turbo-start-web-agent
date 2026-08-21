@@ -1,5 +1,7 @@
 <!--
-  Placeholder favicon for the "Harbour" demo brand.
+  Placeholder favicon. Replace it with the client's own mark — unlike the
+  site name, an SVG cannot come from content/settings/site.yml, so this file
+  and the aria-label below are edited directly.
 
   Next.js picks up this file automatically (the app/icon.svg convention)
   and generates the link rel="icon" tag itself, no manual wiring needed.
@@ -12,7 +14,7 @@
   can't resolve the host page's CSS custom properties. The H glyph itself
   uses currentColor so swapping the badge fill is enough to re-theme it.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Harbour">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Site logo">
   <rect width="32" height="32" rx="8" fill="#2b62ef" />
   <g fill="currentColor" style="color: #ffffff">
     <rect x="9" y="8" width="4" height="16" rx="1" />

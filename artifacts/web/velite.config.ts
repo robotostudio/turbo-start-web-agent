@@ -164,6 +164,21 @@ export default defineConfig({
         copyrightNote: s.string().optional(),
       }),
     },
+    // Site identity — the name and description that used to be hardcoded in
+    // layout.tsx, site-header.tsx and blog/page.tsx. Moved here so that
+    // rebranding a client project is a content edit like every other change
+    // this template promises is one. A `.tsx` file that names the brand is a
+    // regression: see content/settings/site.yml's own header.
+    site: {
+      name: "Site",
+      pattern: "settings/site.yml",
+      single: true,
+      schema: s.object({
+        name: s.string().min(1).max(80),
+        description: s.string().min(1).max(300),
+        blogIntro: s.string().min(1).max(400),
+      }),
+    },
     // Lines for the overscroll easter egg (src/components/site/
     // overscroll-easter-egg.tsx) — a hidden, decorative strip revealed only
     // in the native rubber-band gap when the page bounces past the top. One
