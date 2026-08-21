@@ -6,6 +6,8 @@ items:
     href: /
   - label: About
     href: /about
+  - label: Guides
+    href: /blog
   - label: Blog
     href: /blog
   - label: Design system
