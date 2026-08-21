@@ -26,9 +26,31 @@ it entirely.
 
 ## The workflow
 
-1. **Pull before editing.** `git fetch` and `git status` (or your platform's
-   equivalent) to confirm you're starting from the current `main`, not a
-   stale local copy — someone else's change may already be there.
+1. **Pull before editing, and say what base you are on.** `git fetch`, then
+   check that your branch point actually matches the live branch:
+
+   ```sh
+   git fetch origin
+   git log --oneline -1 origin/main
+   git merge-base --is-ancestor origin/main HEAD && echo "up to date" || echo "STALE"
+   ```
+
+   State the result before your first edit — "starting from `abc1234`, which
+   is current `origin/main`". One line, and it makes a whole class of failure
+   visible immediately instead of at merge time.
+
+   **This matters most in a resumed session.** Continuing yesterday's chat
+   reuses yesterday's container: the clone is as old as the session, and the
+   conversation still contains work you believe is unlanded but which was
+   merged hours ago. You then commit on top of a base that no longer exists
+   and re-apply changes already on the live branch. That happened here on
+   2026-08-21 — a branch whose merge base was 17 commits behind produced a
+   pull request that conflicted by re-adding an FAQ entry already merged.
+   `git status` looked perfectly healthy throughout, because it was reading a
+   stale cache.
+
+   If you are stale, rebase onto the live branch or start a fresh branch from
+   it. Do not build on the old base and leave the conflict for a human.
 2. **Never work directly on `main`.** Create or switch to a branch first,
    e.g. `git checkout -b <descriptive-name>` (this repo's own current branch,
    `feat/block-system`, is an example of the naming style — short,

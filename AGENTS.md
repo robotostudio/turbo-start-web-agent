@@ -233,135 +233,68 @@ date or which file under `.claude/skills/` is stale.
 
 ## 6. Incidents and quirks
 
-Record what actually went wrong here, as it happens, with enough detail that
-the next agent (or the next developer) doesn't rediscover it the hard way. A
-rule sticks when it carries the story of why it exists.
+What actually went wrong here, kept short on purpose. Every agent reads this
+file, and Codex truncates project docs past 32 KiB **silently** — so this
+section holds only lessons that apply whatever platform you are on. Anything
+true of one platform lives in that platform's runbook under
+`docs/platforms/`, which is where an operator connecting it will look:
+Replit's import offering to rewrite the app and its pnpm stall
+(`replit.md`), Codex having no git remote (`codex.md`), a public repo hiding
+a broken GitHub connection and org settings needing a paid plan
+(`claude-code.md`), scoping a v0 import to a subdirectory (`v0.md`), and
+SSO-gated preview URLs (`docs/platforms/README.md`).
 
-The entries below came out of connecting this template to real agent
-platforms. They are kept in an adopter's copy on purpose: every one of them
-is about wiring a client project up, which is the first thing an adopter
-does.
-
-**2026-08-19 — A public repo hides a broken GitHub connection until push
-time.** A Claude Code cloud session read the repo, found `AGENTS.md`, made a
-correct two-line content edit, ran all eight checks, and browser-verified the
-result — then failed at `git push` with `403`, because no GitHub App was
-installed and it had been cloning the repo *anonymously* the whole time.
-Public visibility is what allowed that: on a private repo the session would
-have failed at clone, in seconds, with an obvious cause. Verify write access
-before the first real task, not after it — `scripts/preflight.sh` reports git
-reachability, but reachability is a read.
-
-**2026-08-19 — `gh` is not installed in Claude Code cloud sessions.** This
-skill told agents to open PRs with `gh pr create` and offered no alternative,
-so a session that had done everything right reported it could not deliver.
-The platform's own **Create PR** control and a GitHub MCP tool both work.
-`sync-changes` now lists all three routes in order.
-
-**2026-08-19 — Claude Code's org-settings route needs a Team or Enterprise
-plan.** On a personal plan that page is simply unreachable, so guidance
-pointing an operator there is a dead end. Reconnecting from inside the
-product restored write access with no local setup. Prefer routes a client can
-complete in a browser: any fix requiring a local terminal with an
-authenticated `gh` defeats the premise that the client edits without a
-developer.
-
-**2026-08-19 — Agent platforms add vendor commit trailers by default.** A
-commit arrived carrying `Co-Authored-By: <model>` and a session URL. The URL
-is not a leak (it 403s for anyone not signed into the account that made it),
-but it is a permanent AI-authorship marker in a public repo's history and it
-records the model vendor instead of who wanted the change. Use
-`Requested-by:` and `Agent:` instead; strip the defaults before pushing.
-
-**2026-08-19 — Vercel preview deployments are SSO-gated by default.** With
-`ssoProtection` set to `all_except_custom_domains`, every preview URL returns
-a login redirect, so the client cannot see their own change before it merges
-— which removes the review step the whole workflow is built around. Decide
-this deliberately per project: give the client a seat on the Vercel project
-(needs a paid plan; Hobby supports no team members at all), issue a
-protection-bypass link, or make previews public. Do not assume a preview link
-just works.
-
-**2026-08-20 — Codex cloud containers have no git remote.** A push there
-fails with `fatal: 'origin' does not appear to be a git repository`, which
-reads like a broken connection and is not one: Codex delivers the task's
-diff through its own **Create PR** control rather than through a push. Do not
-diagnose it as a credentials problem and do not retry. A `403` is the
-credentials problem; a missing `origin` is the platform's design.
-
-**2026-08-20 — A platform's own instructions outrank this file.** Codex
-reported that its environment tells it to create a PR straight after
-committing, which contradicts rule 7's pause, and correctly followed the
-platform. Nothing here is sovereign: rules in this repo are one input among
-several, below the system and developer instructions of whatever is running.
-Write rules whose *failure* is tolerable — the pause is a nicety, and the
-merge gate, enforced by GitHub rather than by instruction, is what actually
-protects the live branch.
-
-**2026-08-20 — Schemas enforce shape, not meaning.** Asked to drop a stat,
-an agent hit `statsSchema`'s exactly-four rule, correctly refused to widen
-the schema, and substituted `MIT` / "License for client reuse" into a Block
-titled "The numbers behind the pitch." Every gate passed; the section read as
-three numbers and a licence. No realistic schema change catches that. It is
-the clearest argument for why the PR review step is not ceremony.
-
-**2026-08-20 — Replit's import offered to rewrite the app, not run it.**
-Importing this template opened an unprompted task titled "Port imported
-Vercel app to Replit" that began converting the Next.js App Router site to
-Vite. For this project that is fatal rather than cosmetic — the content
-pipeline is the Next.js build — and it burned a day of agent credits in
-about a minute before anyone typed a prompt. Nothing reached GitHub. The
-generated `replit.md` now opens with an explicit instruction never to
-migrate the project, because Agent reads that file as standing instructions
-and it is the only lever the repository has over the behaviour. Use
-Assistant rather than Agent for edits: Assistant edits files, Agent
-restructures projects. Full procedure in `docs/platforms/replit.md` §1.
-
-**2026-08-20 — pnpm self-update hangs every command in a Replit
-workspace.** The container ships one pnpm version, `package.json` pins
-another, and the self-update stalls rather than failing, so every `pnpm`
-command hangs — presenting as a mysteriously slow typecheck when in fact
-tsc never starts. Fixed in the generated `.replit` with
-`npm_config_manage_package_manager_versions = "false"` under `[env]`.
-Nobody running the pinned version on their own machine will ever reproduce
-this.
-
-**2026-08-20 — An agent described its own accident as the work.** Asked to
-change one line of banner copy, v0 also ran the dev server (correctly, to
-verify the change), which rewrote the Next.js-generated `next-env.d.ts`. It
-committed that side effect as its own `refactor:` commit with a plausible
-rationale, then titled the pull request after it — "Improve Next.js type
-safety for development" — never mentioning the banner change anyone had
-asked for. Every check passed, because none of them read English. On an
-agent-authored PR the **file list is the truth and the prose is a claim**;
-read the diff, not the description. Root cause fixed by gitignoring
-`next-env.d.ts`, but any generated file that creeps back into version
-control will reproduce it.
-
-**2026-08-20 — `git fetch && git push --force-with-lease` is not a safe
-force-push.** Fetching refreshes the remote-tracking ref, so the lease
-compares the remote against itself and always passes — `--force` with the
-safety removed. An agent hit a refused lease and proposed exactly this
-rather than pinning the SHA. The correct form is
-`--force-with-lease=<branch>:<expected-sha>`, using a SHA you have actually
-looked at. A safety check that fails is information; working around it
-without understanding it throws that information away.
-
-**2026-08-21 — A pull request body arrived as one unreadable line.** An
-agent composed the body as a JavaScript string and passed it through
-`gh pr create --body "…\n…"`. Shells do not expand `\n` inside double
-quotes, so GitHub received literal backslash-n, Markdown ignored it, and the
-whole description rendered as a single run-on line with the escapes visible.
-The broken command was shown in an approval prompt and approved, because
-nothing about it looks wrong unless you know the quoting rule — an approval
-gate only catches what the approver can recognise. Fixed at the source: the
-rule is now "write the body to a file and use `--body-file`", which has no
-escaping to get wrong, and the `pr-hygiene` workflow fails any body carrying
-the defect.
+Add to whichever file fits. Record what happened, not just the rule — a rule
+sticks when it carries the story.
 
 **A green build is not a rendered page.** Several defects here passed
-`typecheck`, `lint`, and `build` cleanly and were only visible in a browser:
-prose with every margin dropped, a `Stats` Block indented out of line with
-the text beside it, literal backticks around inline code, and a
-table-of-contents entry highlighting the wrong section. Rule 4 says click
-through the built site; these are why.
+`typecheck`, `lint`, and `build` cleanly and were only visible once rendered:
+prose with every margin dropped, a Block indented out of line with the text
+beside it, literal backticks around inline code, a table-of-contents entry
+highlighting the wrong section. Rule 4 asks you to check the rendered page;
+these are why.
+
+**Schemas enforce shape, not meaning.** Asked to drop a stat, an agent hit
+`statsSchema`'s exactly-four rule, correctly refused to widen the schema, and
+substituted `MIT` / "License for client reuse" into a Block titled "The
+numbers behind the pitch." Every gate passed; the section read as three
+numbers and a licence. No schema change catches that. It is the clearest
+argument for why the review step is not ceremony.
+
+**On a pull request, the file list is the truth and the prose is a claim.**
+An agent ran the dev server to verify its work — correctly — which rewrote a
+generated file. It committed that side effect as its own `refactor:` commit
+with a plausible rationale, then titled the whole pull request after it and
+never mentioned the change that had been requested. Every check passed,
+because none of them read English. `pr-hygiene` now catches *malformed*
+descriptions; nothing catches untrue ones. Read the diff.
+
+**A platform's own instructions outrank this file.** Codex reported that its
+environment tells it to open a PR immediately after committing, contradicting
+rule 7's pause, and correctly followed the platform. Nothing here is
+sovereign. Write rules whose failure is tolerable: the pause is a nicety, and
+the merge gate — enforced by GitHub, not by instruction — is what actually
+protects the live branch.
+
+**A safety check that fails is information.** `git push --force-with-lease`
+was refused because a remote-tracking ref was stale. The response was
+`git fetch && git push --force-with-lease`, which *defeats* the protection:
+fetching refreshes the ref, so the lease compares the remote against itself
+and always passes. Pin the SHA you actually looked at
+(`--force-with-lease=<branch>:<sha>`) rather than working around the refusal.
+
+**An approval prompt only catches what the approver can recognise.** A PR
+body was passed as `--body "…\n…"`; shells do not expand `\n` inside double
+quotes, so the description rendered as one run-on line of visible escapes.
+The broken command was displayed for approval and approved, because nothing
+about it looks wrong unless you already know the quoting rule. Fixed at the
+source — write the body to a file and use `--body-file` — and gated by
+`pr-hygiene`.
+
+**A resumed session brings a stale clone with it.** Continuing a chat from a
+previous day reuses its container: the checkout is as old as the session, and
+the conversation still holds work you believe is unlanded but which merged
+hours ago. A branch whose merge base was 17 commits behind produced a pull
+request that conflicted by re-adding an FAQ entry already on the live branch,
+with `git status` looking healthy throughout. Verify your base before editing
+— see `.agents/skills/sync-changes/SKILL.md` step 1.
