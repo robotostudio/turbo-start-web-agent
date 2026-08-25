@@ -6,7 +6,7 @@
 # by velite.config.ts (Zod .refine(isSafeUrl, ...)) because YAML never passes
 # through the MDX content-lockdown remark plugin.
 enabled: true
-message: "New guide: what to get right before handing a site to a client's agent"
+message: "New guide: what to check before you hand the site over"
 link:
   label: Read the handover guide
   href: /blog/handing-over-the-site
