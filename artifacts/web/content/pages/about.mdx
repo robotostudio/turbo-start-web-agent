@@ -1,17 +1,150 @@
 ---
 title: About Harbour
-description: What this starter is and how content works.
+description: What this starter is, who edits it, and the rules that make agent-editable content safe.
 ---
+
+<Hero
+  variant="centered"
+  title="A site your client edits, and your developers still own"
+  lede="Harbour is a starter marketing site. Content is MDX in the repository — no CMS, no database — and a build-time lockdown decides what an editor, human or agent, is allowed to change."
+  primary={{ label: "Browse the Blocks", href: "/blocks-gallery" }}
+  secondary={{ label: "Read the guides", href: "/blog" }}
+/>
+
+## What this is for
+
+Every client site ends up with the same small problem. The build goes well,
+everyone signs off, and three weeks later someone needs a price changed on one
+page. The usual answers are a CMS nobody maintains or a queue of one-line copy
+changes sitting in a developer's inbox.
+
+Harbour is the third answer. The client's team edits through the AI agent they
+already use; your developers keep working in git; and every change lands as a
+branch and a pull request, so a person still reviews what ships.
 
 ## Content is MDX in git
 
 Pages live under `content/`. Each page is data, not code: you assemble Blocks
 and pass them literal values. There is no CMS and no database.
 
+Site chrome is not MDX. The site name, header menu, footer, and the site-wide
+announcement bar are YAML under `content/settings/`, validated by the same
+pipeline. Nothing under `src/` names the brand — if you find yourself editing a
+company name inside a `.tsx` file, that is a bug in this template, not a step in
+the process.
+
+<FeatureGrid
+  title="The pieces, and what each one is responsible for."
+  lede="Six moving parts. Everything else is composition."
+  features={[
+    {
+      title: "Blocks.",
+      body: "Fourteen pre-built, schema-validated sections — Hero, FeatureGrid, Faq, Pricing and the rest. Pages are composed from them rather than laid out by hand.",
+    },
+    {
+      title: "The content lockdown.",
+      body: "A remark plugin that inspects every content file at build time and rejects anything that isn't a literal value. It is an allowlist, not a blocklist.",
+    },
+    {
+      title: "One token file.",
+      body: "Colour, type, spacing and radius are CSS custom properties in globals.css. Rebranding a site means editing token values, never hunting hex codes through components.",
+    },
+    {
+      title: "YAML for site chrome.",
+      body: "Site name, navigation, footer and the announcement bar are structured data, so renaming the site is one edit in content rather than a search across source.",
+    },
+    {
+      title: "Draft and noindex.",
+      body: "A page marked draft stays out of production builds while remaining visible on preview deployments; noindex publishes a page but keeps it out of the sitemap.",
+    },
+    {
+      title: "Git as the audit trail.",
+      body: "Every edit is a diff on a branch, reviewable as a pull request and revertible in one command. There is no separate content history to reconcile.",
+    },
+  ]}
+/>
+
+## Blocks, not page templates
+
+A page is an MDX file where prose and Blocks sit side by side. Headings,
+paragraphs, lists and tables render as ordinary Markdown; a Block is a
+capitalised tag dropped in wherever a section needs more structure than a
+paragraph can carry.
+
+```mdx
+<Hero title="…" primary={{ label: "…", href: "/…" }} />
+```
+
+No imports and no wiring — Blocks are in scope in every content file. The
+registry ships fourteen today, and each one renders live with its exact props on
+the [blocks gallery](/blocks-gallery). Almost every task is composing what is
+already there. Adding a Block is a code change with four touch points that move
+together: a Zod schema, a component, a regenerated catalog, and the registry
+guard test that fails if the two halves drift apart.
+
+## Design tokens, one file
+
+Blocks and primitives never carry a raw hex code or a pixel value. They
+reference the custom properties defined in `globals.css`, so a rebrand is a
+token swap: the Block tree and the copy stay exactly where they are while the
+new palette, type scale and spacing carry across every section at once. Tokens
+may be given new values, never renamed or removed — every Block references them
+by name.
+
 ## The build is the gate
 
 Bad frontmatter or bad Block props fail the build by design. If the build
 passes, the content is valid.
+
+The lockdown is the part that has to be right. MDX is not a document format —
+it compiles to a JavaScript module — so "the agent may only edit content"
+guarantees nothing on its own. The plugin walks both the MDX tree and every
+expression inside it and rejects anything that isn't a pure literal: no imports
+or exports, no function calls or identifiers, no raw HTML elements, no event
+handler props, and no URL that isn't a plain string on a safe scheme. That is
+what turns the rule into a guarantee rather than a request.
+
+A green build is necessary but not sufficient. Schemas enforce shape, not
+meaning — they will happily ship four well-formed stats that say the wrong
+thing. Read the rendered page before calling a change done.
+
+## How a change reaches the site
+
+An edit is proposed, not published. The agent writes to a branch and opens a
+pull request; CI runs the same checks a developer runs locally — content
+validation, catalog and gallery drift, lint, tests, types, and a full build that
+renders every page. A human merges. Nothing reaches the live branch by any other
+route.
+
+<Faq
+  title="What people ask before handing over the repository."
+  faqs={[
+    {
+      question: "Who is actually meant to edit this site day to day?",
+      answer: "The client's team, through whichever AI agent they already use. They describe the change in plain language; the agent edits the MDX or YAML and opens a pull request. Developers keep working in git as normal, on the same files — there is no second system to keep in sync.",
+    },
+    {
+      question: "What stops an agent from changing more than content?",
+      answer: "The content lockdown, which runs at build time rather than relying on the agent's cooperation. It's an allowlist: literal strings, numbers, booleans, arrays, objects and nested Blocks pass, and everything else fails the build with an error naming the exact rule and file position. An agent that tried to smuggle code into a content file would produce a red build, not a live change.",
+    },
+    {
+      question: "Does an edit go live as soon as the agent makes it?",
+      answer: "No. Every change lands as a branch and a pull request, and CI runs the full check sequence against it before anyone can merge. Review is a person's job; the build only guarantees the content is well-formed, not that it says the right thing.",
+    },
+    {
+      question: "How do I put a page up before the client has approved it?",
+      answer: "Set draft: true in the frontmatter. The page is excluded from production builds and the sitemap while staying visible on preview deployments, so it can be shared by link and flipped to live with a one-word edit. If instead you want a page published but unlisted, use noindex: true — that's what this site's own style guide does.",
+    },
+    {
+      question: "Where does the site's name and branding live?",
+      answer: "In content/settings/site.yml and footer.yml. The header, the browser tab title and the blog index all read from there, and no .tsx file names the brand. Colours, type and spacing live as tokens in globals.css. Between those files a full rebrand touches no component source at all.",
+    },
+    {
+      question: "What if a client needs a section no Block covers?",
+      answer: "You build the Block once — a Zod schema, a matching component, a regenerated catalog, and the registry guard test that keeps those in step — and it joins the library for every project afterwards. It's an addition to the template rather than a fork of it. Composing existing Blocks handles almost everything before it comes to that.",
+    },
+  ]}
+/>
 
 <CTA
   title="Ready to go deeper?"
