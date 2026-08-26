@@ -272,6 +272,13 @@ never mentioned the change that had been requested. Every check passed,
 because none of them read English. `pr-hygiene` now catches *malformed*
 descriptions; nothing catches untrue ones. Read the diff.
 
+The prose is not always the agent's, either: v0's Create PR control writes
+its own title and body and discards what the agent wrote, describing a
+four-word copy change as "Update UI components and layout design" (#28) and
+an overscroll line as "Sync UI enhancements and component updates" (#30) —
+the same boilerplate both times. `pr-describe` rewrites such a body from the
+commits, which is where the real description already was.
+
 **A platform's own instructions outrank this file.** Codex reported that its
 environment tells it to open a PR immediately after committing, contradicting
 rule 7's pause, and correctly followed the platform. Nothing here is
