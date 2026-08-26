@@ -31,11 +31,12 @@ jobs:
           # The description is built from the commits on this branch that are
           # not on the base, which a shallow clone cannot see.
           fetch-depth: 0
-          # The head branch itself, not the default merge ref. A `pull_request`
-          # checkout puts HEAD on GitHub's synthetic merge commit, which is not
-          # a commit anyone wrote; building a title from it produced
-          # "Merge dab007b... into 1486574..." on the first live run.
-          ref: ${{ github.event.pull_request.head.sha }}
+          # Deliberately the default merge ref, NOT the head branch. Checking
+          # out `head.sha` reads this workflow's own script from the branch
+          # under review, so a branch cut before a fix to that script silently
+          # runs the old copy -- which is what happened on PR #34, where the
+          # fix merged minutes earlier had no effect. The commits are read from
+          # HEAD_SHA below instead, which needs no checkout to reach.
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -47,6 +48,9 @@ jobs:
           # shell command is a script injection.
           PR_BODY: ${{ github.event.pull_request.body }}
           BASE_REF: origin/${{ github.base_ref }}
+          # The branch tip. HEAD here is GitHub's synthetic merge commit
+          # ("Merge <head> into <base>"), which is not a commit anyone wrote.
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TITLE_FILE: ${{ runner.temp }}/pr-title.txt
           BODY_FILE: ${{ runner.temp }}/pr-body.md
       - name: Apply it
