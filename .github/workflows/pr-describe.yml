@@ -6,9 +6,12 @@ name: PR description
 # the description they cannot fix is not one they wrote.
 on:
   pull_request:
-    # `opened` only. A later `edited` run would fight anyone correcting the
-    # description by hand, including the rewrite this workflow just made.
-    types: [opened]
+    # Not `edited`: that would fight anyone correcting a description by hand,
+    # including the rewrite this workflow just made. `reopened` is here so a
+    # pull request opened before a fix to this workflow can be repaired by
+    # closing and reopening it — safe, because a body this workflow has
+    # already rewritten no longer carries the signature it matches on.
+    types: [opened, reopened]
 
 permissions:
   contents: read
