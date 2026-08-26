@@ -111,15 +111,17 @@ const bullet = (text: string): string => `- ${text}`;
 /**
  * Build the title and body from what the branch actually contains.
  *
- * The title is the *last* commit's subject, and the body leads with its
- * prose. One commit per pull request is the norm here, so most of the time
- * there is no choice to make. Where there is, the last commit is the branch's
- * own final statement of what it is: earlier commits are either steps toward
- * it or -- on platforms that auto-commit every message to the chat's working
- * branch -- unrelated work that rode along. PR #34 came out titled "Add
- * inline link demo to Harbour article", which was a demo edit made mid-chat
- * and the oldest commit on a branch whose actual subject was a new Block.
- * Every commit is still listed in the body either way.
+ * The title is the first commit's subject, and the body leads with its prose.
+ * One commit per pull request is the norm here, so most of the time there is
+ * no choice to make. Where there is, the first commit is the one the branch
+ * was opened to make; later ones are follow-ups, fixes, or -- on platforms
+ * that auto-commit every message to the chat's working branch -- unrelated
+ * work tried mid-chat, which lands on top.
+ *
+ * This was briefly changed to the last commit on the theory that PR #34's
+ * wrong title came from a demo edit sorting oldest. It did not: that edit was
+ * the newest commit on the branch, and the wrong title came from a stale copy
+ * of this script. Every commit is listed in the body either way.
  */
 export const describeFromCommits = (
   commitMessages: readonly string[],
@@ -128,9 +130,9 @@ export const describeFromCommits = (
   const commits = commitMessages
     .map((m) => m.trim())
     .filter((m) => m.length > 0 && !SYNTHETIC_MERGE.test(subjectOf(m)));
-  // Last, not first -- see the note above. Commits arrive oldest-first and the
-  // list rendered below keeps that order, because a history reads forwards.
-  const headline = commits.at(-1) ?? "";
+  // Commits arrive oldest-first, and the list rendered below keeps that order
+  // because a history reads forwards.
+  const headline = commits[0] ?? "";
   const title = subjectOf(headline);
 
   // Nothing usable to build from: leave the pull request exactly as the
@@ -208,9 +210,9 @@ if (isMain()) {
     process.exit(0);
   }
 
-  // --reverse so the list reads oldest-first, the order a history is read in;
-  // git log is newest-first by default. The title comes from the last entry,
-  // not the first -- see describeFromCommits. --no-merges
+  // --reverse so the list reads oldest-first, the order a history is read in
+  // and the order the title is taken from; git log is newest-first by default.
+  // --no-merges
   // because on a `pull_request` event the checked-out HEAD can be GitHub's
   // synthetic merge commit ("Merge <head> into <base>"), which is not a
   // commit anyone wrote and makes a nonsense title.

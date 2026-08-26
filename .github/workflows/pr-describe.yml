@@ -4,8 +4,22 @@ name: PR description
 # itself. See scripts/pr-describe.ts for why this repairs rather than fails:
 # the person who pressed the button is a client editing their own site, and
 # the description they cannot fix is not one they wrote.
+# `pull_request_target`, not `pull_request`. On a `pull_request` event the
+# workflow FILE is read from GitHub's computed merge ref, and that ref can lag
+# the base branch -- so a fix to this workflow or its script has no effect on
+# an open pull request until the merge ref catches up, with nothing failing to
+# say so. PR #34 ran a version of this workflow 33 seconds after its
+# replacement had merged. `pull_request_target` always reads both the workflow
+# and the code from the base branch's tip, which is the only way to guarantee
+# an open pull request gets the current version.
+#
+# The usual `pull_request_target` hazard is checking out the head branch and
+# running its code with a write token. This never does: the checkout below is
+# the base branch, and the only thing read from the head is git metadata --
+# commit messages and file names -- which is treated as text and passed to
+# `gh` through files, never through a shell.
 on:
-  pull_request:
+  pull_request_target:
     # Not `edited`: that would fight anyone correcting a description by hand,
     # including the rewrite this workflow just made. `reopened` is here so a
     # pull request opened before a fix to this workflow can be repaired by
