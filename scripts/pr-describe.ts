@@ -177,6 +177,10 @@ if (isMain()) {
   // command: a pull request body is text an outside contributor controls.
   const body = process.env.PR_BODY ?? "";
   const baseRef = process.env.BASE_REF ?? "origin/main";
+  // The branch tip, not HEAD: a `pull_request` checkout leaves HEAD on
+  // GitHub's synthetic merge commit. Read from the environment rather than
+  // checked out, so this script always runs from the base branch's copy.
+  const headRef = process.env.HEAD_SHA || "HEAD";
 
   if (!isMachineWritten(body)) {
     process.stdout.write("pr-describe: body is not machine-written — leaving it alone\n");
@@ -189,14 +193,14 @@ if (isMain()) {
   // synthetic merge commit ("Merge <head> into <base>"), which is not a
   // commit anyone wrote and makes a nonsense title.
   const commits = parseCommitMessages(
-    git(["log", "--format=%B%x00", "--reverse", "--no-merges", `${baseRef}..HEAD`]),
+    git(["log", "--format=%B%x00", "--reverse", "--no-merges", `${baseRef}..${headRef}`]),
   );
   if (commits.length === 0) {
     process.stdout.write("pr-describe: no commits since base — nothing to describe from\n");
     process.exit(0);
   }
 
-  const files = parseChangedFiles(git(["diff", "--name-only", "-z", `${baseRef}...HEAD`]));
+  const files = parseChangedFiles(git(["diff", "--name-only", "-z", `${baseRef}...${headRef}`]));
   const description = describeFromCommits(commits, files);
   if (description === null) {
     process.stdout.write("pr-describe: no usable commit subject — leaving the body as it is\n");
