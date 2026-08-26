@@ -307,6 +307,15 @@ the capability it needs and give an alternative for platforms without it, or
 write it so the requirement never arises. Getting a commit trailer right at
 commit time needs no force-push; fixing it afterwards does.
 
+Prose alone does not undo this: **an agent runs the command it can see.**
+After that fix, `sync-changes` still listed the platform's own PR control as
+a route in prose while the one copy-pasteable command in the file was `gh pr
+create`. On 2026-08-26 an agent on v0 pushed its branch, ran that command,
+and reported the repository connection as broken — with v0's **Create PR**
+button visible in its own toolbar. Where a rule has a per-platform answer,
+put the precedence before any command, and mark every shell example with the
+route it belongs to.
+
 **A resumed session brings a stale clone with it.** Continuing a chat from a
 previous day reuses its container: the checkout is as old as the session, and
 the conversation still holds work you believe is unlanded but which merged

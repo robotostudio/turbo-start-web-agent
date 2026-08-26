@@ -56,37 +56,55 @@ it entirely.
    `feat/block-system`, is an example of the naming style — short,
    hyphenated, prefixed by kind of change).
 3. **Commit** your change with a message describing *why*, not just what
-   changed.
-4. **Commit it.** Being asked to make a change is authorization to commit
-   it — a commit on a branch is not the live site, and nothing is published
-   by it existing. Do not stop and ask permission to commit work you were
-   just asked to do.
-5. **Deliver it by whatever channel this platform actually has** (see
+   changed. Being asked to make a change is authorization to commit it — a
+   commit on a branch is not the live site, and nothing is published by it
+   existing. Do not stop and ask permission to commit work you were just
+   asked to do.
+4. **Deliver it by whatever channel this platform actually has** (see
    below), then let CI run and let a human merge. This is the review step
    that makes "an agent may edit this site" safe to say at all. Never merge
    your own pull request.
 
-### Delivery: find your channel before concluding you have none
+### Delivery: name your channel before you run anything
 
-`git push` and `gh pr create` are the obvious routes and neither is
-universal. Work down this list and say which one you used:
+Getting the branch up and opening the pull request are two separate steps,
+and the route for each differs by platform. Work out which route you have
+*before* typing a command, and say which one you used.
+
+**Getting the branch up:**
 
 1. **`git push`**, where the shell has a working `origin`.
+2. **The platform's own git integration**, where the shell has no `origin`.
+   Codex cloud containers have none by design — the task's diff is what gets
+   delivered, not a pushed branch.
+
+**Opening the pull request:**
+
+1. **The platform's own Create PR control, wherever one exists — this
+   outranks the shell.** v0, Claude Code cloud, and Codex all show one.
+   Where there is a control, use it and do not reach for `gh` at all.
 2. **A GitHub MCP tool**, if one is connected to the session.
-3. **The platform's own control.** Claude Code shows a **Create PR** action
-   once a branch is pushed; Codex shows one on a finished task, built from
-   the task's diff rather than from a pushed branch.
+3. **`gh pr create`**, only once you have confirmed that `gh` exists *and*
+   is authenticated here.
 4. **Ask the operator**, and tell them the branch name and what is on it.
+
+Looking before you run costs one turn. On 2026-08-26 an agent on v0 pushed
+its branch successfully, then ran `gh pr create`, and reported that it
+"couldn't create the PR because GitHub CLI authentication isn't configured
+in this environment" — while v0's own **Create PR** button sat in the
+toolbar directly above that message. The branch was already on the remote.
+Nothing was broken except the choice of route.
 
 Two failures look alarming and are not:
 
-- **No `gh` binary.** Several platforms ship none. It is not a permissions
-  problem and it does not block delivery — use route 2 or 3.
+- **No `gh` binary, or a `gh` that is not authenticated.** Several platforms
+  ship none, and some ship one with no credentials. Neither is a permissions
+  problem and neither blocks delivery — use the platform's own control.
 - **`fatal: 'origin' does not appear to be a git repository`.** Codex cloud
   containers have **no git remote at all**, by design: the task's diff is
   what gets delivered, through the platform, not through a push. Seeing this
   does not mean the repository connection is broken, and it is not worth
-  retrying — go to route 3.
+  retrying — use the platform's own control.
 
 A `403` on push is different from both: that one *is* a credentials problem,
 and it means the session has read access only. Say so plainly rather than
@@ -105,6 +123,11 @@ gate. Nothing reaches the live branch without a human merging it, and on a
 protected branch GitHub itself refuses anything that skips that path.
 
 ## Writing the pull request body
+
+**This section is about `gh` in a shell — route 3 above.** If you are opening
+the pull request through a platform control or an MCP tool, type the body
+into that and skip to the trailers section: there is no shell in the path,
+so no escaping rule to get wrong.
 
 **Never pass a multi-line body as a `--body "…"` argument.** Write it to a
 file and use `--body-file`:
