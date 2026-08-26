@@ -116,7 +116,7 @@ test("several commits are all listed", () => {
       ["a.yml", "b.yml"],
     ),
   );
-  assert.equal(title, "First change");
+  assert.equal(title, "Second change", "the last commit titles the pull request");
   assert.match(body, /## Commits/);
   assert.match(body, /- First change/);
   assert.match(body, /- Second change/);
@@ -130,13 +130,29 @@ test("several commits are all listed", () => {
 test("a synthetic merge commit never becomes the title", () => {
   const merge = "Merge dab007b201e261d2d5afb09a436ed68b581bd7f2 into 14865740f746d2a29802ea";
   const real = "Make hidden overscroll copy more playful\n\nRequested-by: client\nAgent: v0";
-  const { title } = notNull(describeFromCommits([real, merge], ["a.yml"]));
+  // Deliberately last in the list: the title comes from the last commit, so a
+  // merge sitting at the tip is exactly where this guard has to hold.
+  const { title, body } = notNull(describeFromCommits([real, merge], ["a.yml"]));
   assert.equal(title, "Make hidden overscroll copy more playful");
+  assert.ok(!body.includes("Merge dab007b"), "and it is not listed as a commit either");
 });
 
-test("the first commit, not the last, gives the title", () => {
+test("the last commit, not the first, gives the title", () => {
   const { title } = notNull(describeFromCommits(["First change", "Second change"], []));
-  assert.equal(title, "First change", "commits arrive oldest-first via git log --reverse");
+  assert.equal(title, "Second change", "commits arrive oldest-first via git log --reverse");
+});
+
+// PR #34 was titled "Add inline link demo to Harbour article" -- a demo edit
+// made mid-chat, and the oldest commit on a branch whose subject was a new
+// Block. Platforms that auto-commit every message put unrelated work at the
+// bottom of the branch, so the oldest commit is the worst title candidate
+// there is.
+test("work that rode along on an earlier commit does not title the pull request", () => {
+  const rodeAlong = "Add inline link demo to Harbour article\n\nRequested-by: client";
+  const theWork = "Add PostGrid section to the homepage\n\nRequested-by: client\nAgent: v0";
+  const { title, body } = notNull(describeFromCommits([rodeAlong, theWork], ["home.mdx"]));
+  assert.equal(title, "Add PostGrid section to the homepage");
+  assert.match(body, /- Add inline link demo to Harbour article/, "still listed under Commits");
 });
 
 test("parseChangedFiles splits NUL-separated paths", () => {

@@ -30,13 +30,23 @@ jobs:
         with:
           # The description is built from the commits on this branch that are
           # not on the base, which a shallow clone cannot see.
+          # All history for every branch, so the pull request's head commit is
+          # reachable without ever checking that branch out.
           fetch-depth: 0
-          # Deliberately the default merge ref, NOT the head branch. Checking
-          # out `head.sha` reads this workflow's own script from the branch
-          # under review, so a branch cut before a fix to that script silently
-          # runs the old copy -- which is what happened on PR #34, where the
-          # fix merged minutes earlier had no effect. The commits are read from
-          # HEAD_SHA below instead, which needs no checkout to reach.
+          # The base branch, explicitly.
+          #
+          # Not the head branch: that reads this workflow's own script from the
+          # code under review, so a branch cut before a fix to the script runs
+          # the stale copy.
+          #
+          # And not the default merge ref either. That ref is computed by
+          # GitHub and can still be serving a merge from before the base moved,
+          # which is how PR #34 ran a version of this script that had been
+          # fixed and merged minutes earlier -- reintroducing output the fix
+          # had removed, with nothing failing to signal it.
+          #
+          # The base branch is the only ref here that is always current.
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24

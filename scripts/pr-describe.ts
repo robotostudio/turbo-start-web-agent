@@ -59,6 +59,18 @@ const MACHINE_SIGNATURE = new RegExp(
 /** True when the body looks machine-generated rather than written. */
 export const isMachineWritten = (body: string): boolean => MACHINE_SIGNATURE.test(body);
 
+/**
+ * GitHub's synthetic merge commit, exactly as it names one: `Merge <head sha>
+ * into <base sha>`. It appears when a `pull_request` checkout lands on the
+ * merge ref rather than the branch, and it is not a commit anyone wrote.
+ *
+ * `--no-merges` on the git call already removes it. This is the second gate,
+ * because the first one lives in a shell argument no test can reach, and the
+ * consequence of it failing is a pull request titled after a pair of SHAs --
+ * which is what shipped on the first live run.
+ */
+const SYNTHETIC_MERGE = /^Merge [0-9a-f]{7,40} into [0-9a-f]{7,40}$/;
+
 /** A trailer line: `Key: value` at the end of a commit message. */
 const TRAILER_LINE = /^[A-Za-z][A-Za-z-]*:\s*\S/;
 
@@ -99,18 +111,27 @@ const bullet = (text: string): string => `- ${text}`;
 /**
  * Build the title and body from what the branch actually contains.
  *
- * The title is the first commit's subject: an agent following this repo's
- * skill writes one commit per requested change, so that subject is the
- * change. The body leads with the first commit's prose because that is where
- * the "why" lives.
+ * The title is the *last* commit's subject, and the body leads with its
+ * prose. One commit per pull request is the norm here, so most of the time
+ * there is no choice to make. Where there is, the last commit is the branch's
+ * own final statement of what it is: earlier commits are either steps toward
+ * it or -- on platforms that auto-commit every message to the chat's working
+ * branch -- unrelated work that rode along. PR #34 came out titled "Add
+ * inline link demo to Harbour article", which was a demo edit made mid-chat
+ * and the oldest commit on a branch whose actual subject was a new Block.
+ * Every commit is still listed in the body either way.
  */
 export const describeFromCommits = (
   commitMessages: readonly string[],
   changedFiles: readonly string[],
 ): Description | null => {
-  const commits = commitMessages.map((m) => m.trim()).filter((m) => m.length > 0);
-  const first = commits[0] ?? "";
-  const title = subjectOf(first);
+  const commits = commitMessages
+    .map((m) => m.trim())
+    .filter((m) => m.length > 0 && !SYNTHETIC_MERGE.test(subjectOf(m)));
+  // Last, not first -- see the note above. Commits arrive oldest-first and the
+  // list rendered below keeps that order, because a history reads forwards.
+  const headline = commits.at(-1) ?? "";
+  const title = subjectOf(headline);
 
   // Nothing usable to build from: leave the pull request exactly as the
   // platform left it. A generated description is at least a description; a
@@ -121,8 +142,8 @@ export const describeFromCommits = (
 
   const sections: string[] = ["## The change"];
 
-  const prose = proseOf(first);
-  sections.push(prose.length > 0 ? prose : subjectOf(first));
+  const prose = proseOf(headline);
+  sections.push(prose.length > 0 ? prose : subjectOf(headline));
 
   if (commits.length > 1) {
     sections.push("## Commits", commits.map((m) => bullet(subjectOf(m))).join("\n"));
@@ -132,7 +153,7 @@ export const describeFromCommits = (
     sections.push("## Files changed", changedFiles.map((f) => bullet(`\`${f}\``)).join("\n"));
   }
 
-  const trailers = trailersOf(first);
+  const trailers = trailersOf(headline);
   if (trailers.length > 0) {
     sections.push("## Provenance", trailers.map(bullet).join("\n"));
   }
@@ -187,8 +208,9 @@ if (isMain()) {
     process.exit(0);
   }
 
-  // --reverse so commits[0] is the branch's FIRST commit, which is what the
-  // title is built from; git log is newest-first by default. --no-merges
+  // --reverse so the list reads oldest-first, the order a history is read in;
+  // git log is newest-first by default. The title comes from the last entry,
+  // not the first -- see describeFromCommits. --no-merges
   // because on a `pull_request` event the checked-out HEAD can be GitHub's
   // synthetic merge commit ("Merge <head> into <base>"), which is not a
   // commit anyone wrote and makes a nonsense title.
