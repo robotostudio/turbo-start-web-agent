@@ -39,8 +39,6 @@ const VENDOR_SESSION_URL =
   String.raw`|https?:\/\/claude\.ai\/code\/session[^\s)\]]*` +
   String.raw`|https?:\/\/chatgpt\.com\/codex\/[^\s)\]]+`;
 
-const VENDOR_SESSION_LINK = new RegExp(VENDOR_SESSION_URL, "gi");
-
 /**
  * The signature of a machine-written body: a session link alone on a line, at
  * column zero, as the platform emits it — `[v0 Session](https://v0.app/…)`.
@@ -60,11 +58,6 @@ const MACHINE_SIGNATURE = new RegExp(
 
 /** True when the body looks machine-generated rather than written. */
 export const isMachineWritten = (body: string): boolean => MACHINE_SIGNATURE.test(body);
-
-/** Every vendor session link in a body, in order, deduplicated. */
-export const sessionLinks = (body: string): string[] => [
-  ...new Set(body.match(VENDOR_SESSION_LINK) ?? []),
-];
 
 /** A trailer line: `Key: value` at the end of a commit message. */
 const TRAILER_LINE = /^[A-Za-z][A-Za-z-]*:\s*\S/;
@@ -114,11 +107,17 @@ const bullet = (text: string): string => `- ${text}`;
 export const describeFromCommits = (
   commitMessages: readonly string[],
   changedFiles: readonly string[],
-  originalBody: string,
-): Description => {
+): Description | null => {
   const commits = commitMessages.map((m) => m.trim()).filter((m) => m.length > 0);
   const first = commits[0] ?? "";
-  const title = subjectOf(first) || "Changes from an agent session";
+  const title = subjectOf(first);
+
+  // Nothing usable to build from: leave the pull request exactly as the
+  // platform left it. A generated description is at least a description; a
+  // title invented here out of an empty branch would be worse than the one it
+  // replaced, and the first live run proved this code can be wrong in ways
+  // unit tests do not reach.
+  if (title.length === 0) return null;
 
   const sections: string[] = ["## The change"];
 
@@ -138,14 +137,12 @@ export const describeFromCommits = (
     sections.push("## Provenance", trailers.map(bullet).join("\n"));
   }
 
-  const links = sessionLinks(originalBody);
   sections.push(
     "---",
     [
-      "This description was written from the commits on this branch. The platform that",
-      "opened this pull request generated its own title and body, which described work",
-      "that is not in the diff — see `scripts/pr-describe.ts`. The diff is unchanged.",
-      ...(links.length > 0 ? ["", ...links.map((l) => bullet(l))] : []),
+      "Written from the commits on this branch by `pr-describe`, because the platform",
+      "that opened this pull request generated a description of work that is not in the",
+      "diff. The diff itself is untouched.",
     ].join("\n"),
   );
 
@@ -186,14 +183,26 @@ if (isMain()) {
     process.exit(0);
   }
 
-  const commits = parseCommitMessages(git(["log", "--format=%B%x00", `${baseRef}..HEAD`]));
+  // --reverse so commits[0] is the branch's FIRST commit, which is what the
+  // title is built from; git log is newest-first by default. --no-merges
+  // because on a `pull_request` event the checked-out HEAD can be GitHub's
+  // synthetic merge commit ("Merge <head> into <base>"), which is not a
+  // commit anyone wrote and makes a nonsense title.
+  const commits = parseCommitMessages(
+    git(["log", "--format=%B%x00", "--reverse", "--no-merges", `${baseRef}..HEAD`]),
+  );
   if (commits.length === 0) {
     process.stdout.write("pr-describe: no commits since base — nothing to describe from\n");
     process.exit(0);
   }
 
   const files = parseChangedFiles(git(["diff", "--name-only", "-z", `${baseRef}...HEAD`]));
-  const { title, body: rewritten } = describeFromCommits(commits, files, body);
+  const description = describeFromCommits(commits, files);
+  if (description === null) {
+    process.stdout.write("pr-describe: no usable commit subject — leaving the body as it is\n");
+    process.exit(0);
+  }
+  const { title, body: rewritten } = description;
 
   // Written to files rather than echoed: the workflow passes them to
   // `gh pr edit --body-file`, and a body on a command line is the escaped-

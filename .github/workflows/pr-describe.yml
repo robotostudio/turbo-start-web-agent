@@ -6,9 +6,12 @@ name: PR description
 # the description they cannot fix is not one they wrote.
 on:
   pull_request:
-    # `opened` only. A later `edited` run would fight anyone correcting the
-    # description by hand, including the rewrite this workflow just made.
-    types: [opened]
+    # Not `edited`: that would fight anyone correcting a description by hand,
+    # including the rewrite this workflow just made. `reopened` is here so a
+    # pull request opened before a fix to this workflow can be repaired by
+    # closing and reopening it — safe, because a body this workflow has
+    # already rewritten no longer carries the signature it matches on.
+    types: [opened, reopened]
 
 permissions:
   contents: read
@@ -28,6 +31,11 @@ jobs:
           # The description is built from the commits on this branch that are
           # not on the base, which a shallow clone cannot see.
           fetch-depth: 0
+          # The head branch itself, not the default merge ref. A `pull_request`
+          # checkout puts HEAD on GitHub's synthetic merge commit, which is not
+          # a commit anyone wrote; building a title from it produced
+          # "Merge dab007b... into 1486574..." on the first live run.
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24

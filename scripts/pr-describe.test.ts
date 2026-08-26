@@ -5,7 +5,6 @@ import {
   isMachineWritten,
   parseChangedFiles,
   proseOf,
-  sessionLinks,
   subjectOf,
   trailersOf,
 } from "./pr-describe.ts";
@@ -29,6 +28,12 @@ const V0_COMMIT = [
   "Requested-by: client",
   "Agent: v0",
 ].join("\n");
+
+/** describeFromCommits returns null when it has nothing usable; these cases do not. */
+const notNull = (d: ReturnType<typeof describeFromCommits>) => {
+  assert.ok(d !== null, "expected a description");
+  return d;
+};
 
 test("a v0-generated body is recognised as machine-written", () => {
   assert.equal(isMachineWritten(V0_BODY), true);
@@ -61,9 +66,9 @@ test("a body discussing the defect is not treated as machine-written", () => {
   );
 });
 
-test("session links are extracted and deduplicated", () => {
-  assert.deepEqual(sessionLinks(V0_BODY), ["https://v0.app/tope-5066/chat/jHxWwN3zchb"]);
-  assert.deepEqual(sessionLinks("no links here"), []);
+test("an empty branch leaves the description alone rather than inventing one", () => {
+  assert.equal(describeFromCommits([], ["a.yml"]), null);
+  assert.equal(describeFromCommits(["", "   "], ["a.yml"]), null);
 });
 
 test("subject, prose and trailers split a commit message", () => {
@@ -81,45 +86,57 @@ test("subject, prose and trailers split a commit message", () => {
 });
 
 test("a commit with no prose still yields a usable body", () => {
-  const { title, body } = describeFromCommits([V0_COMMIT], ["a.yml"], V0_BODY);
+  const { title, body } = notNull(describeFromCommits([V0_COMMIT], ["a.yml"]));
   assert.equal(title, "Make hidden overscroll copy more playful");
   assert.match(body, /## The change\n\nMake hidden overscroll copy more playful/);
 });
 
 test("the rewritten description names the real change, the file, and the provenance", () => {
-  const { title, body } = describeFromCommits(
-    [V0_COMMIT],
-    ["artifacts/web/content/settings/overscroll.yml"],
-    V0_BODY,
+  const { title, body } = notNull(
+    describeFromCommits([V0_COMMIT], ["artifacts/web/content/settings/overscroll.yml"]),
   );
   assert.equal(title, "Make hidden overscroll copy more playful");
   assert.match(body, /artifacts\/web\/content\/settings\/overscroll\.yml/);
   assert.match(body, /Requested-by: client/);
   assert.match(body, /Agent: v0/);
-  assert.match(
-    body,
-    /https:\/\/v0\.app\/tope-5066\/chat\/jHxWwN3zchb/,
-    "session link is preserved",
-  );
+  assert.ok(!body.includes("v0.app"), "no session link is carried into the description");
   assert.ok(!body.includes("Enhanced component responsiveness"), "invented bullets are gone");
 });
 
 test("the rewritten body has real line breaks, so pr-hygiene stays green", () => {
-  const { body } = describeFromCommits([V0_COMMIT], ["a.yml"], V0_BODY);
+  const { body } = notNull(describeFromCommits([V0_COMMIT], ["a.yml"]));
   assert.ok(!body.includes("\\n"), "no literal escapes");
   assert.ok(body.split("\n").length > 5, "real line breaks");
 });
 
 test("several commits are all listed", () => {
-  const { title, body } = describeFromCommits(
-    ["First change\n\nWhy.\n\nRequested-by: client", "Second change"],
-    ["a.yml", "b.yml"],
-    V0_BODY,
+  const { title, body } = notNull(
+    describeFromCommits(
+      ["First change\n\nWhy.\n\nRequested-by: client", "Second change"],
+      ["a.yml", "b.yml"],
+    ),
   );
   assert.equal(title, "First change");
   assert.match(body, /## Commits/);
   assert.match(body, /- First change/);
   assert.match(body, /- Second change/);
+});
+
+// The first live run titled a pull request "Merge dab007b... into 1486574...".
+// On a `pull_request` event the checked-out HEAD is GitHub's synthetic merge
+// commit, and `git log` is newest-first, so the title came from a commit
+// nobody wrote. Fixed at the git call with --no-merges and --reverse, and
+// guarded here so the description survives one arriving anyway.
+test("a synthetic merge commit never becomes the title", () => {
+  const merge = "Merge dab007b201e261d2d5afb09a436ed68b581bd7f2 into 14865740f746d2a29802ea";
+  const real = "Make hidden overscroll copy more playful\n\nRequested-by: client\nAgent: v0";
+  const { title } = notNull(describeFromCommits([real, merge], ["a.yml"]));
+  assert.equal(title, "Make hidden overscroll copy more playful");
+});
+
+test("the first commit, not the last, gives the title", () => {
+  const { title } = notNull(describeFromCommits(["First change", "Second change"], []));
+  assert.equal(title, "First change", "commits arrive oldest-first via git log --reverse");
 });
 
 test("parseChangedFiles splits NUL-separated paths", () => {
