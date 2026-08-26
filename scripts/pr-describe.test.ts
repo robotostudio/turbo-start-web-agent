@@ -122,6 +122,23 @@ test("several commits are all listed", () => {
   assert.match(body, /- Second change/);
 });
 
+// The first live run titled a pull request "Merge dab007b... into 1486574...".
+// On a `pull_request` event the checked-out HEAD is GitHub's synthetic merge
+// commit, and `git log` is newest-first, so the title came from a commit
+// nobody wrote. Fixed at the git call with --no-merges and --reverse, and
+// guarded here so the description survives one arriving anyway.
+test("a synthetic merge commit never becomes the title", () => {
+  const merge = "Merge dab007b201e261d2d5afb09a436ed68b581bd7f2 into 14865740f746d2a29802ea";
+  const real = "Make hidden overscroll copy more playful\n\nRequested-by: client\nAgent: v0";
+  const { title } = describeFromCommits([real, merge], ["a.yml"], V0_BODY);
+  assert.equal(title, "Make hidden overscroll copy more playful");
+});
+
+test("the first commit, not the last, gives the title", () => {
+  const { title } = describeFromCommits(["First change", "Second change"], [], V0_BODY);
+  assert.equal(title, "First change", "commits arrive oldest-first via git log --reverse");
+});
+
 test("parseChangedFiles splits NUL-separated paths", () => {
   assert.deepEqual(parseChangedFiles("a.ts\0b.ts\0"), ["a.ts", "b.ts"]);
   assert.deepEqual(parseChangedFiles(""), []);

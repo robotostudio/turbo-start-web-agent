@@ -28,6 +28,11 @@ jobs:
           # The description is built from the commits on this branch that are
           # not on the base, which a shallow clone cannot see.
           fetch-depth: 0
+          # The head branch itself, not the default merge ref. A `pull_request`
+          # checkout puts HEAD on GitHub's synthetic merge commit, which is not
+          # a commit anyone wrote; building a title from it produced
+          # "Merge dab007b... into 1486574..." on the first live run.
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24

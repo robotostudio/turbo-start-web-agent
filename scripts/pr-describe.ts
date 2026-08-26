@@ -186,7 +186,14 @@ if (isMain()) {
     process.exit(0);
   }
 
-  const commits = parseCommitMessages(git(["log", "--format=%B%x00", `${baseRef}..HEAD`]));
+  // --reverse so commits[0] is the branch's FIRST commit, which is what the
+  // title is built from; git log is newest-first by default. --no-merges
+  // because on a `pull_request` event the checked-out HEAD can be GitHub's
+  // synthetic merge commit ("Merge <head> into <base>"), which is not a
+  // commit anyone wrote and makes a nonsense title.
+  const commits = parseCommitMessages(
+    git(["log", "--format=%B%x00", "--reverse", "--no-merges", `${baseRef}..HEAD`]),
+  );
   if (commits.length === 0) {
     process.stdout.write("pr-describe: no commits since base — nothing to describe from\n");
     process.exit(0);
