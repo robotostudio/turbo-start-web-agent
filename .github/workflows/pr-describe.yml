@@ -1,0 +1,58 @@
+name: PR description
+
+# Repairs a pull request description that the opening platform generated
+# itself. See scripts/pr-describe.ts for why this repairs rather than fails:
+# the person who pressed the button is a client editing their own site, and
+# the description they cannot fix is not one they wrote.
+on:
+  pull_request:
+    # `opened` only. A later `edited` run would fight anyone correcting the
+    # description by hand, including the rewrite this workflow just made.
+    types: [opened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-description:
+    runs-on: ubuntu-latest
+    # A pull request from a fork gets a read-only token no matter what
+    # `permissions` says, so `gh pr edit` would fail. Fork PRs are not the
+    # case this exists for — the platforms that generate descriptions push
+    # branches to this repository.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The description is built from the commits on this branch that are
+          # not on the base, which a shallow clone cannot see.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build a description from the commits
+        run: node --experimental-strip-types scripts/pr-describe.ts
+        env:
+          # Never interpolated into a `run:` string: a pull request body is
+          # text an outside contributor controls, and `${{ ... }}` inside a
+          # shell command is a script injection.
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_REF: origin/${{ github.base_ref }}
+          TITLE_FILE: ${{ runner.temp }}/pr-title.txt
+          BODY_FILE: ${{ runner.temp }}/pr-body.md
+      - name: Apply it
+        # The script writes these two files only when it decided to rewrite,
+        # so their existence is the signal. A body that was written by a human
+        # leaves no files and this step is skipped.
+        run: |
+          if [ ! -f "$BODY_FILE" ]; then
+            echo "Nothing to rewrite."
+            exit 0
+          fi
+          gh pr edit "$NUMBER" --title "$(cat "$TITLE_FILE")" --body-file "$BODY_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          TITLE_FILE: ${{ runner.temp }}/pr-title.txt
+          BODY_FILE: ${{ runner.temp }}/pr-body.md
