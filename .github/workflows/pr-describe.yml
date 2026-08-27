@@ -20,12 +20,24 @@ name: PR description
 # `gh` through files, never through a shell.
 on:
   pull_request_target:
-    # Not `edited`: that would fight anyone correcting a description by hand,
-    # including the rewrite this workflow just made. `reopened` is here so a
-    # pull request opened before a fix to this workflow can be repaired by
-    # closing and reopening it — safe, because a body this workflow has
-    # already rewritten no longer carries the signature it matches on.
-    types: [opened, reopened]
+    # `synchronize` is a push to the branch, so the description follows the
+    # commits it is built from. Without it, a description written at open time
+    # is a snapshot of commits that may no longer exist: PR #47 amended a
+    # broken commit trailer and the body went on displaying the broken one,
+    # because nothing had re-run.
+    #
+    # Not `edited`, which fires on someone typing in the description box —
+    # re-running there would fight the person correcting it.
+    #
+    # `reopened` lets a pull request opened before a fix to this workflow be
+    # repaired by closing and reopening it.
+    #
+    # None of these can overwrite a hand-written description. Every run first
+    # checks the body for a vendor session link, the signature of a
+    # machine-written body, and stops if it is absent — and a body this
+    # workflow has already rewritten does not carry one either, so the rewrite
+    # is idempotent rather than repeating on every push.
+    types: [opened, reopened, synchronize]
 
 permissions:
   contents: read
