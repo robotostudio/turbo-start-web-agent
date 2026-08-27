@@ -52,11 +52,12 @@ can't quietly drift from it:
 > 2. **Compose before extend.** Almost every task is composing existing Blocks
 >    from `catalog.json` into MDX (§3). Only touch schemas or components (§4)
 >    when no existing Block can express the content.
-> 3. **Design tokens only.** Blocks and primitives reference the CSS custom
->    properties defined in `artifacts/web/src/app/globals.css` — never a raw
->    hex code or a px value. Re-theming a client site means editing token
->    values there, never renaming or removing a token (every Block references
->    them by name).
+> 3. **Design tokens and type roles only.** Blocks and primitives reference
+>    the CSS custom properties and `type-*` roles defined in
+>    `artifacts/web/src/app/globals.css` — never a raw hex code, a px value, or
+>    a bare `text-2xl font-semibold` stack. Re-theming a client site means
+>    editing values there, never renaming or removing a token (every Block
+>    references them by name). The full vocabulary is §3a.
 > 4. **The build is the gate.** If the commands in §5 pass, the content is
 >    valid. Fix the content, not the schema. A green build is necessary but
 >    not sufficient — check the rendered page before calling a change done.
