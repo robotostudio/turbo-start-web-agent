@@ -72,7 +72,7 @@ everything below is relative to that directory, not the repo root.
 | Catalog/gallery generators | `artifacts/web/scripts/generate-catalog.ts`, `artifacts/web/scripts/generate-gallery.ts` |
 | Verify commands (delegate into `artifacts/web`) | root `package.json` |
 
-Deeper how-to procedures belong in `.agents/skills/`, not in this file. Three
+Deeper how-to procedures belong in `.agents/skills/`, not in this file. Four
 skills ship in this repo today:
 
 | Skill | Use it for |
@@ -80,6 +80,7 @@ skills ship in this repo today:
 | `.agents/skills/compose-page/SKILL.md` | The full page-composition workflow: locating the right MDX file, choosing Blocks from `catalog.json`, writing frontmatter (including the blog-only fields §3 doesn't cover), and composing Blocks with literal props. |
 | `.agents/skills/sync-changes/SKILL.md` | Session-start git discipline: pull before editing, branch → commit → PR, never push to `main`, and how to confirm a push actually reached the remote on platforms where the shell has no git credentials. |
 | `.agents/skills/find-skills/SKILL.md` | How to review and install a third-party skill safely before adding it to `.agents/skills/` and `skills-lock.json`. |
+| `.agents/skills/write-a-skill/SKILL.md` | Asked to remember a rule or save a convention: write it here as a skill rather than into your platform's own memory, where only one person on one platform would ever see it. |
 
 Codex, Cursor, Copilot/VS Code, Zed, and most of the rest of the ecosystem
 read only this file and never load `.agents/skills/` — for those platforms
