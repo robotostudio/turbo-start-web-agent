@@ -19,10 +19,12 @@ it, assume the worst case (that the branch you're on ships live) rather
 than the permissive one. Committing directly to the live branch publishes
 to whoever is looking at the live site, with nobody having reviewed it
 first. This repo's own CI (`.github/workflows/ci.yml`) runs
-`harness:check`, `content:check`, `catalog:check`, `gallery:check`, `lint`,
-`test`, `typecheck`, and `build` on every pull request — that gate only
-fires on a PR, so a direct push to any branch that skips the PR step skips
-it entirely.
+`pnpm run checks` on every pull request — the same command you run locally,
+covering `harness:check`, `content:check`, `catalog:check`, `gallery:check`,
+`lint`, `test`, `typecheck`, and `build`. That gate only fires on a PR, so a
+direct push to any branch that skips the PR step skips it entirely. Run
+`pnpm run checks` before you deliver: CI runs the identical script, so a
+failure there is one you could have seen first.
 
 ## The workflow
 

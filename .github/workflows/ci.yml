@@ -16,11 +16,11 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run harness:check
-      - run: pnpm run content:check
-      - run: pnpm run catalog:check
-      - run: pnpm run gallery:check
-      - run: pnpm run lint
-      - run: pnpm run test
-      - run: pnpm run typecheck
-      - run: pnpm run build
+      # One step, calling the same script an agent runs locally. These used to
+      # be eight separate `run:` lines, which read better in the Actions UI but
+      # meant CI and `package.json` were two lists that had to be kept in step
+      # by hand -- and an agent reading AGENTS.md had to know all eight. With
+      # one script, "green locally" and "green in CI" cannot come apart.
+      # pnpm names the failing script in its output, so a failure is still
+      # identifiable from the log.
+      - run: pnpm run checks
