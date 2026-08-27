@@ -19,6 +19,8 @@ import {
   media,
   newsletterSchema,
   parseBlock,
+  postGridMaxCount,
+  postGridSchema,
   pricingSchema,
   safeUrl,
   statsCount,
@@ -258,6 +260,45 @@ test("Gallery rejects an unsafe image URL", () => {
       }),
     /src/,
   );
+});
+
+// --- PostGrid --------------------------------------------------------
+
+test("PostGrid parses valid props", () => {
+  const parsed = parseBlock("PostGrid", postGridSchema, { title: "From the blog" });
+  assert.equal(parsed.title, "From the blog");
+});
+
+test("PostGrid applies the count default", () => {
+  const parsed = parseBlock("PostGrid", postGridSchema, { title: "x" });
+  assert.equal(parsed.count, 3);
+});
+
+test("PostGrid accepts an explicit category filter", () => {
+  const parsed = parseBlock("PostGrid", postGridSchema, { title: "x", category: "Guides" });
+  assert.equal(parsed.category, "Guides");
+});
+
+test("PostGrid rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("PostGrid", postGridSchema, {}),
+    (error: Error) => error.message.includes("<PostGrid>") && error.message.includes("title"),
+  );
+});
+
+test("PostGrid rejects a count above the fixed 3-column row's cap", () => {
+  assert.throws(
+    () => parseBlock("PostGrid", postGridSchema, { title: "x", count: postGridMaxCount + 1 }),
+    /count/,
+  );
+});
+
+test("PostGrid rejects a count below 1", () => {
+  assert.throws(() => parseBlock("PostGrid", postGridSchema, { title: "x", count: 0 }), /count/);
+});
+
+test("PostGrid rejects a non-integer count", () => {
+  assert.throws(() => parseBlock("PostGrid", postGridSchema, { title: "x", count: 2.5 }), /count/);
 });
 
 // --- Faq --------------------------------------------------------

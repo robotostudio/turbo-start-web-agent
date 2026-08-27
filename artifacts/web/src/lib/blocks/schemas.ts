@@ -202,6 +202,25 @@ export const gallerySchema = z
   );
 export type GalleryProps = z.input<typeof gallerySchema>;
 
+/** The default and maximum number of posts PostGrid pulls, and the row it
+ * renders in (sm:grid-cols-3, same as ImageCards/Testimonial) — kept close to
+ * the schema since both the default and the cap exist for the same reason:
+ * 3 fills one clean row, 6 fills two, and beyond that the section stops
+ * reading as a "highlights" grid and starts duplicating the /blog index. */
+export const postGridMaxCount = 6;
+
+export const postGridSchema = z
+  .object({
+    title: z.string(),
+    lede: z.string().optional(),
+    count: z.number().int().min(1).max(postGridMaxCount).default(3),
+    category: z.string().optional(),
+  })
+  .describe(
+    "A grid of recent post previews — category, date, title, and excerpt — each linking to its article, three per row. Unlike every other Block here, its cards are NOT authored as props: it reads the live blog collection at render (newest first, optionally filtered to one `category`) and takes only `count` and `category` as literal props, so the grid can never drift out of step with the posts themselves. Use to surface recent writing on a page other than /blog, e.g. the homepage. If `category` matches no published post, the grid renders a plain 'No posts published yet.' line instead of an empty row.",
+  );
+export type PostGridProps = z.input<typeof postGridSchema>;
+
 export const faqSchema = z
   .object({
     title: z.string(),
@@ -323,6 +342,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "FeatureSplit", schema: featureSplitSchema },
   { name: "ImageCards", schema: imageCardsSchema },
   { name: "Gallery", schema: gallerySchema },
+  { name: "PostGrid", schema: postGridSchema },
   { name: "Faq", schema: faqSchema },
   { name: "Testimonial", schema: testimonialSchema },
   { name: "LogoCloud", schema: logoCloudSchema },

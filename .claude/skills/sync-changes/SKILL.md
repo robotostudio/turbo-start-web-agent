@@ -19,10 +19,12 @@ it, assume the worst case (that the branch you're on ships live) rather
 than the permissive one. Committing directly to the live branch publishes
 to whoever is looking at the live site, with nobody having reviewed it
 first. This repo's own CI (`.github/workflows/ci.yml`) runs
-`harness:check`, `content:check`, `catalog:check`, `gallery:check`, `lint`,
-`test`, `typecheck`, and `build` on every pull request — that gate only
-fires on a PR, so a direct push to any branch that skips the PR step skips
-it entirely.
+`pnpm run checks` on every pull request — the same command you run locally,
+covering `harness:check`, `content:check`, `catalog:check`, `gallery:check`,
+`lint`, `test`, `typecheck`, and `build`. That gate only fires on a PR, so a
+direct push to any branch that skips the PR step skips it entirely. Run
+`pnpm run checks` before you deliver: CI runs the identical script, so a
+failure there is one you could have seen first.
 
 ## The workflow
 
@@ -56,37 +58,55 @@ it entirely.
    `feat/block-system`, is an example of the naming style — short,
    hyphenated, prefixed by kind of change).
 3. **Commit** your change with a message describing *why*, not just what
-   changed.
-4. **Commit it.** Being asked to make a change is authorization to commit
-   it — a commit on a branch is not the live site, and nothing is published
-   by it existing. Do not stop and ask permission to commit work you were
-   just asked to do.
-5. **Deliver it by whatever channel this platform actually has** (see
+   changed. Being asked to make a change is authorization to commit it — a
+   commit on a branch is not the live site, and nothing is published by it
+   existing. Do not stop and ask permission to commit work you were just
+   asked to do.
+4. **Deliver it by whatever channel this platform actually has** (see
    below), then let CI run and let a human merge. This is the review step
    that makes "an agent may edit this site" safe to say at all. Never merge
    your own pull request.
 
-### Delivery: find your channel before concluding you have none
+### Delivery: name your channel before you run anything
 
-`git push` and `gh pr create` are the obvious routes and neither is
-universal. Work down this list and say which one you used:
+Getting the branch up and opening the pull request are two separate steps,
+and the route for each differs by platform. Work out which route you have
+*before* typing a command, and say which one you used.
+
+**Getting the branch up:**
 
 1. **`git push`**, where the shell has a working `origin`.
+2. **The platform's own git integration**, where the shell has no `origin`.
+   Codex cloud containers have none by design — the task's diff is what gets
+   delivered, not a pushed branch.
+
+**Opening the pull request:**
+
+1. **The platform's own Create PR control, wherever one exists — this
+   outranks the shell.** v0, Claude Code cloud, and Codex all show one.
+   Where there is a control, use it and do not reach for `gh` at all.
 2. **A GitHub MCP tool**, if one is connected to the session.
-3. **The platform's own control.** Claude Code shows a **Create PR** action
-   once a branch is pushed; Codex shows one on a finished task, built from
-   the task's diff rather than from a pushed branch.
+3. **`gh pr create`**, only once you have confirmed that `gh` exists *and*
+   is authenticated here.
 4. **Ask the operator**, and tell them the branch name and what is on it.
+
+Looking before you run costs one turn. On 2026-08-26 an agent on v0 pushed
+its branch successfully, then ran `gh pr create`, and reported that it
+"couldn't create the PR because GitHub CLI authentication isn't configured
+in this environment" — while v0's own **Create PR** button sat in the
+toolbar directly above that message. The branch was already on the remote.
+Nothing was broken except the choice of route.
 
 Two failures look alarming and are not:
 
-- **No `gh` binary.** Several platforms ship none. It is not a permissions
-  problem and it does not block delivery — use route 2 or 3.
+- **No `gh` binary, or a `gh` that is not authenticated.** Several platforms
+  ship none, and some ship one with no credentials. Neither is a permissions
+  problem and neither blocks delivery — use the platform's own control.
 - **`fatal: 'origin' does not appear to be a git repository`.** Codex cloud
   containers have **no git remote at all**, by design: the task's diff is
   what gets delivered, through the platform, not through a push. Seeing this
   does not mean the repository connection is broken, and it is not worth
-  retrying — go to route 3.
+  retrying — use the platform's own control.
 
 A `403` on push is different from both: that one *is* a credentials problem,
 and it means the session has read access only. Say so plainly rather than
@@ -105,6 +125,11 @@ gate. Nothing reaches the live branch without a human merging it, and on a
 protected branch GitHub itself refuses anything that skips that path.
 
 ## Writing the pull request body
+
+**This section is about `gh` in a shell — route 3 above.** If you are opening
+the pull request through a platform control or an MCP tool, type the body
+into that and skip to the trailers section: there is no shell in the path,
+so no escaping rule to get wrong.
 
 **Never pass a multi-line body as a `--body "…"` argument.** Write it to a
 file and use `--body-file`:
@@ -168,20 +193,23 @@ they put a permanent AI-authorship marker in the history of what may be a
 public client repo, and the session link is useless to anyone but the
 account that created it.
 
-**Get this right at commit time — you may not get a second chance.** A
-trailer is part of the commit message, so correcting it means
-`git commit --amend` and a force-push, and **not every platform can
-force-push.** Some push only through their own GitHub integration, which
-does not expose it; the shell falls back to plain `git` with no credentials
-and the amend never leaves the container. On 2026-08-21 an agent read the
-failing check, diagnosed it correctly, amended the commit, and still could
-not deliver the fix. The pull request had to be closed and the work redone.
+**Get this right at commit time.** A trailer is part of the commit message,
+so correcting it means `git commit --amend` and a force-push — a bigger
+operation than getting it right once, and one that not every path can carry.
+A hosted platform's shell frequently has no git credentials at all, so an
+amend typed into a terminal never leaves the container: on 2026-08-21 an
+agent read the failing check, diagnosed it correctly, amended the commit, and
+could not deliver the fix, and the pull request had to be closed and the work
+redone. The platform's *own* integration may well be able to rewrite the
+branch even where its shell cannot — v0 does — so treat a failed force-push
+as a fact about the path you took, not about the platform.
 
 So: check the message *before* you commit. If your platform adds a trailer
 automatically, remove it in the same step rather than planning to fix it
-afterwards. And if you find yourself unable to force-push a correction, do
-not retry — say so plainly, quote the corrected message, and ask the
-operator to push it.
+afterwards. And if you find yourself unable to force-push a correction from
+the shell, do not retry it there — try the platform's own delivery path, and
+if that is not available say so plainly, quote the corrected message, and ask
+the operator to push it.
 
 ## Platform caveat — verify the push actually landed
 

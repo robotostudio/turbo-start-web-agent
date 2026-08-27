@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 14,
+  "blockCount": 15,
   "blocks": {
     "Banner": {
       "schema": {
@@ -302,6 +302,33 @@
           "images"
         ],
         "description": "An eight-image mosaic of varying tile sizes, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. Use when the goal is browsing images, not reading copy."
+      }
+    },
+    "PostGrid": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "lede": {
+            "type": "string"
+          },
+          "count": {
+            "default": 3,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "category": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "description": "A grid of recent post previews — category, date, title, and excerpt — each linking to its article, three per row. Unlike every other Block here, its cards are NOT authored as props: it reads the live blog collection at render (newest first, optionally filtered to one `category`) and takes only `count` and `category` as literal props, so the grid can never drift out of step with the posts themselves. Use to surface recent writing on a page other than /blog, e.g. the homepage. If `category` matches no published post, the grid renders a plain 'No posts published yet.' line instead of an empty row."
       }
     },
     "Faq": {

@@ -1,0 +1,94 @@
+name: PR description
+
+# Repairs a pull request description that the opening platform generated
+# itself. See scripts/pr-describe.ts for why this repairs rather than fails:
+# the person who pressed the button is a client editing their own site, and
+# the description they cannot fix is not one they wrote.
+# `pull_request_target`, not `pull_request`. On a `pull_request` event the
+# workflow FILE is read from GitHub's computed merge ref, and that ref can lag
+# the base branch -- so a fix to this workflow or its script has no effect on
+# an open pull request until the merge ref catches up, with nothing failing to
+# say so. PR #34 ran a version of this workflow 33 seconds after its
+# replacement had merged. `pull_request_target` always reads both the workflow
+# and the code from the base branch's tip, which is the only way to guarantee
+# an open pull request gets the current version.
+#
+# The usual `pull_request_target` hazard is checking out the head branch and
+# running its code with a write token. This never does: the checkout below is
+# the base branch, and the only thing read from the head is git metadata --
+# commit messages and file names -- which is treated as text and passed to
+# `gh` through files, never through a shell.
+on:
+  pull_request_target:
+    # Not `edited`: that would fight anyone correcting a description by hand,
+    # including the rewrite this workflow just made. `reopened` is here so a
+    # pull request opened before a fix to this workflow can be repaired by
+    # closing and reopening it — safe, because a body this workflow has
+    # already rewritten no longer carries the signature it matches on.
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-description:
+    runs-on: ubuntu-latest
+    # A pull request from a fork gets a read-only token no matter what
+    # `permissions` says, so `gh pr edit` would fail. Fork PRs are not the
+    # case this exists for — the platforms that generate descriptions push
+    # branches to this repository.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The description is built from the commits on this branch that are
+          # not on the base, which a shallow clone cannot see.
+          # All history for every branch, so the pull request's head commit is
+          # reachable without ever checking that branch out.
+          fetch-depth: 0
+          # The base branch, explicitly.
+          #
+          # Not the head branch: that reads this workflow's own script from the
+          # code under review, so a branch cut before a fix to the script runs
+          # the stale copy.
+          #
+          # And not the default merge ref either. That ref is computed by
+          # GitHub and can still be serving a merge from before the base moved,
+          # which is how PR #34 ran a version of this script that had been
+          # fixed and merged minutes earlier -- reintroducing output the fix
+          # had removed, with nothing failing to signal it.
+          #
+          # The base branch is the only ref here that is always current.
+          ref: ${{ github.event.pull_request.base.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build a description from the commits
+        run: node --experimental-strip-types scripts/pr-describe.ts
+        env:
+          # Never interpolated into a `run:` string: a pull request body is
+          # text an outside contributor controls, and `${{ ... }}` inside a
+          # shell command is a script injection.
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_REF: origin/${{ github.base_ref }}
+          # The branch tip. HEAD here is GitHub's synthetic merge commit
+          # ("Merge <head> into <base>"), which is not a commit anyone wrote.
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TITLE_FILE: ${{ runner.temp }}/pr-title.txt
+          BODY_FILE: ${{ runner.temp }}/pr-body.md
+      - name: Apply it
+        # The script writes these two files only when it decided to rewrite,
+        # so their existence is the signal. A body that was written by a human
+        # leaves no files and this step is skipped.
+        run: |
+          if [ ! -f "$BODY_FILE" ]; then
+            echo "Nothing to rewrite."
+            exit 0
+          fi
+          gh pr edit "$NUMBER" --title "$(cat "$TITLE_FILE")" --body-file "$BODY_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          TITLE_FILE: ${{ runner.temp }}/pr-title.txt
+          BODY_FILE: ${{ runner.temp }}/pr-body.md

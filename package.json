@@ -20,6 +20,7 @@
     "gallery:check": "pnpm --filter @workspace/web run gallery:check",
     "harness": "node --experimental-strip-types scripts/harness-gen/index.ts",
     "harness:check": "node --experimental-strip-types scripts/harness-gen/index.ts --check",
+    "checks": "pnpm run harness:check && pnpm run content:check && pnpm run catalog:check && pnpm run gallery:check && pnpm run lint && pnpm run test && pnpm run typecheck && pnpm run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck"
   },

@@ -23,9 +23,11 @@ read this file directly; it reads `CLAUDE.md`, which imports this one.
    a bare `text-2xl font-semibold` stack. Re-theming a client site means
    editing values there, never renaming or removing a token (every Block
    references them by name). The full vocabulary is §3a.
-4. **The build is the gate.** If the commands in §5 pass, the content is
-   valid. Fix the content, not the schema. A green build is necessary but
-   not sufficient — check the rendered page before calling a change done.
+4. **The build is the gate — run `pnpm run checks` before delivering.** That
+   one command is the whole gate (§5), and it is what CI runs, so green
+   locally means green there. Fix the content, not the schema. A green build
+   is necessary but not sufficient — check the rendered page before calling a
+   change done.
    Where you have a browser, click through it (nav, footer, every linked
    page). Where you do not, serve the build and assert on the returned HTML
    for the strings you changed; that catches wrong-content far better than a
@@ -303,7 +305,17 @@ working as intended.
 
 ## 5. Verify
 
-From the repo root (each delegates into `artifacts/web`, except the first):
+From the repo root, one command runs every gate below, in this order, and
+stops at the first failure:
+
+```sh
+pnpm run checks
+```
+
+**Run it before delivering any change.** `.github/workflows/ci.yml` runs this
+same script rather than its own list of steps, so there is no version of the
+gate that passes here and fails there. Run an individual one while iterating
+if you like — each delegates into `artifacts/web`, except the first:
 
 ```sh
 pnpm run harness:check    # generated per-platform surfaces are in sync with AGENTS.md, harness.config.json, and .agents/skills/
@@ -375,6 +387,13 @@ never mentioned the change that had been requested. Every check passed,
 because none of them read English. `pr-hygiene` now catches *malformed*
 descriptions; nothing catches untrue ones. Read the diff.
 
+The prose is not always the agent's, either: v0's Create PR control writes
+its own title and body and discards what the agent wrote, describing a
+four-word copy change as "Update UI components and layout design" (#28) and
+an overscroll line as "Sync UI enhancements and component updates" (#30) —
+the same boilerplate both times. `pr-describe` rewrites such a body from the
+commits, which is where the real description already was.
+
 **A platform's own instructions outrank this file.** Codex reported that its
 environment tells it to open a PR immediately after committing, contradicting
 rule 7's pause, and correctly followed the platform. Nothing here is
@@ -401,14 +420,30 @@ source — write the body to a file and use `--body-file` — and gated by
 it.** Three rules written here turned out to encode one platform's abilities
 as if they were universal: "open a PR with `gh pr create`" (Codex ships no
 `gh`), "verify write access by pushing a throwaway branch" (Codex cloud has
-no git remote at all), and "amend the commit and force-push" (v0 pushes only
-through its GitHub integration, which does not expose force-push). Each read
+no git remote at all), and "amend the commit and force-push" (a shell with no
+git credentials cannot). Each read
 as a neutral instruction and each dead-ended an agent that was otherwise
 doing everything right — the failure looks like agent incompetence and is
 actually a rule written from one vantage point. When writing a rule, name
 the capability it needs and give an alternative for platforms without it, or
 write it so the requirement never arises. Getting a commit trailer right at
 commit time needs no force-push; fixing it afterwards does.
+
+The correction to that third example is itself the lesson repeating. "v0
+cannot force-push" was one observation of one code path -- a shell with no
+credentials -- written down as a property of the platform. On 2026-08-27 v0
+amended a pushed commit and force-pushed the branch through its own GitHub
+integration (`head_ref_force_pushed` on #38). A capability claim needs the
+path it was observed on attached, or it outlives the thing it described.
+
+Prose alone does not undo this: **an agent runs the command it can see.**
+After that fix, `sync-changes` still listed the platform's own PR control as
+a route in prose while the one copy-pasteable command in the file was `gh pr
+create`. On 2026-08-26 an agent on v0 pushed its branch, ran that command,
+and reported the repository connection as broken — with v0's **Create PR**
+button visible in its own toolbar. Where a rule has a per-platform answer,
+put the precedence before any command, and mark every shell example with the
+route it belongs to.
 
 **A resumed session brings a stale clone with it.** Continuing a chat from a
 previous day reuses its container: the checkout is as old as the session, and
