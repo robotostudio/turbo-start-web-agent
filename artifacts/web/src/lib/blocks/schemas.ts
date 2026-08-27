@@ -331,6 +331,26 @@ export const pricingSchema = z
   );
 export type PricingProps = z.input<typeof pricingSchema>;
 
+export const comparisonSchema = z
+  .object({
+    title: z.string(),
+    lede: z.string().optional(),
+    rows: z
+      .array(
+        z.object({
+          criteria: z.string(),
+          us: z.string(),
+          traditional: z.string(),
+        }),
+      )
+      .min(5)
+      .max(6),
+  })
+  .describe(
+    "A two-column comparison table with five or six concise rows. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan.",
+  );
+export type ComparisonProps = z.input<typeof comparisonSchema>;
+
 // The registry the catalog generator reads. Keep in step with blockComponents
 // in src/components/blocks/index.ts — a schema with no component renders
 // nothing, and a component with no schema cannot be validated.
@@ -338,6 +358,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "Banner", schema: bannerSchema },
   { name: "Hero", schema: heroSchema },
   { name: "CTA", schema: ctaBandSchema },
+  { name: "Comparison", schema: comparisonSchema },
   { name: "FeatureGrid", schema: featureGridSchema },
   { name: "FeatureSplit", schema: featureSplitSchema },
   { name: "ImageCards", schema: imageCardsSchema },

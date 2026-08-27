@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 15,
+  "blockCount": 16,
   "blocks": {
     "Banner": {
       "schema": {
@@ -128,6 +128,49 @@
           "primary"
         ],
         "description": "A full-bleed, brand-colored closing band with a heading, optional supporting copy, and a single button — the highest-contrast CTA treatment available. Use as the last section on a page for the strongest possible visual close."
+      }
+    },
+    "Comparison": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "lede": {
+            "type": "string"
+          },
+          "rows": {
+            "minItems": 5,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "criteria": {
+                  "type": "string"
+                },
+                "us": {
+                  "type": "string"
+                },
+                "traditional": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "criteria",
+                "us",
+                "traditional"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "rows"
+        ],
+        "description": "A two-column comparison table with five or six concise rows. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan."
       }
     },
     "FeatureGrid": {
