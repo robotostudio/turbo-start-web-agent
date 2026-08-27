@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { type PricingProps, parseBlock, pricingSchema } from "@/lib/blocks/schemas";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "./section-header";
@@ -61,32 +61,16 @@ export function Pricing(raw: PricingProps) {
                   </ul>
                 )}
               </div>
-              {plan.cta &&
-                (plan.cta.href.startsWith("/") ? (
-                  <Link
-                    href={plan.cta.href}
-                    className={cn(
-                      "rounded-lg px-6 py-3 text-center",
-                      plan.emphasized
-                        ? "bg-primary text-primary-foreground"
-                        : "border border-border text-foreground",
-                    )}
-                  >
-                    {plan.cta.label}
-                  </Link>
-                ) : (
-                  <a
-                    href={plan.cta.href}
-                    className={cn(
-                      "rounded-lg px-6 py-3 text-center",
-                      plan.emphasized
-                        ? "bg-primary text-primary-foreground"
-                        : "border border-border text-foreground",
-                    )}
-                  >
-                    {plan.cta.label}
-                  </a>
-                ))}
+              {plan.cta && (
+                // w-full because these sit at the foot of a card and used to
+                // be block-level; the primitive is inline-flex.
+                <ButtonLink
+                  href={plan.cta.href}
+                  label={plan.cta.label}
+                  variant={plan.emphasized ? "default" : "outline"}
+                  className="w-full"
+                />
+              )}
             </div>
           ))}
         </div>
