@@ -4,6 +4,7 @@ import { test } from "node:test";
 import {
   assertNamesParsable,
   droppedSections,
+  emptySections,
   missingSections,
   parseSections,
   renderGallery,
@@ -16,6 +17,39 @@ test("gallery is in sync with the schema registry", () => {
       stdio: "pipe",
     }),
   );
+});
+
+// `Comparison` reached the gallery on 2026-08-27 as nothing but the stub --
+// every gate green, and the page showed "COMPARISON  NO EXAMPLE YET". The
+// gallery is how design-a-block expects an author to see what already exists,
+// so an entry with nothing in it is worse than useless: it looks answered.
+test("a Block whose section is still the stub is reported", () => {
+  const sections = new Map([
+    ["Hero", '<BlockSpec name="Hero">\n\n<Hero title="Real" />\n\n</BlockSpec>'],
+    ["Comparison", stubSection("Comparison")],
+  ]);
+  assert.deepEqual(emptySections(["Hero", "Comparison"], sections), ["Comparison"]);
+});
+
+test("a Block with no section at all is reported", () => {
+  assert.deepEqual(emptySections(["Hero"], new Map()), ["Hero"]);
+});
+
+test("a gallery where every Block has an example is clean", () => {
+  const sections = new Map([
+    ["Hero", '<BlockSpec name="Hero">\n\n<Hero title="Real" />\n\n</BlockSpec>'],
+  ]);
+  assert.deepEqual(emptySections(["Hero"], sections), []);
+});
+
+// The reason this is checked separately from the drift comparison: an empty
+// stub is not drift. Regenerating reproduces it exactly, so `pnpm gallery`
+// reports success on a gallery that shows nothing for that Block.
+test("an empty stub survives regeneration, which is why drift cannot catch it", () => {
+  const rendered = renderGallery(["Comparison"], new Map());
+  const again = renderGallery(["Comparison"], parseSections(rendered));
+  assert.equal(again, rendered, "regeneration is a fixed point, stub and all");
+  assert.deepEqual(emptySections(["Comparison"], parseSections(rendered)), ["Comparison"]);
 });
 
 test("parseSections extracts a section's raw text verbatim, tags included", () => {

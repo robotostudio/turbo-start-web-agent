@@ -5,6 +5,7 @@ import { blockSchemas } from "../src/lib/blocks/schemas.ts";
 import {
   assertNamesParsable,
   droppedSections,
+  emptySections,
   missingSections,
   parseSections,
   renderGallery,
@@ -36,6 +37,25 @@ const existingSections = parseSections(existing);
 const rendered = renderGallery(blockNames, existingSections);
 
 if (process.argv.includes("--check")) {
+  // Checked before the drift comparison, because an empty stub is not drift:
+  // regenerating produces the same stub, so `pnpm gallery` would report
+  // success on a gallery that shows nothing for that Block.
+  const empty = emptySections(blockNames, existingSections);
+  if (empty.length > 0) {
+    process.stderr.write(
+      `Block gallery has no example for: ${empty.join(", ")}.\n` +
+        `  Every Block needs one. The gallery is how the next author -- and the ` +
+        `next agent -- sees what already exists\n` +
+        `  before building something new, and an entry reading "NO EXAMPLE YET" ` +
+        `teaches them nothing.\n` +
+        `  Write a real usage example between the <BlockSpec> tags in ` +
+        `content/pages/blocks-gallery.mdx and drop the status="todo".\n` +
+        `  Use the copy you would actually ship: an example full of placeholder ` +
+        `text is a Block that looks unfinished.\n`,
+    );
+    process.exit(1);
+  }
+
   if (existing !== rendered) {
     const dropped = droppedSections(blockNames, existingSections);
     const missing = missingSections(blockNames, existingSections);

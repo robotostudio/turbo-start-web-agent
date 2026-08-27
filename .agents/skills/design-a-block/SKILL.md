@@ -99,6 +99,18 @@ failed lint on a change that was otherwise correct.
 Images use `next/image` with explicit `width` and `height`. Decorative images
 take `alt=""`; an image that carries meaning takes a real description.
 
+## A Block is not finished until the gallery shows it
+
+`pnpm catalog` writes an empty stub for a new Block so the generator can run
+mid-work. That stub is not a deliverable: fill it in with a real usage example
+in `content/pages/blocks-gallery.mdx` and drop the `status="todo"`.
+
+Use the copy you would actually ship. An example full of placeholder text
+makes a finished Block look unfinished, and the gallery is where the next
+person decides whether to reuse your Block or write another one.
+
+`pnpm run checks` fails on a Block with no example.
+
 ## Before you deliver
 
 Run `pnpm run checks` — one command, the same gate CI runs.

@@ -175,7 +175,7 @@ After editing, run `pnpm content:check` (§5), then view the page.
 ## 4. Extend (rarer, governed)
 
 Adding a genuinely new Block — one no composition of existing Blocks can
-express — has four touch points, all of which must move together:
+express — has five touch points, all of which must move together:
 
 1. **Schema** — add a Zod schema to `artifacts/web/src/lib/blocks/schemas.ts`
    and register it in the `blockSchemas` array. Any URL prop must use the
@@ -199,6 +199,13 @@ express — has four touch points, all of which must move together:
    or a component has no matching schema (never validated). It reads
    `index.ts` as source text rather than importing it, because Node's
    `--experimental-strip-types` test runner cannot import a `.tsx` file.
+
+5. **The gallery example.** `pnpm catalog` writes an empty `status="todo"` stub
+   so it can run the moment a Block is registered. Replace it with a real usage
+   example in `content/pages/blocks-gallery.mdx`. `gallery:check` fails while a
+   stub remains: an empty entry is not drift — regenerating reproduces it
+   exactly — so nothing else catches it, and the gallery is what the next
+   author reads before deciding whether your Block already covers their case.
 
 `pnpm catalog:check` and `pnpm gallery:check` both run in CI — a Block added
 without running `pnpm catalog` fails the build, which is the drift check
