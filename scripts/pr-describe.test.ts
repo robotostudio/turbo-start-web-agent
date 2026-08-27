@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   describeFromCommits,
   isMachineWritten,
+  isOwnDescription,
   parseChangedFiles,
   proseOf,
   subjectOf,
@@ -64,6 +65,37 @@ test("a body discussing the defect is not treated as machine-written", () => {
     false,
     "the pull request that adds this file quotes a session link — rewriting it would delete the explanation",
   );
+});
+
+// PR #47 amended a broken commit trailer, and the description went on showing
+// the broken one -- the vendor signature was gone the moment the body was
+// first rewritten, so nothing would ever act on that pull request again. The
+// footer this script writes is what makes the description keep following its
+// commits.
+test("a description this script wrote is recognised as its own", () => {
+  const { body } = notNull(describeFromCommits([V0_COMMIT], ["a.yml"]));
+  assert.equal(isOwnDescription(body), true);
+  assert.equal(isMachineWritten(body), true, "so a later push rewrites it from the new commits");
+});
+
+test("rewriting an already-rewritten body is a fixed point", () => {
+  const first = notNull(describeFromCommits([V0_COMMIT], ["a.yml"]));
+  const second = notNull(describeFromCommits([V0_COMMIT], ["a.yml"]));
+  assert.equal(second.body, first.body, "same commits in, same description out");
+});
+
+test("a description someone wrote by hand is never touched", () => {
+  const body = [
+    "## The change",
+    "",
+    "I wrote this myself, and it should survive every push to the branch.",
+    "",
+    "## Verification",
+    "",
+    "All checks green.",
+  ].join("\n");
+  assert.equal(isOwnDescription(body), false);
+  assert.equal(isMachineWritten(body), false);
 });
 
 test("an empty branch leaves the description alone rather than inventing one", () => {

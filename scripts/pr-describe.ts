@@ -56,8 +56,33 @@ const MACHINE_SIGNATURE = new RegExp(
   "im",
 );
 
-/** True when the body looks machine-generated rather than written. */
-export const isMachineWritten = (body: string): boolean => MACHINE_SIGNATURE.test(body);
+/**
+ * The first line of the footer this script writes, used both to render it and
+ * to recognise it later. A body carrying this line is one this workflow owns.
+ */
+const OWNED_MARKER = "Written from the commits on this branch by `pr-describe`";
+
+/**
+ * True when the body is one this script wrote. That makes the rewrite
+ * idempotent — running again produces the same text — and it is what lets the
+ * description keep following the commits it was built from.
+ *
+ * Without it, `synchronize` would be useless: the vendor signature is gone the
+ * moment the body is first rewritten, so an amended or extended branch would
+ * go on displaying a description of commits that no longer exist. PR #47 did
+ * exactly that, showing a broken commit trailer for an hour after the commit
+ * had been fixed.
+ */
+export const isOwnDescription = (body: string): boolean => body.includes(OWNED_MARKER);
+
+/**
+ * True when this script should write the description: either the platform
+ * generated it, or this script did and the commits may have moved since.
+ *
+ * A description someone typed by hand matches neither and is never touched.
+ */
+export const isMachineWritten = (body: string): boolean =>
+  MACHINE_SIGNATURE.test(body) || isOwnDescription(body);
 
 /**
  * GitHub's synthetic merge commit, exactly as it names one: `Merge <head sha>
@@ -163,7 +188,7 @@ export const describeFromCommits = (
   sections.push(
     "---",
     [
-      "Written from the commits on this branch by `pr-describe`, because the platform",
+      `${OWNED_MARKER}, because the platform`,
       "that opened this pull request generated a description of work that is not in the",
       "diff. The diff itself is untouched.",
     ].join("\n"),
