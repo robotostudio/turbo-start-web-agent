@@ -72,8 +72,8 @@ everything below is relative to that directory, not the repo root.
 | Catalog/gallery generators | `artifacts/web/scripts/generate-catalog.ts`, `artifacts/web/scripts/generate-gallery.ts` |
 | Verify commands (delegate into `artifacts/web`) | root `package.json` |
 
-Deeper how-to procedures belong in `.agents/skills/`, not in this file. Six
-skills ship in this repo today, five written for it and one installed from
+Deeper how-to procedures belong in `.agents/skills/`, not in this file. Seven
+skills ship in this repo today, six written for it and one installed from
 elsewhere (see `skills-lock.json`):
 
 | Skill | Use it for |
@@ -83,6 +83,7 @@ elsewhere (see `skills-lock.json`):
 | `.agents/skills/design-a-block/SKILL.md` | Before writing or editing any component a visitor sees: which type role, which token, which button variant — and what the system deliberately omits. §4 has the mechanics; this has the design decisions already made. |
 | `.agents/skills/find-skills/SKILL.md` | How to review and install a third-party skill safely before adding it to `.agents/skills/` and `skills-lock.json`. |
 | `.agents/skills/write-a-skill/SKILL.md` | Asked to remember a rule or save a convention: write it here as a skill rather than into your platform's own memory, where only one person on one platform would ever see it. |
+| `.agents/skills/no-em-dash-copy/SKILL.md` | Writing or editing any copy a visitor reads: this site uses commas, colons, parentheses or full stops where an em dash would go. |
 | `.agents/skills/humanizer/SKILL.md` | Writing or editing any copy a visitor will read: the AI tells to remove before it ships — inflated claims, sales language, stock vocabulary, filler, and the rest. Third-party, pinned in `skills-lock.json`. |
 
 Codex, Cursor, Copilot/VS Code, Zed, and most of the rest of the ecosystem
