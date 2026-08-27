@@ -2,53 +2,39 @@ import Image from "next/image";
 import { type GalleryProps, gallerySchema, parseBlock } from "@/lib/blocks/schemas";
 import { SectionHeader } from "./section-header";
 
-// Fixed mosaic layout, keyed by tile position (0-indexed) — see
-// `galleryImageCount` in schemas.ts for why the shape is not authorable.
-// Tiles 0 and 5 are always wide; tiles 6 and 7 are wide on mobile (a single
-// column would otherwise leave them half-width) and square from `sm` up.
-const TILE_CLASS_NAMES = [
-  "relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg",
-  "relative aspect-square w-full overflow-hidden rounded-lg",
-  "relative aspect-square w-full overflow-hidden rounded-lg",
-  "relative aspect-square w-full overflow-hidden rounded-lg",
-  "relative aspect-square w-full overflow-hidden rounded-lg",
-  "relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg",
-  "relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg sm:col-span-1 sm:aspect-square",
-  "relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-lg sm:col-span-1 sm:aspect-square",
-];
-
-// Matches TILE_CLASS_NAMES' col-span behaviour so the browser doesn't
-// download a source sized for the wrong slot at each breakpoint.
-const TILE_SIZES = [
-  "(min-width: 640px) 50vw, 100vw",
-  "(min-width: 640px) 25vw, 50vw",
-  "(min-width: 640px) 25vw, 50vw",
-  "(min-width: 640px) 25vw, 50vw",
-  "(min-width: 640px) 25vw, 50vw",
-  "(min-width: 640px) 50vw, 100vw",
-  "(min-width: 640px) 25vw, 100vw",
-  "(min-width: 640px) 25vw, 100vw",
-];
+// Tiles 0, 1, 6, 7 span 2 columns; 2-5 are square. 4x2 + 4 = 12 spans divides
+// exactly by the 4-column grid, so there is no ragged hole on the last row.
+const WIDE = new Set([0, 1, 6, 7]);
 
 export function Gallery(raw: GalleryProps) {
   const { title, lede, images } = parseBlock("Gallery", gallerySchema, raw);
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} lede={lede} />
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:mt-20 sm:grid-cols-4">
-          {images.map((image, index) => (
-            <div key={image.src} className={TILE_CLASS_NAMES[index]}>
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes={TILE_SIZES[index]}
-                className="object-cover"
-              />
-            </div>
-          ))}
+        <div className="stack-content grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {images.map((image, index) => {
+            const wide = WIDE.has(index);
+            return (
+              <div
+                key={image.src}
+                className={
+                  wide
+                    ? "relative col-span-2 aspect-16/9 w-full overflow-hidden rounded-media"
+                    : "relative aspect-square w-full overflow-hidden rounded-media"
+                }
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes={wide ? "(min-width: 640px) 50vw, 100vw" : "(min-width: 640px) 25vw, 50vw"}
+                  className="object-cover"
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

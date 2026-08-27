@@ -20,12 +20,12 @@ export function ArticleHeader({
   pubDate: string;
 }) {
   return (
-    <header className="border-b border-border pb-10 font-sans">
+    <header className="border-b border-border pb-8 font-sans">
       {/* One crumb deep. The category is not its own route in this template —
           there is no /blog/category/[slug] — so it renders as plain text
           beside the one link that does resolve. Adding category routes is a
           per-project decision, not something the starter should presume. */}
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 type-caption">
         <Link href="/blog" className="text-muted-foreground hover:text-foreground">
           Blog
         </Link>
@@ -35,18 +35,16 @@ export function ArticleHeader({
         <span className="text-muted-foreground">{category}</span>
       </nav>
 
-      <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl">
-        {title}
-      </h1>
+      <h1 className="stack-near max-w-4xl type-title text-foreground">{title}</h1>
 
       {description ? (
-        <p className="mt-5 max-w-2xl text-lg text-pretty text-muted-foreground">{description}</p>
+        <p className="stack-lede max-w-lede type-lead text-muted-foreground">{description}</p>
       ) : null}
 
       {/* `dateTime` carries the machine-readable instant while the visible
           text stays the formatted day — the same value, in the two forms a
           reader and a crawler each need. */}
-      <p className="mt-8 font-mono text-sm text-muted-foreground">
+      <p className="stack-near type-caption font-mono text-muted-foreground">
         Published <time dateTime={pubDate}>{formatDate(pubDate)}</time>
       </p>
     </header>

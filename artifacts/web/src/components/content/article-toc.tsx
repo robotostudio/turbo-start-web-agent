@@ -31,8 +31,8 @@ export function ArticleToc({ toc }: { toc: TocEntry[] }) {
     // silently does nothing. `top-24` clears the header, which is itself
     // sticky at `top-4` (site-header.tsx) plus its own height.
     <aside className="order-1 font-sans lg:sticky lg:top-24 lg:order-2 lg:self-start">
-      <details open className="group/toc rounded-lg border border-border p-4">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-foreground select-none [&::-webkit-details-marker]:hidden">
+      <details open className="group/toc rounded-3xl border border-border p-4">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 type-caption font-medium text-foreground select-none [&::-webkit-details-marker]:hidden">
           On this page
           <svg
             viewBox="0 0 16 16"
@@ -54,13 +54,13 @@ export function ArticleToc({ toc }: { toc: TocEntry[] }) {
             the links it toggles `data-active` on — the attributes are the
             contract between this server-rendered markup and that island, so
             neither has to know anything else about the other. */}
-        <ol data-toc className="mt-4 flex flex-col gap-3">
+        <ol data-toc className="stack-lede flex flex-col gap-4">
           {toc.map((entry, index) => (
             <li key={entry.url}>
               <a
                 href={entry.url}
                 data-toc-link
-                className="flex items-baseline gap-3 text-sm leading-snug text-muted-foreground transition-colors hover:text-foreground data-[active]:font-medium data-[active]:text-foreground"
+                className="flex items-baseline gap-2 type-caption text-muted-foreground transition-colors hover:text-foreground data-[active]:font-medium data-[active]:text-foreground"
               >
                 <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground/60">
                   {String(index + 1).padStart(2, "0")}

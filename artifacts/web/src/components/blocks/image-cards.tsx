@@ -7,12 +7,12 @@ export function ImageCards(raw: ImageCardsProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} />
-        <div className="mt-14 grid grid-cols-1 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
+        <div className="stack-content grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
-            <div key={card.title} className="group">
-              <div className="aspect-4/3 w-full overflow-hidden rounded-lg">
+            <article key={card.title} className="group flex flex-col card p-2">
+              <div className="aspect-4/3 w-full overflow-hidden rounded-media">
                 <Image
                   src={card.image.src}
                   alt={card.image.alt}
@@ -22,11 +22,11 @@ export function ImageCards(raw: ImageCardsProps) {
                   className="size-full object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-110"
                 />
               </div>
-              <h3 className="mt-5 text-lg font-semibold text-foreground">{card.title}</h3>
-              <p className="mt-2 max-w-xs text-base text-pretty text-muted-foreground">
-                {card.body}
-              </p>
-            </div>
+              <div className="p-3">
+                <h3 className="type-subheading text-foreground">{card.title}</h3>
+                <p className="stack-tight type-para text-muted-foreground">{card.body}</p>
+              </div>
+            </article>
           ))}
         </div>
       </div>

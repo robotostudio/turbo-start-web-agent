@@ -7,22 +7,26 @@ export function Team(raw: TeamProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} />
-        <ul className="mt-16 grid grid-cols-2 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
+        <ul className="stack-content grid grid-cols-2 gap-4 lg:grid-cols-3">
           {team.map((person) => (
-            <li key={person.name}>
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-black/5">
-                <Image
-                  src={person.avatar.src}
-                  alt={person.avatar.alt}
-                  fill
-                  sizes="(min-width: 640px) 33vw, 50vw"
-                  className="object-cover"
-                />
+            <li
+              key={person.name}
+              className="relative aspect-3/4 overflow-hidden rounded-card outline-1 -outline-offset-1 outline-foreground/5"
+            >
+              <Image
+                src={person.avatar.src}
+                alt={person.avatar.alt}
+                fill
+                sizes="(min-width: 640px) 33vw, 50vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-foreground/80 via-foreground/10 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4">
+                <div className="type-subheading text-balance text-background">{person.name}</div>
+                <div className="stack-tight type-caption text-background/70">{person.role}</div>
               </div>
-              <div className="mt-4 text-base font-semibold text-foreground">{person.name}</div>
-              <div className="text-sm text-muted-foreground">{person.role}</div>
             </li>
           ))}
         </ul>

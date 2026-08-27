@@ -40,13 +40,8 @@ const PageWrap: ProseWrap = ({ children }) => (
   </div>
 );
 
-// Blog articles: the route already puts the body in a fixed measure column
-// beside the table-of-contents rail (src/app/blog/[slug]/page.tsx), so the
-// gutter and the max-width both come from that column instead — a second
-// `page-inset` here would indent the body inside its own column, and
-// `max-w-3xl` would fight the column for the measure.
 const ArticleWrap: ProseWrap = ({ children }) => (
-  <div className="prose prose-base max-w-none font-sans">
+  <div className="prose prose-base font-sans">
     <div>{children}</div>
   </div>
 );

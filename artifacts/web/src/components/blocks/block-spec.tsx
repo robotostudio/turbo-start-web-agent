@@ -4,6 +4,10 @@ import type { ReactNode } from "react";
 // blockComponents. It is page structure injected at render (see
 // mdx-content.tsx), not a Block an author composes with. Registering it would
 // have it list itself in its own gallery and skew blockCount.
+
+export const blockAnchor = (name: string): string =>
+  name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
 export function BlockSpec({
   name,
   status = "ready",
@@ -14,18 +18,17 @@ export function BlockSpec({
   children?: ReactNode;
 }) {
   return (
-    <section className="border-t border-border py-12">
-      <div className="page-inset">
-        <div className="flex items-baseline gap-3">
-          <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">{name}</h2>
-          {status === "todo" && (
-            <span className="font-mono text-xs uppercase text-muted-foreground">
-              no example yet
-            </span>
-          )}
-        </div>
-      </div>
-      {children}
+    <section
+      id={blockAnchor(name)}
+      aria-label={name}
+      className="scroll-mt-24 border-t border-border section-y"
+    >
+      {status === "todo" && (
+        <p className="px-5 pb-8 type-overline font-mono text-muted-foreground uppercase">
+          no example yet
+        </p>
+      )}
+      <div className="min-w-0">{children}</div>
     </section>
   );
 }

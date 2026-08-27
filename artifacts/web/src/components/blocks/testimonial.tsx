@@ -7,29 +7,32 @@ export function Testimonial(raw: TestimonialProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} />
-        <ul className="mt-16 grid grid-cols-1 gap-x-10 gap-y-14 sm:mt-20 sm:grid-cols-3">
+        <ul className="stack-content grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <li key={testimonial.person.name} className="flex flex-col justify-between gap-8">
+            <li
+              key={testimonial.person.name}
+              className="flex flex-col justify-between gap-8 card p-6 sm:p-8"
+            >
               <blockquote>
-                <p className="relative max-w-xs text-lg text-pretty text-foreground before:absolute before:inline before:-translate-x-full before:content-['\201C'] after:inline after:content-['\201D']">
-                  {testimonial.quote}
-                </p>
+                <p className="type-lead text-foreground">{testimonial.quote}</p>
               </blockquote>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Image
                   src={testimonial.person.avatar.src}
                   alt={testimonial.person.avatar.alt}
                   width={40}
                   height={40}
-                  className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
+                  className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-foreground/5"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="type-caption font-semibold text-foreground">
                     {testimonial.person.name}
                   </div>
-                  <div className="text-sm text-muted-foreground">{testimonial.person.role}</div>
+                  <div className="type-caption text-muted-foreground">
+                    {testimonial.person.role}
+                  </div>
                 </div>
               </div>
             </li>

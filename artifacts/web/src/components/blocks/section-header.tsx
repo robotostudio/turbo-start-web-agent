@@ -12,16 +12,14 @@
 // max-w-2xl (title) and max-w-md (lede) are the measures most Blocks already
 // converged on before this file existed — picked as canonical over max-w-xl
 // and max-w-md-on-title variants that had drifted in a few Blocks, and kept
-// at text-4xl (no sm:text-5xl bump) since the plain 4xl was already the
-// majority and Hero already owns the larger register for the one h1 per
-// page.
+// at the `type-heading` role (no larger bump) since 4xl was already the majority
+// and Hero already owns `type-display`, the larger register for the one h1
+// per page.
 export function SectionHeader({ title, lede }: { title: string; lede?: string }) {
   return (
     <>
-      <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-        {title}
-      </h2>
-      {lede && <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">{lede}</p>}
+      <h2 className="max-w-2xl type-heading text-foreground">{title}</h2>
+      {lede && <p className="stack-lede max-w-md type-lead text-muted-foreground">{lede}</p>}
     </>
   );
 }

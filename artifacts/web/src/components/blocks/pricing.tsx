@@ -15,47 +15,45 @@ export function Pricing(raw: PricingProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} lede={lede} />
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:mt-16 lg:grid-cols-3 lg:grid-rows-[--spacing(6)_1fr_--spacing(6)]">
+        <div className="stack-content grid grid-cols-1 gap-4 lg:grid-cols-3 lg:grid-rows-[--spacing(6)_1fr_--spacing(6)]">
           {plans.map((plan) => (
             <div
               key={plan.title}
               className={cn(
-                "flex flex-col justify-between gap-8 rounded-lg border p-8 lg:row-start-2",
+                "flex flex-col justify-between gap-8 rounded-card border p-8 lg:row-start-2",
                 plan.emphasized ? "border-primary" : "border-border",
                 plan.emphasized && "lg:row-span-full",
               )}
             >
               <div>
                 <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-lg font-semibold text-foreground">{plan.title}</h3>
+                  <h3 className="type-subheading text-foreground">{plan.title}</h3>
                   {plan.emphasized && (
-                    <span className="font-mono text-xs tracking-wide text-primary uppercase">
-                      Popular
-                    </span>
+                    <span className="type-overline font-mono text-primary uppercase">Popular</span>
                   )}
                 </div>
-                <p className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-foreground tabular-nums">
-                    {plan.price}
-                  </span>
+                <p className="stack-lede flex items-baseline gap-1">
+                  <span className="type-heading text-foreground tabular-nums">{plan.price}</span>
                   {plan.period && (
-                    <span className="font-mono text-sm text-muted-foreground">{plan.period}</span>
+                    <span className="type-caption font-mono text-muted-foreground">
+                      {plan.period}
+                    </span>
                   )}
                 </p>
                 {plan.body && (
-                  <p className="mt-4 text-base text-pretty text-muted-foreground">{plan.body}</p>
+                  <p className="stack-lede type-para text-muted-foreground">{plan.body}</p>
                 )}
                 {plan.features && plan.features.length > 0 && (
-                  <ul className="mt-6 flex flex-col gap-3">
+                  <ul className="stack-near flex flex-col gap-4">
                     {plan.features.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
+                      <li key={item} className="flex items-start gap-2">
                         <span
                           aria-hidden="true"
                           className="mt-2.5 size-1 shrink-0 rounded-full bg-muted-foreground"
                         />
-                        <span className="text-base text-foreground">{item}</span>
+                        <span className="type-para text-foreground">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -66,7 +64,7 @@ export function Pricing(raw: PricingProps) {
                   <Link
                     href={plan.cta.href}
                     className={cn(
-                      "rounded-lg px-6 py-3 text-center",
+                      "rounded-full px-6 py-3 text-center",
                       plan.emphasized
                         ? "bg-primary text-primary-foreground"
                         : "border border-border text-foreground",
@@ -78,7 +76,7 @@ export function Pricing(raw: PricingProps) {
                   <a
                     href={plan.cta.href}
                     className={cn(
-                      "rounded-lg px-6 py-3 text-center",
+                      "rounded-full px-6 py-3 text-center",
                       plan.emphasized
                         ? "bg-primary text-primary-foreground"
                         : "border border-border text-foreground",

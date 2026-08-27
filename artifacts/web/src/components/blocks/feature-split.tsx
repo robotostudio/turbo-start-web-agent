@@ -7,32 +7,32 @@ export function FeatureSplit(raw: FeatureSplitProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
-        <div className="grid grid-cols-1 items-center gap-x-12 gap-y-10 lg:grid-cols-2">
-          <div>
+      <div className="page-inset section-y">
+        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <div className="flex flex-col card p-8 sm:p-12">
             <SectionHeader title={title} lede={lede} />
             {points && points.length > 0 && (
-              <ul className="mt-8 flex flex-col gap-3">
+              <ul className="stack-near flex flex-col gap-2">
                 {points.map((point) => (
-                  <li key={point} className="flex items-start gap-2.5">
+                  <li key={point} className="flex items-start gap-2">
                     <span
                       aria-hidden="true"
                       className="mt-2.5 size-1 shrink-0 rounded-full bg-muted-foreground"
                     />
-                    <span className="text-base text-foreground">{point}</span>
+                    <span className="type-para text-foreground">{point}</span>
                   </li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-black/10">
+          <div className="h-full overflow-hidden rounded-card">
             <Image
               src={image.src}
               alt={image.alt}
               width={1200}
               height={900}
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="aspect-4/3 w-full object-cover"
+              className="size-full min-h-80 object-cover"
             />
           </div>
         </div>
