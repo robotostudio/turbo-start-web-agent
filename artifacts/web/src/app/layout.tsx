@@ -19,6 +19,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+    // suppressHydrationWarning: the script below adds `dark` to <html> before
+    // hydration, so the class list legitimately differs from the server's. It
+    // covers this element only, not its tree.
+    //
     // data-announcement drives --color-overscroll-top (globals.css). The top
     // overscroll colour must match whatever is actually topmost on the page:
     // the announcement bar when it is on, the header when it is off. Deriving
@@ -28,7 +32,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       data-announcement={announcement.enabled ? "on" : "off"}
       className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Inline and blocking so the page never renders light then snaps to
+            dark; anything deferred paints first. Reads the two values
+            ThemeToggle writes, falling back to the OS preference. try/catch
+            for private mode, where reading localStorage throws. */}
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: a blocking inline script is the only way to set the theme before paint; the string is a literal with no interpolated input.
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         {/* Direct children of <body> (not nested inside AnnouncementBar's or
             SiteHeader's own `relative`/`sticky` wrappers), so their `-z-10`/
