@@ -18,12 +18,11 @@
    including from v0 or third-party registries — lands already themed to
    these values instead of shadcn's stock zinc palette.
 
-   No .dark overrides: this template is light-mode-only today. `@custom-
-   variant dark` below is left in place as cheap forward-compat scaffolding
-   (shadcn's own convention) for a future theme toggle, but nothing in this
-   file or the component tree applies a `.dark` class or uses a `dark:`
-   utility yet — verify both are still true before trusting `dark:` classes
-   added elsewhere to actually do anything.
+   Both themes are token swaps: every value below is redefined under `.dark`
+   and nothing else in the tree changes. A Block that reads `bg-card` is
+   already correct in both, so a `dark:` utility in a component is almost
+   always a bug — it means that component hardcoded a light value where a
+   token belonged.
    ========================================================================== */
 
 @theme {
@@ -44,6 +43,151 @@
      `motion-safe:` at the call site, never applied unconditionally: this
      utility itself has no opinion on `prefers-reduced-motion`. */
   --animate-marquee: marquee 20s linear infinite;
+
+  /* One variable per role so a global change is one edit: "bump every
+     paragraph by 2px" is --type-para and nothing else. */
+  --type-display: clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
+  --type-title: clamp(2.25rem, 1.6rem + 3.25vw, 3.25rem);
+  --type-heading: clamp(1.75rem, 1.4rem + 1.75vw, 2.25rem);
+  --type-subheading: 1.25rem;
+  --type-lead: 1.125rem;
+  --type-para: 1rem;
+  --type-caption: 0.875rem;
+  --type-caption-mobile: 1rem;
+  --type-overline: 0.75rem;
+
+  /* Every vertical gap on the site resolves here, so spacing moves together. */
+  --rhythm-section: 4rem;
+  --rhythm-stack-tight: 0.5rem;
+  --rhythm-stack-lede: 1rem;
+  --rhythm-stack-near: 1.5rem;
+  --rhythm-stack-content: 2rem;
+  --rhythm-stack-content-wide: 3rem;
+
+  --container-note: 48ch;
+  --container-lede: 60ch;
+}
+
+/* ==========================================================================
+   TYPE SCALE
+
+   One class per role. Each bundles size, weight, line-height and tracking, so
+   a heading is one class rather than four that can drift apart between Blocks.
+   Roles are named for the job, not a numeric ladder — there is exactly one
+   way to write a section heading.
+
+   Each clamp's UPPER bound is the design system's fixed value; the lower
+   bound is this project's mobile adaptation. Vocabulary and rules:
+   AGENTS.md §3a.
+   ========================================================================== */
+
+@utility type-display {
+  font-size: var(--type-display);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+@utility type-title {
+  font-size: var(--type-title);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+@utility type-heading {
+  font-size: var(--type-heading);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+@utility type-subheading {
+  font-size: var(--type-subheading);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+@utility type-lead {
+  font-size: var(--type-lead);
+  line-height: 1.625;
+  letter-spacing: 0.005em;
+  text-wrap: pretty;
+}
+
+@utility type-para {
+  font-size: var(--type-para);
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  text-wrap: pretty;
+}
+
+@utility type-caption {
+  /* 16px on phones, 14px from `sm` — small text has to clear 16px on mobile,
+     and iOS zooms a focused input below it. Folded into the role so a caption
+     is one class, not a `type-para sm:type-caption` pair repeated 8 times. */
+  font-size: var(--type-caption-mobile);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+
+  @media (width >= 40rem) {
+    font-size: var(--type-caption);
+    line-height: 1.43;
+  }
+}
+
+@utility type-overline {
+  font-size: var(--type-overline);
+  font-weight: 500;
+  line-height: 1.33;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   VERTICAL RHYTHM
+
+   Named steps instead of a `mt-*` guessed per Block. Changing the ladder is an
+   edit to the --rhythm-* variables above, never to a Block. Which step goes
+   where: AGENTS.md §3a.
+   ========================================================================== */
+
+@utility section-y {
+  padding-block: var(--rhythm-section);
+}
+
+@utility stack-tight {
+  margin-top: var(--rhythm-stack-tight);
+}
+
+@utility stack-lede {
+  margin-top: var(--rhythm-stack-lede);
+}
+
+@utility stack-near {
+  margin-top: var(--rhythm-stack-near);
+}
+
+@utility stack-content {
+  margin-top: var(--rhythm-stack-content);
+
+  @media (width >= 40rem) {
+    margin-top: var(--rhythm-stack-content-wide);
+  }
+}
+
+/* Ground colour and corner together, so no two cards can disagree. Padding
+   stays at the call site: a stat tile is not a feature panel. */
+
+@utility card {
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+  color: var(--card-foreground);
 }
 
 /* Slides a track exactly half its own width — the track renders its content
@@ -98,11 +242,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  :where(a, button, summary):not([class*="rounded-"]) {
+    border-radius: var(--radius-lg);
+  }
   html {
     @apply font-sans;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground selection:bg-foreground selection:text-background;
   }
 }
 
@@ -112,7 +259,7 @@
   .page-inset {
     margin-inline: auto;
     max-width: 80rem;
-    padding-inline: 1.5rem;
+    padding-inline: 1.25rem;
   }
 
   /* Top gap under the sticky header (`site-header.tsx`'s `<header class="sticky
@@ -132,12 +279,20 @@
      `.page-inset` elements further down a prose page, even though every
      top-level markdown node gets its own `.page-inset` wrapper. */
   header + .page-inset {
-    padding-top: 5rem;
+    padding-top: 4rem;
   }
   @media (min-width: 40rem) {
     header + .page-inset {
-      padding-top: 7rem;
+      padding-top: 5rem;
     }
+  }
+
+  /* Sets the vendored Drawer's own `--drawer-inset` extension point (see
+     `m-(--drawer-inset,0px)` and the closed-transform calcs in
+     `@/components/ui/drawer`) so the panel floats inset from the viewport
+     edge instead of the primitive's edge-flush default. */
+  .drawer-panel-inset {
+    --drawer-inset: 0.75rem;
   }
 
   /* A Block composed into a blog post (see the `Stats` example in
@@ -156,16 +311,6 @@
      routes, where a Block IS the page-level container, are unaffected. */
   .article-body > section > .page-inset {
     padding-inline: 0;
-  }
-
-  /* Sets the vendored Drawer's own `--drawer-inset` extension point (see
-     `m-(--drawer-inset,0px)` and the closed-transform calcs in
-     `@/components/ui/drawer`) so the site header's mobile nav panel floats
-     inset from the viewport edge with margin on every side, instead of the
-     primitive's edge-flush default. Matches the floating header panel's
-     gutter for a consistent shape. */
-  .drawer-panel-inset {
-    --drawer-inset: 0.75rem;
   }
 }
 
@@ -221,6 +366,18 @@
   content: "";
 }
 
+/* The typography plugin ships headings at `font-weight: 700`. Every heading
+   the site renders itself is `font-semibold` (600) — Hero, SectionHeader,
+   every card title — so an article's h2 was the one heading on the site a
+   step heavier than its neighbours, and the typography rules forbid `bold` on
+   headings outright. globals.css already remaps the plugin's --tw-prose-*
+   COLOUR variables above; the plugin exposes no equivalent variable for
+   weight, so this has to be a selector. Measured in the browser, not assumed:
+   computed `font-weight` on a rendered article h2 was 700 before this rule. */
+.prose :is(h1, h2, h3, h4) {
+  font-weight: 600;
+}
+
 /* Markdown images arrive as bare `<img>` with no way for an author to add a
    class (content carries no markup — see remark-content-lockdown.ts), so the
    only place to give them the site's card treatment is here. Matches the
@@ -265,35 +422,59 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-cta: var(--cta);
+  --color-scrim: var(--scrim);
+  --color-gloss: var(--gloss);
+  --color-cta-foreground: var(--cta-foreground);
+  /* Additive, not multiplicative: at a 4px base a multiplier scale collapses
+     (0.6 * 4px = 2.4px) and every step reads the same. --radius-sm is 0. */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-5xl: calc(var(--radius) + 24px);
+  /* Blocks name the surface, not the step, so restyling every card is one
+     edit here and `rounded-card` cannot drift from the `card` utility. */
+  --radius-media: var(--radius-2xl);
+  --radius-card: var(--radius-3xl);
+  --radius-panel: var(--radius-4xl);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.21 0.006 285.9);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.006 285.9);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.006 285.9);
-  --primary: oklch(0.55 0.22 264);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.967 0.001 286.4);
-  --secondary-foreground: oklch(0.21 0.006 285.9);
-  --muted: oklch(0.967 0.001 286.4);
-  --muted-foreground: oklch(0.552 0.016 285.9);
-  --accent: oklch(0.967 0.001 286.4);
-  --accent-foreground: oklch(0.21 0.006 285.9);
+  /* Verbatim from ~/dev/roboto-studio/pointer app/global.css `:root`, at
+     commit 7c156b2. That repo is the source of truth, not the deployed site:
+     pointer.robotostudio.com currently serves a newer build whose values
+     differ. Re-copy from the repo; never hand-tune one. Pointer also ships a
+     `.dark` block this template does not use yet. */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(0.9578 0.0054 95.1);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(0.98 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(0.216 0.006 56.043);
+  --primary-foreground: oklch(0.985 0.001 106.423);
+  --secondary: oklch(0.97 0.001 106.424);
+  --secondary-foreground: oklch(0.216 0.006 56.043);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(0.216 0.006 56.043);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.3);
-  --input: oklch(0.92 0.004 286.3);
-  --ring: oklch(0.55 0.22 264);
-  --radius: 0.75rem;
+  --border: oklch(0.923 0.003 48.717);
+  --input: oklch(0.923 0.003 48.717);
+  --ring: oklch(0.709 0.01 56.259);
+  --radius: 4px;
+
+  /* --hero-chrome is what sits above the panel: header 56px + its 16px margin
+     + the section's 16px gutter, plus the announcement bar's 52px when
+     data-announcement is on. Re-measure if the header height changes. */
+  --hero-chrome: 5.5rem;
+  --hero-min-height: calc(100svh - var(--hero-chrome) - 13rem);
+  --wordmark-size: 13vw;
 
   /* Endpoints for the two-tone overscroll canvas above — verified against
      what actually renders at each edge, not guessed. Top matches the
@@ -310,6 +491,55 @@
   --color-overscroll-bottom: var(--background);
 }
 
+/* Dark theme. Verbatim from the same pointer repo file as `:root` above, its
+   `.dark` block. `color-scheme` is what makes the browser's own furniture —
+   scrollbars, form controls, the canvas behind the page — follow the theme;
+   without it a dark page keeps light scrollbars. */
+.dark {
+  --background: oklch(0.18 0.01 93.99);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.21 0.01 91.72);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(0.21 0.01 91.72);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.923 0.003 48.717);
+  --primary-foreground: oklch(0.21 0.01 91.72);
+  --secondary: oklch(0.268 0.007 34.298);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.268 0.007 34.298);
+  --muted-foreground: oklch(0.709 0.01 56.259);
+  --accent: oklch(0.268 0.007 34.298);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.553 0.013 58.071);
+}
+
+/* Surfaces that are not a straight token swap between themes. Declared here
+   rather than inside either palette block, both of which are verbatim copies
+   from the pointer repo. */
+:root {
+  color-scheme: light;
+  --cta: var(--foreground);
+  --cta-foreground: var(--background);
+  --scrim: var(--foreground);
+  /* `primary` inverts between themes, so the pill's highlight needs a token
+     that is lighter than it in both. */
+  --gloss: var(--primary-foreground);
+}
+
+.dark {
+  color-scheme: dark;
+  --cta: var(--card);
+  --cta-foreground: var(--card-foreground);
+  --gloss: var(--foreground);
+  /* Not `foreground`, which is near-white here: a scrim has to darken what is
+     behind it in BOTH themes, so dark maps it to the page ground instead. */
+  --scrim: oklch(0 0 0);
+}
+
 :root[data-announcement="on"] {
   --color-overscroll-top: var(--primary);
+  --hero-chrome: 8.75rem;
 }

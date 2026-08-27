@@ -7,16 +7,27 @@
   and generates the link rel="icon" tag itself, no manual wiring needed.
 
   This is deliberately a plain monogram, not a crafted logo: every template
-  adopter is expected to swap this file for their own brand mark. The badge
-  color below (#2b62ef) is the sRGB rendering of this project's primary
-  design token (oklch(0.55 0.22 264) in src/app/globals.css), kept as a
-  literal hex value because a favicon is served as a standalone document and
-  can't resolve the host page's CSS custom properties. The H glyph itself
-  uses currentColor so swapping the badge fill is enough to re-theme it.
+  adopter is expected to swap this file for their own brand mark.
+
+  The three literal values below are hand-derived from the design tokens in
+  src/app/globals.css and must be re-derived by hand whenever the palette or
+  the radius moves. A favicon is served as a standalone document, so it can
+  resolve none of those CSS custom properties, and nothing in the build
+  checks these against globals.css:
+
+    fill="#1c1917"  is the primary token, oklch(0.216 0.006 56.043), in sRGB
+    fill="#fafaf9"  is the primary-foreground token, oklch(0.985 0.001 106.423)
+    rx="4"          is the radius token (4px) at this mark's 32x32 scale
+
+  They have already gone stale once: the badge shipped as #2b62ef, the sRGB
+  of a primary token that had since been retired, and every gate stayed
+  green. Change the palette or the radius, change this file in the same
+  commit. (Note the glyph does not use currentColor — a standalone SVG
+  document inherits no color, so the fill has to be written out here.)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Site logo">
-  <rect width="32" height="32" rx="8" fill="#2b62ef" />
-  <g fill="currentColor" style="color: #ffffff">
+  <rect width="32" height="32" rx="4" fill="#1c1917" />
+  <g fill="#fafaf9">
     <rect x="9" y="8" width="4" height="16" rx="1" />
     <rect x="19" y="8" width="4" height="16" rx="1" />
     <rect x="9" y="14" width="14" height="4" rx="1" />
