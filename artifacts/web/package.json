@@ -21,7 +21,8 @@
     "catalog": "node --experimental-strip-types scripts/generate-catalog.ts && pnpm run gallery",
     "catalog:check": "node --experimental-strip-types scripts/generate-catalog.ts --check",
     "gallery": "node --experimental-strip-types scripts/generate-gallery.ts",
-    "gallery:check": "node --experimental-strip-types scripts/generate-gallery.ts --check"
+    "gallery:check": "node --experimental-strip-types scripts/generate-gallery.ts --check",
+    "brand:check": "node --experimental-strip-types scripts/brand-check.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
