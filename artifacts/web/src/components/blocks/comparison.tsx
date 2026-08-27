@@ -9,9 +9,9 @@ export function Comparison(raw: ComparisonProps) {
       <div className="page-inset py-20 sm:py-28">
         <SectionHeader title={title} lede={lede} />
         <div className="mt-16 overflow-x-auto sm:mt-20">
-          <table className="w-full min-w-[36rem] border-collapse text-left text-base">
+          <table className="w-full min-w-xl border-collapse text-left text-base">
             <caption className="sr-only">
-              Comparison of Harbour and the traditional approach
+              Comparison of this approach and the traditional approach
             </caption>
             <thead>
               <tr className="border-b border-border">
