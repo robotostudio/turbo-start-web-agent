@@ -22,9 +22,11 @@ read this file directly; it reads `CLAUDE.md`, which imports this one.
    hex code or a px value. Re-theming a client site means editing token
    values there, never renaming or removing a token (every Block references
    them by name).
-4. **The build is the gate.** If the commands in §5 pass, the content is
-   valid. Fix the content, not the schema. A green build is necessary but
-   not sufficient — check the rendered page before calling a change done.
+4. **The build is the gate — run `pnpm run checks` before delivering.** That
+   one command is the whole gate (§5), and it is what CI runs, so green
+   locally means green there. Fix the content, not the schema. A green build
+   is necessary but not sufficient — check the rendered page before calling a
+   change done.
    Where you have a browser, click through it (nav, footer, every linked
    page). Where you do not, serve the build and assert on the returned HTML
    for the strings you changed; that catches wrong-content far better than a
@@ -200,7 +202,17 @@ working as intended.
 
 ## 5. Verify
 
-From the repo root (each delegates into `artifacts/web`, except the first):
+From the repo root, one command runs every gate below, in this order, and
+stops at the first failure:
+
+```sh
+pnpm run checks
+```
+
+**Run it before delivering any change.** `.github/workflows/ci.yml` runs this
+same script rather than its own list of steps, so there is no version of the
+gate that passes here and fails there. Run an individual one while iterating
+if you like — each delegates into `artifacts/web`, except the first:
 
 ```sh
 pnpm run harness:check    # generated per-platform surfaces are in sync with AGENTS.md, harness.config.json, and .agents/skills/

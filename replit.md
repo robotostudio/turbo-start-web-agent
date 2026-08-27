@@ -57,9 +57,11 @@ can't quietly drift from it:
 >    hex code or a px value. Re-theming a client site means editing token
 >    values there, never renaming or removing a token (every Block references
 >    them by name).
-> 4. **The build is the gate.** If the commands in §5 pass, the content is
->    valid. Fix the content, not the schema. A green build is necessary but
->    not sufficient — check the rendered page before calling a change done.
+> 4. **The build is the gate — run `pnpm run checks` before delivering.** That
+>    one command is the whole gate (§5), and it is what CI runs, so green
+>    locally means green there. Fix the content, not the schema. A green build
+>    is necessary but not sufficient — check the rendered page before calling a
+>    change done.
 >    Where you have a browser, click through it (nav, footer, every linked
 >    page). Where you do not, serve the build and assert on the returned HTML
 >    for the strings you changed; that catches wrong-content far better than a
