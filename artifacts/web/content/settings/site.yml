@@ -2,7 +2,7 @@
 # the browser tab, and the blog index.
 #
 # This file exists so that rebranding a client site means editing content,
-# never source. Nothing under src/ mentions the site's name — the header
+# never source. Nothing under src/ mentions the site's name. The header
 # (site-header.tsx), the root metadata (layout.tsx), and the blog index
 # (blog/page.tsx) all read from here. If you find yourself editing a brand
 # name inside a .tsx file, that is a bug in the template, not a step in the
@@ -18,7 +18,7 @@ name: Harbour
 description: A starter marketing site you can edit with any AI agent.
 
 # The paragraph under the heading on /blog. Written about this template's own
-# demo posts — replace it when the client's real posts arrive, or the page
+# demo posts. Replace it when the client's real posts arrive, or the page
 # will describe a set of articles that no longer exists.
 blogIntro: >-
   Five starter posts, each one demonstrating what a post in this template can

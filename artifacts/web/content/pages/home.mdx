@@ -6,7 +6,7 @@ description: A starter marketing site you can edit with any AI agent.
 <Hero
   variant="centered"
   title="Your website, editable by any AI agent"
-  lede="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."
+  lede="Harbour is a starter marketing site. Your developers keep working in git. Your team edits through the agent they already use."
   primary={{ label: "Read the docs", href: "/about" }}
   secondary={{ label: "Browse the blocks", href: "/blocks-gallery" }}
 />
@@ -33,19 +33,19 @@ description: A starter marketing site you can edit with any AI agent.
     },
     {
       title: "Content lives in git.",
-      body: "It's plain-text MDX — diffable, reviewable as a pull request, revertible, and directly editable by an AI agent.",
+      body: "It's plain-text MDX: diffable, reviewable as a pull request, revertible, and directly editable by an AI agent.",
     },
     {
       title: "One token file.",
-      body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
+      body: "Rebrand a client site by editing a handful of CSS variables instead of hunting hex codes.",
     },
     {
-      title: "Schemas that catch mistakes.",
+      title: "Typed schemas.",
       body: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
     },
     {
       title: "No client JS by default.",
-      body: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+      body: "Sections render on the server, so a block only ships a bundle when it actually needs one.",
     },
     {
       title: "Ships in an afternoon.",
@@ -56,7 +56,7 @@ description: A starter marketing site you can edit with any AI agent.
 
 <FeatureSplit
   title="Every block ships with real content, not lorem ipsum."
-  lede="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
+  lede="Preview a block and it already reads like a finished page. Swap the copy when the client's ready, not before."
   points={[
     "Every block preview ships with client-ready copy",
     "Content stays wired to the same schema in production",
@@ -82,7 +82,7 @@ description: A starter marketing site you can edit with any AI agent.
   title="What agencies say once they've shipped a client site."
   testimonials={[
     {
-      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days — and the client didn't know the difference.",
+      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days, and the client didn't know the difference.",
       person: {
         name: "Jordan Ellis",
         role: "Creative Director, Fernwood Studio",
@@ -129,7 +129,7 @@ description: A starter marketing site you can edit with any AI agent.
     },
     {
       title: "Client rebrand",
-      body: "Same block tree, new tokens — the whole site retheme took an afternoon.",
+      body: "Same block tree, new tokens. The whole site retheme took an afternoon.",
       image: {
         src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=olive",
         alt: "",
@@ -143,23 +143,23 @@ description: A starter marketing site you can edit with any AI agent.
   faqs={[
     {
       question: "Do I need to know a CMS, or is plain Markdown enough?",
-      answer: "There's no CMS to learn — content is just MDX files in content/, validated by Zod at build time. A remark plugin locks down what MDX can contain, so an agent can edit those files directly without ever touching a database or an admin panel.",
+      answer: "There's no CMS to learn. Content is just MDX files in content/, validated by Zod at build time. A remark plugin locks down what MDX can contain, so an agent can edit those files directly without ever touching a database or an admin panel.",
     },
     {
       question: "How long does a client rebuild actually take?",
-      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week — layout, spacing, responsive behavior — are already decided.",
+      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week (layout, spacing, responsive behavior) are already decided.",
     },
     {
       question: "How long does a rebrand take on a site that's already live?",
-      answer: "Most take an afternoon. A rebrand is a token swap rather than a rebuild — the block tree and the copy stay exactly where they are while the design tokens carry the new palette, type, and spacing across every section at once.",
+      answer: "Most take an afternoon. A rebrand is a token swap rather than a rebuild: the block tree and the copy stay exactly where they are while the design tokens carry the new palette, type, and spacing across every section at once.",
     },
     {
       question: "What happens when a client wants a block that doesn't exist yet?",
-      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template — it's an addition to it, so the next client project gets it for free too.",
+      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template, it's an addition to it, so the next client project gets it for free too.",
     },
     {
       question: "Is the block registry locked to a specific CMS?",
-      answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time — swap the source and you'd rebuild that check, not just add an adapter.",
+      answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time. Swap the source and you'd rebuild that check, not just add an adapter.",
     },
     {
       question: "Can we host the site on our own servers?",
@@ -167,15 +167,9 @@ description: A starter marketing site you can edit with any AI agent.
     },
     {
       question: "Can I white-label this for resale?",
-      answer: "Yes. It ships MIT-licensed specifically so agencies can rebrand, resell, and reuse it across client engagements without asking permission or crediting the template anywhere client-facing. That includes the footer — there is no attribution line to keep or link back to, so the only name in a client's footer is the client's own.",
+      answer: "Yes. It ships MIT-licensed specifically so agencies can rebrand, resell, and reuse it across client engagements without asking permission or crediting the template anywhere client-facing. That includes the footer, where there is no attribution line to keep or link back to, so the only name in a client's footer is the client's own.",
     },
   ]}
-/>
-
-<Newsletter
-  title="Get notified when new blocks ship."
-  lede="One email a month, unsubscribe anytime."
-  action="https://forms.example.com/subscribe"
 />
 
 <CTA

@@ -18,7 +18,7 @@ noindex: true
 <Hero
   variant="centered"
   title="Your website, editable by any AI agent"
-  lede="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."
+  lede="Harbour is a starter marketing site. Your developers keep working in git. Your team edits through the agent they already use."
   primary={{ label: "Read the docs", href: "/about" }}
   secondary={{ label: "View source", href: "https://github.com" }}
 />
@@ -26,7 +26,7 @@ noindex: true
 <Hero
   variant="left"
   title="Or lead from the left"
-  lede="Same Block, different variant — set through a literal prop, not a new component."
+  lede="Same Block, different variant, set through a literal prop rather than a new component."
   primary={{ label: "Read the docs", href: "/about" }}
 />
 
@@ -39,14 +39,6 @@ noindex: true
   lede="Compose pages from Blocks. The build is the gate."
   primary={{ label: "About Harbour", href: "/about" }}
 />
-
-Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX source, closed like this:
-
-```mdx
-<BlockSpec name="CTA">
-<CTA title="Example" />
-</BlockSpec>
-```
 
 </BlockSpec>
 
@@ -62,19 +54,19 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
     },
     {
       title: "Bring your own content.",
-      body: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+      body: "Wire pages to Markdown, Sanity, or a JSON file. The block components never know which one is behind them.",
     },
     {
       title: "One token file.",
-      body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
+      body: "Rebrand a client site by editing a handful of CSS variables instead of hunting hex codes.",
     },
     {
-      title: "Schemas that catch mistakes.",
+      title: "Typed schemas.",
       body: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
     },
     {
       title: "No client JS by default.",
-      body: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+      body: "Sections render on the server, so a block only ships a bundle when it actually needs one.",
     },
     {
       title: "Ships in an afternoon.",
@@ -89,7 +81,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <FeatureSplit
   title="Every block ships with real content, not lorem ipsum."
-  lede="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
+  lede="Preview a block and it already reads like a finished page. Swap the copy when the client's ready, not before."
   points={[
     "Every block preview ships with client-ready copy",
     "Content stays wired to the same schema in production",
@@ -126,7 +118,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
     },
     {
       title: "Client rebrand",
-      body: "Same block tree, new tokens — the whole site retheme took an afternoon.",
+      body: "Same block tree, new tokens. The whole site retheme took an afternoon.",
       image: {
         src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=olive",
         alt: "",
@@ -163,19 +155,19 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
   faqs={[
     {
       question: "Do I need to know Sanity, or can I use plain Markdown?",
-      answer: "Neither is required. Block components read from a shared content shape, and the shape ships with a Markdown adapter and a Sanity adapter already wired. Point the config at whichever one matches the client's comfort level — the sections themselves never know which backend is behind them.",
+      answer: "Neither is required. Block components read from a shared content shape, and the shape ships with a Markdown adapter and a Sanity adapter already wired. Point the config at whichever one matches the client's comfort level. The sections themselves never know which backend is behind them.",
     },
     {
       question: "How long does a client rebuild actually take?",
-      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week — layout, spacing, responsive behavior — are already decided.",
+      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week (layout, spacing, responsive behavior) are already decided.",
     },
     {
       question: "What happens when a client wants a block that doesn't exist yet?",
-      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template — it's an addition to it, so the next client project gets it for free too.",
+      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template, it's an addition to it, so the next client project gets it for free too.",
     },
     {
       question: "Is the block registry locked to a specific CMS?",
-      answer: "No. The registry is just a mapping from a type string to a component. Whatever's supplying that type — Sanity, a JSON file, a headless CMS you bolt on later — the registry doesn't care, as long as the props match the schema.",
+      answer: "No. The registry is just a mapping from a type string to a component. Whatever's supplying that type (Sanity, a JSON file, a headless CMS you bolt on later), the registry doesn't care, as long as the props match the schema.",
     },
     {
       question: "Can I white-label this for resale?",
@@ -183,7 +175,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
     },
     {
       question: "Does it support multiple languages?",
-      answer: "Not yet natively — routing and copy are single-locale today. Multi-language support is on the roadmap, but if a client needs it now, the content layer is thin enough that most teams wire in next-intl themselves in under a day.",
+      answer: "Not yet natively. Routing and copy are single-locale today. Multi-language support is on the roadmap, but if a client needs it now, the content layer is thin enough that most teams wire in next-intl themselves in under a day.",
     },
   ]}
 />
@@ -196,7 +188,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
   title="What agencies say once they've shipped a client site."
   testimonials={[
     {
-      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days — and the client didn't know the difference.",
+      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days, and the client didn't know the difference.",
       person: {
         name: "Jordan Ellis",
         role: "Creative Director, Fernwood Studio",

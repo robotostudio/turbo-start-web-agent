@@ -1,11 +1,192 @@
 ---
 title: Style guide
-description: Internal reference for how this site is composed.
+description: The tokens, type roles, and surfaces every page on this site is built from.
 noindex: true
 ---
 
-## Unlisted on purpose
+<Hero
+  variant="left"
+  title="One file decides how this site looks"
+  lede="Colour, type, spacing and radius all resolve to tokens in a single stylesheet. Change a value there and every Block follows, with nothing to hunt down component by component."
+  primary={{ label: "See the Blocks", href: "/blocks-gallery" }}
+  secondary={{ label: "Read the guides", href: "/blog" }}
+/>
 
-This page is published and directly reachable, but carries `noindex: true`, so
-it stays out of the sitemap and asks search engines not to index it. Use it for
-internal references you want to share by link but not surface.
+## Colour
+
+The palette is taken verbatim from Pointer's own root stylesheet and sits at
+the bottom of the design system file. That is the one place a raw colour value
+belongs, because it is the definition rather than a use. Everywhere else, every
+colour is a semantic token: `bg-card`, `text-muted-foreground`,
+`ring-foreground/10`.
+
+| Token | Means |
+| --- | --- |
+| `background` / `foreground` | The page and the ink on it |
+| `card` / `card-foreground` | A raised surface and its ink |
+| `primary` / `primary-foreground` | The brand fill: buttons, the header pill |
+| `muted` / `muted-foreground` | Quiet fills and secondary copy |
+| `accent` / `accent-foreground` | Hover and active states |
+| `border` / `input` / `ring` | Hairlines, field edges, focus rings |
+
+`bg-black/10` compiles, but it is wrong: `foreground` is the token that means
+"the ink colour", and it moves when the palette does. Re-theming a client site
+means editing the values of these tokens, never renaming or removing one.
+
+## Type
+
+One class per role. Each bundles size, weight, line-height and tracking, so a
+heading is a single class rather than four that can drift apart between two
+Blocks. Sizes given as a range are `clamp()`, so one class holds at every width
+and no role needs an `sm:` twin.
+
+| Role | Size | Use it for |
+| --- | --- | --- |
+| `type-display` | 40 to 72px | The one biggest statement on a page. Once only. |
+| `type-title` | 36 to 52px | A page title that is not a Hero |
+| `type-heading` | 28 to 36px | A section heading |
+| `type-subheading` | 20px | A card, entry, or FAQ title |
+| `type-lead` | 18px | The supporting line under a heading |
+| `type-para` | 16px | Body and card copy |
+| `type-caption` | 14px | Dates, bylines, roles, small labels |
+| `type-overline` | 12px | Uppercase micro-labels |
+
+Add only a colour alongside a role: `type-heading text-foreground`. Do not
+re-specify `font-*`, `tracking-*`, `leading-*`, or `text-balance`. The role sets
+them, and repeating one is how two Blocks start to disagree.
+
+<FeatureGrid
+  title="The rules that keep the system from drifting"
+  lede="Each one exists because something broke without it."
+  features={[
+    {
+      title: "Roles, not stacks.",
+      body: "One class per heading. A four-class stack drifts the moment two Blocks copy it and one gets edited.",
+    },
+    {
+      title: "Tokens, not hex.",
+      body: "A raw colour survives a re-theme untouched, which is exactly how a stale brand colour hides in a client site.",
+    },
+    {
+      title: "One card class.",
+      body: "Ground colour and corner ship together, so no two cards can disagree about what a card looks like.",
+    },
+    {
+      title: "Separation by edge.",
+      body: "A border, a ring, or whitespace does the work. There is no shadow scale to reach for and none to keep in step.",
+    },
+    {
+      title: "Additive radius.",
+      body: "Corners step off a 4px base by addition. A multiplier scale collapses at that base and every step reads alike.",
+    },
+    {
+      title: "One gutter.",
+      body: "Every section shares page-inset, so nothing invents its own padding and sections align down the page.",
+    },
+  ]}
+/>
+
+## Surfaces
+
+`card` is the filled surface every Block draws on: ground colour and corner in
+one class. Padding stays at the call site, because it genuinely differs by card
+size.
+
+```
+card p-6 sm:p-8      a tile
+card p-8 sm:p-12     a panel
+card p-2             a media frame
+```
+
+Never write `rounded-3xl bg-card` by hand. An outlined card, like the raised
+plan in Pricing, and an image frame, like Team, are different surfaces and keep
+their own `border` or `outline`.
+
+## Rhythm
+
+Vertical gaps are named steps, never a margin guessed per Block. Five classes,
+tightest first, each driven by one variable.
+
+| Class | Gap | Between |
+| --- | --- | --- |
+| `stack-tight` | 8px | A card title and its own body |
+| `stack-lede` | 16px | A heading and the lede under it |
+| `stack-near` | 24px | Copy and its buttons, or a statement and the row it introduces |
+| `stack-content` | 32 to 48px | A heading block and the grid or list under it |
+| `section-y` | 64px | A section's own padding, top and bottom |
+
+Every Block opens `page-inset section-y`. Writing `mt-8 sm:mt-12` instead is
+the same class of bug as writing a raw type stack: it compiles, and it drifts.
+
+## Changing the system globally
+
+Each role and each step is one variable at the top of the stylesheet. Bumping
+every paragraph by 2px is a single edit:
+
+```
+--type-para: 1.125rem;
+```
+
+Widening every section is `--rhythm-section`. Restyling every card corner
+is `--radius-card`. Nothing in any Block needs touching, which is the whole
+point: a global change should be one line, and an agent asked to make one
+should never be editing fourteen components.
+
+## Measure, radius, spacing
+
+Prose runs to one of three widths: `max-w-note` (48ch), `max-w-lede` (60ch), or
+`max-w-prose` (72ch). A line beyond roughly 90 characters is a defect, not a
+preference.
+
+`--radius` is the base, at 4px, and the ladder steps off it additively rather
+than by multiplier. At a 4px base a multiplier scale collapses and every step
+reads the same. Blocks name the surface, not the step: `rounded-media` (12px)
+for an image frame, `rounded-card` (16px) for a card, `rounded-panel` (20px)
+for a full-bleed panel, and `rounded-full` for every control.
+
+Vertical gaps come from the rhythm steps above. Horizontal grid gaps are
+`gap-4`, and gap values come from 2, 4, 6, 8 and 12, nothing else.
+
+<Faq
+  title="Changing the theme, as an agent would"
+  faqs={[
+    {
+      question: "Make every paragraph on the site 2px bigger.",
+      answer: "Open src/app/globals.css, find --type-para in the @theme block, and change 1rem to 1.125rem. That is the whole change. Every Block reads the type-para role, and the role reads that variable, so nothing else needs touching. The same holds for any role: --type-heading, --type-caption, and the rest.",
+    },
+    {
+      question: "Give the site more breathing room between sections.",
+      answer: "Raise --rhythm-section. Every Block opens with page-inset section-y, and section-y is that one value, so all fourteen move together. For the gap between a heading and the grid under it, the variable is --rhythm-stack-content.",
+    },
+    {
+      question: "Soften every corner on the site.",
+      answer: "Raise --radius. The whole ladder is calc() off that one base, so cards, panels, media frames and inputs all follow. To restyle only one kind of surface, change --radius-card, --radius-panel or --radius-media instead of the base.",
+    },
+    {
+      question: "Rebrand this site for a new client.",
+      answer: "Edit the values of the colour tokens in :root, and the matching ones in .dark if the site ships both themes. Never rename or remove a token, because every Block references it by name, and never add a raw hex alongside one. Nothing outside that block names a colour.",
+    },
+    {
+      question: "The dark theme looks wrong in one spot. Do I add a dark: class?",
+      answer: "Almost certainly not. Both themes are the same tokens with different values, so a component that reads bg-card is already correct in both. A dark: utility in a Block usually means that Block hardcoded a light value where a token belonged. Fix the token, not the component.",
+    },
+    {
+      question: "Can I write text-2xl font-semibold tracking-tight?",
+      answer: "No. It compiles, which is why this is worth saying out loud, but it is the exact drift the roles exist to prevent. Pick the role that matches the job: that stack is type-subheading.",
+    },
+    {
+      question: "There is no role for what I need. Can I add one?",
+      answer: "Almost certainly not. All eight roles are in use, and a ninth is nearly always one of the eight in the wrong place. Work out which job the text is doing before reaching for a new size.",
+    },
+    {
+      question: "The build passes. Is the page done?",
+      answer: "Not yet. A green build means the props are valid, not that the page reads well. Every defect worth fixing on this site so far passed typecheck, lint and build, and was only visible once rendered.",
+    },
+  ]}
+/>
+
+<CTA
+  title="See every Block in one place"
+  lede="The gallery renders each Block with real content and links straight to its props."
+  primary={{ label: "Open the Blocks gallery", href: "/blocks-gallery" }}
+/>

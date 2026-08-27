@@ -1,5 +1,5 @@
 # Lines for the hidden overscroll easter egg
-# (src/components/site/overscroll-easter-egg.tsx) — revealed only in the
+# (src/components/site/overscroll-easter-egg.tsx), revealed only in the
 # native rubber-band gap when the page bounces past the top. Purely
 # decorative and aria-hidden; one line is shown at random per reveal. Keep
 # entries short, they render as a single line of text.
