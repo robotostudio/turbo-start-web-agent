@@ -1,4 +1,6 @@
+import { buttonVariants } from "@/components/ui/button-variants";
 import { type NewsletterProps, newsletterSchema, parseBlock } from "@/lib/blocks/schemas";
+import { cn } from "@/lib/utils";
 
 export function Newsletter(raw: NewsletterProps) {
   const { title, lede, action, buttonLabel } = parseBlock("Newsletter", newsletterSchema, raw);
@@ -30,10 +32,10 @@ export function Newsletter(raw: NewsletterProps) {
               aria-label="Email address"
               className="min-w-0 flex-1 rounded-lg border border-border px-4 py-3 text-base text-foreground placeholder:text-muted-foreground"
             />
-            <button
-              type="submit"
-              className="shrink-0 rounded-lg bg-primary px-6 py-3 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
+            {/* The one button on the site that is genuinely a button rather
+                than a link, so it takes the classes directly instead of going
+                through ButtonLink. */}
+            <button type="submit" className={cn("shrink-0", buttonVariants({ size: "marketing" }))}>
               {buttonLabel}
             </button>
           </form>

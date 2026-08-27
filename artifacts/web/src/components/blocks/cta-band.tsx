@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { type CtaBandProps, ctaBandSchema, parseBlock } from "@/lib/blocks/schemas";
 
 export function CtaBand(raw: CtaBandProps) {
@@ -11,21 +11,9 @@ export function CtaBand(raw: CtaBandProps) {
           {title}
         </h2>
         {lede && <p className="max-w-sm text-lg text-pretty text-primary-foreground/80">{lede}</p>}
-        {primary.href.startsWith("/") ? (
-          <Link
-            href={primary.href}
-            className="rounded-lg bg-background px-6 py-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background"
-          >
-            {primary.label}
-          </Link>
-        ) : (
-          <a
-            href={primary.href}
-            className="rounded-lg bg-background px-6 py-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background"
-          >
-            {primary.label}
-          </a>
-        )}
+        {/* `inverse` because this band is primary-filled: the default variant
+            is primary-on-background and would vanish into it. */}
+        <ButtonLink href={primary.href} label={primary.label} variant="inverse" />
       </div>
     </section>
   );
