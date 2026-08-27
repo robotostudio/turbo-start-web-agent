@@ -178,6 +178,14 @@ Requested-by: client
 Agent: Claude Code
 ```
 
+**Each trailer goes on its own line**, and the same shell rule that mangles a
+pull request body mangles a commit message: `-m "Requested-by: client\nAgent:
+v0"` puts a literal backslash and `n` between them, git reads one trailer whose
+value happens to contain two odd characters, and `Agent:` stops existing. That
+shipped on PR #47 on 2026-08-27. Use a second `-m`, a heredoc, or `--file`. CI
+fails it now (`pr-hygiene`), but the fix afterwards is an amend and a
+force-push, so it is much cheaper to get right the first time.
+
 `Requested-by:` is whoever asked for the change — `client` when a client
 asked through an agent, or a name when you know it. `Agent:` is the platform
 you are running on: `Claude Code`, `Codex`, `Cursor`, `Replit`. Both are

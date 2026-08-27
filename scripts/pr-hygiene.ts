@@ -106,11 +106,59 @@ export const checkVendorTrailers = (commitMessages: readonly string[]): Finding[
         `time and this never arises.`,
     }));
 
+/**
+ * A trailer line: `Key: value` at the start of a line, which is the only shape
+ * git recognises as a trailer.
+ */
+const TRAILER_LINE = /^[A-Za-z][A-Za-z-]*:.*$/gm;
+
+/**
+ * The escaped-newline defect again, one layer down: a commit message whose
+ * trailers were composed as a single string and joined with a literal `\n`
+ * rather than a line break.
+ *
+ * Observed on 2026-08-27, PR #47:
+ *
+ *     Requested-by: client\nAgent: v0
+ *
+ * Git sees one trailer whose value happens to contain two characters that look
+ * like an escape. `Agent:` is not a trailer at all, so the provenance the
+ * convention exists to record is silently gone — and `pr-hygiene` passed the
+ * pull request, because the body rule never looked at commit messages.
+ *
+ * Scoped to trailer lines rather than the whole message, for the same reason
+ * `checkEscapedNewlines` is a ratio and not a substring match: commit messages
+ * in this repository discuss `\n` — several were written while building this
+ * very check — and failing those would be worse than the defect. A trailer is
+ * structured, so a literal escape inside one is unambiguous; prose about
+ * escapes lives in paragraphs, which this rule never reads.
+ */
+export const checkEscapedTrailers = (commitMessages: readonly string[]): Finding[] =>
+  commitMessages.flatMap((message) => {
+    const broken = (message.match(TRAILER_LINE) ?? []).filter((line) => line.includes("\\n"));
+    if (broken.length === 0) return [];
+    return [
+      {
+        rule: "escaped-trailer",
+        message:
+          `Commit "${message.split("\n")[0]}" has a literal \\n inside a trailer:\n` +
+          broken.map((line) => `    ${line}`).join("\n") +
+          `\n  Git reads that as ONE trailer whose value contains a backslash and an "n", so ` +
+          `every trailer after the first is lost along with the provenance it recorded.\n` +
+          `  Write each trailer on its own line. A shell does not expand \\n inside double ` +
+          `quotes, so \`-m "Requested-by: client\\nAgent: v0"\` produces exactly this; use a ` +
+          `second \`-m\`, a heredoc, or \`--file\`.\n` +
+          `  Get it right at commit time: fixing it afterwards needs an amend and a force-push.`,
+      },
+    ];
+  });
+
 /** Every rule, run over one pull request. */
 export const checkPullRequest = (body: string, commitMessages: readonly string[]): Finding[] => [
   ...checkNonEmptyBody(body),
   ...checkEscapedNewlines(body),
   ...checkVendorTrailers(commitMessages),
+  ...checkEscapedTrailers(commitMessages),
 ];
 
 // --- CLI ---------------------------------------------------------------------
