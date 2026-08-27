@@ -3,6 +3,7 @@ import type { ComponentProps, ComponentType, ReactNode } from "react";
 import * as runtime from "react/jsx-runtime";
 import { blockComponents } from "@/components/blocks";
 import { BlockSpec } from "@/components/blocks/block-spec";
+import { ButtonMatrix, TypeScale } from "@/components/content/design-specimens";
 
 // How a top-level markdown element is wrapped. Every variant below keeps the
 // same three-layer shape, and each layer is load-bearing:
@@ -147,10 +148,21 @@ export async function MdxContent({
   variant?: MdxVariant;
 }) {
   const { default: Content } = await run(source, runtime);
-  // BlockSpec is Block Gallery chrome, injected here rather than registered in
+  // Block Gallery chrome, injected here rather than registered in
   // blockComponents/blockSchemas — a Block listing itself in its own gallery
-  // would skew blockCount. See src/components/blocks/block-spec.tsx.
+  // would skew blockCount. BlockSpec wraps each Block's example; ButtonMatrix
+  // and TypeScale render the primitives those Blocks are built from. See
+  // src/components/blocks/block-spec.tsx and
+  // src/components/content/design-specimens.tsx.
   return (
-    <Content components={{ ...blockComponents, BlockSpec, ...componentsByVariant[variant] }} />
+    <Content
+      components={{
+        ...blockComponents,
+        BlockSpec,
+        ButtonMatrix,
+        TypeScale,
+        ...componentsByVariant[variant],
+      }}
+    />
   );
 }
