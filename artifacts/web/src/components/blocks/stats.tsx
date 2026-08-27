@@ -6,16 +6,13 @@ export function Stats(raw: StatsProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} />
-        <dl className="mt-14 divide-y divide-foreground/10 sm:mt-20 sm:grid sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+        <dl className="stack-content grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col gap-2 py-8 first:pt-0 last:pb-0 sm:px-8 sm:py-0 sm:first:pl-0 sm:last:pr-0"
-            >
-              <dt className="truncate text-sm text-muted-foreground">{stat.label}</dt>
-              <dd className="font-mono text-4xl font-semibold text-foreground tabular-nums sm:text-5xl">
+            <div key={stat.label} className="flex flex-col gap-2 card p-6 sm:p-8">
+              <dt className="type-caption text-muted-foreground">{stat.label}</dt>
+              <dd className="order-first type-heading text-foreground tabular-nums">
                 {stat.value}
               </dd>
             </div>

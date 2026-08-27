@@ -24,12 +24,6 @@ columns:
         href: /style-guide
       - label: Blocks gallery
         href: /blocks-gallery
-  - title: Resources
-    links:
-      - label: GitHub
-        href: https://github.com
-      - label: X
-        href: https://x.com
 social:
   - label: Harbour on X
     href: https://x.com
@@ -37,10 +31,8 @@ social:
   - label: Harbour on GitHub
     href: https://github.com
     icon: github
-legal:
-  - label: Privacy
-    href: /privacy
-  - label: Terms
-    href: /terms
+builtBy:
+  label: Built by Roboto Studio
+  href: https://robotostudio.com
+legal: []
 note: Harbour is MIT-licensed. Clone it, edit the content in Git or through any AI agent, and ship your own site.
-copyrightNote: Released under the MIT license.

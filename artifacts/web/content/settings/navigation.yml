@@ -1,17 +1,13 @@
 # Primary site navigation. Rendered by src/components/site/site-header.tsx.
 # Every `href` is validated by velite.config.ts (Zod .refine(isSafeUrl, ...))
 # because YAML never passes through the MDX content-lockdown remark plugin.
+# No "Home" entry: the wordmark on the left of the header is already an
+# <a href="/"> (aria-label="Homepage"), so a Home link duplicates it and
+# spends a nav slot on the one destination every visitor can already reach.
 items:
-  - label: Home
-    href: /
   - label: About
     href: /about
   - label: Blog
     href: /blog
-  - label: Design system
-    href: /style-guide
-    children:
-      - label: Style guide
-        href: /style-guide
-      - label: Blocks gallery
-        href: /blocks-gallery
+  - label: Blocks gallery
+    href: /blocks-gallery

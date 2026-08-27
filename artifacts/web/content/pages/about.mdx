@@ -1,20 +1,128 @@
 ---
 title: About Harbour
-description: What this starter is and how content works.
+description: A marketing site a client can edit through an AI agent, without a developer losing control of the code.
 ---
+
+<Hero
+  variant="left"
+  title="A site your client can edit, and you can still review"
+  lede="Harbour is a marketing template where the content is MDX in git. A client asks an agent for a change, the agent composes Blocks, and you see the result as a pull request like any other."
+  primary={{ label: "See the Blocks", href: "/blocks-gallery" }}
+  secondary={{ label: "Read the guides", href: "/blog" }}
+/>
+
+## The problem it solves
+
+Most client sites end up with one of two failure modes. Either every copy change
+comes back to a developer, and small edits queue for days, or the client gets a
+CMS and the layout slowly drifts as they reach for tools nobody designed for the
+job.
+
+Harbour splits the difference. Content is data the client's agent may write.
+Components, schemas and design tokens are code the client's agent may not touch.
+The split is enforced at build time, not by convention.
+
+<FeatureGrid
+  title="How the pieces fit together"
+  lede="Six parts, each with one job."
+  features={[
+    {
+      title: "Blocks.",
+      body: "Fourteen sections with typed props. Composing them is the whole authoring workflow for a page.",
+    },
+    {
+      title: "Content in git.",
+      body: "Pages are MDX files. Every edit is a diff, so a bad change is reviewable and one revert away.",
+    },
+    {
+      title: "Schemas.",
+      body: "Every Block validates its props at build time. A wrong prop fails CI, not the client demo.",
+    },
+    {
+      title: "The lockdown.",
+      body: "A remark plugin rejects imports, function calls and raw HTML, whatever an agent tries.",
+    },
+    {
+      title: "Design tokens.",
+      body: "Colour, type, spacing and radius live in one stylesheet, so rebranding is an edit to values.",
+    },
+    {
+      title: "Static output.",
+      body: "Sections render on the server, so a page ships JavaScript only where it genuinely needs it.",
+    },
+  ]}
+/>
 
 ## Content is MDX in git
 
 Pages live under `content/`. Each page is data, not code: you assemble Blocks
-and pass them literal values. There is no CMS and no database.
+and pass them literal values. There is no CMS and no database, so there is no
+second copy of the content to keep in step, and no admin login to hand over.
+
+```mdx
+<Hero
+  variant="centered"
+  title="Your website, editable by any AI agent"
+  primary={{ label: "Read the docs", href: "/about" }}
+/>
+```
+
+That is the entire authoring surface. No imports, no wiring. Blocks are injected
+into every content file automatically.
 
 ## The build is the gate
 
 Bad frontmatter or bad Block props fail the build by design. If the build
 passes, the content is valid.
 
+That guarantee is worth being precise about. The lockdown walks the MDX tree and
+every expression in it, rejecting anything that is not a literal value: no
+imports, no function calls, no raw HTML elements, no event handler props, no
+unsafe URLs. It is what makes "an agent may only edit content" true regardless
+of what an agent attempts, rather than a rule an agent could choose to break.
+
+What the build cannot check is whether the page reads well. Schemas enforce
+shape, not meaning, so a section can pass every gate and still say the wrong
+thing. Read the rendered page before calling a change done.
+
+<Stats
+  title="What the template ships with"
+  stats={[
+    { value: "14", label: "Blocks in the registry today" },
+    { value: "1", label: "File that decides the whole theme" },
+    { value: "8", label: "Type roles in the design system" },
+    { value: "0", label: "Databases to run or back up" },
+  ]}
+/>
+
+<Faq
+  title="Common questions"
+  faqs={[
+    {
+      question: "Which agents can edit this site?",
+      answer: "Any of them. The rules live in AGENTS.md, which Codex, Cursor, Copilot, Zed, Gemini CLI and most of the ecosystem read natively, and CLAUDE.md imports the same file for Claude Code.",
+    },
+    {
+      question: "What stops an agent breaking the site?",
+      answer: "The content lockdown, which is a build step rather than an instruction. An agent that tries to import a module or drop in raw HTML gets a failed build naming exactly what it did and what to do instead.",
+    },
+    {
+      question: "Can a client change the layout, not just the words?",
+      answer: "Yes, within the Block vocabulary. They can add, reorder and remove sections on a page. What they cannot do is invent new markup, which is what keeps a site looking designed six months in.",
+    },
+    {
+      question: "How do I rebrand it for a client?",
+      answer: "Edit the token values in one stylesheet. Colour, radius, spacing and type all resolve to those tokens, so nothing is left holding a stale brand colour. The style guide lists the full vocabulary.",
+    },
+    {
+      question: "Can I use it for paid client work?",
+      answer: "Yes. It is MIT-licensed specifically so agencies can rebrand, resell and reuse it without asking permission or crediting the template anywhere client-facing, footer included.",
+    },
+  ]}
+/>
+
 <CTA
   title="Ready to go deeper?"
-  lede="Read the guides for practical notes on composing pages, working with Blocks, and getting the most from Harbour."
+  lede="The guides cover composing pages, working with Blocks, and getting the most from Harbour."
   primary={{ label: "Read the guides", href: "/blog" }}
 />

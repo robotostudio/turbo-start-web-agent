@@ -119,7 +119,7 @@ export function OverscrollEasterEgg() {
     >
       <p
         className={cn(
-          "text-sm font-semibold transition duration-300 ease-out motion-reduce:transition-none",
+          "type-caption font-semibold transition duration-300 ease-out motion-reduce:transition-none",
           shown ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
         )}
       >

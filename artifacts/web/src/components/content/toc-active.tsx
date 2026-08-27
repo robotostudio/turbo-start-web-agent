@@ -11,18 +11,24 @@ import { useEffect } from "react";
 // jump link in it, is server-rendered and works before this island loads and
 // with JS off entirely. If this component never runs, the panel simply has no
 // highlight.
-export function TocActive() {
+export function TocActive({
+  container = "[data-toc]",
+  link = "a[data-toc-link]",
+}: {
+  container?: string;
+  link?: string;
+} = {}) {
   useEffect(() => {
-    const toc = document.querySelector("[data-toc]");
+    const toc = document.querySelector(container);
     if (!toc) return;
 
     // Each heading id -> its link. Reading the ids back off the links (rather
     // than re-deriving them) means the two can never disagree: whatever
     // Velite's `s.toc()` emitted is exactly what gets tracked.
     const linkById = new Map<string, HTMLAnchorElement>();
-    for (const link of toc.querySelectorAll<HTMLAnchorElement>("a[data-toc-link]")) {
-      const id = decodeURIComponent(new URL(link.href).hash.slice(1));
-      if (id && !linkById.has(id)) linkById.set(id, link);
+    for (const anchor of toc.querySelectorAll<HTMLAnchorElement>(link)) {
+      const id = decodeURIComponent(new URL(anchor.href).hash.slice(1));
+      if (id && !linkById.has(id)) linkById.set(id, anchor);
     }
 
     const headings = [...linkById.keys()]
@@ -56,7 +62,7 @@ export function TocActive() {
         firstBelow === -1 ? headings[headings.length - 1] : headings[Math.max(0, firstBelow - 1)];
       if (active.id === state.activeId) return;
       state.activeId = active.id;
-      for (const [id, link] of linkById) link.toggleAttribute("data-active", id === active.id);
+      for (const [id, anchor] of linkById) anchor.toggleAttribute("data-active", id === active.id);
     };
 
     // Scroll fires far more often than the highlight can change, so the work
@@ -79,7 +85,7 @@ export function TocActive() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+  }, [container, link]);
 
   return null;
 }

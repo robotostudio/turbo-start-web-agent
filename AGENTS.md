@@ -17,11 +17,12 @@ read this file directly; it reads `CLAUDE.md`, which imports this one.
 2. **Compose before extend.** Almost every task is composing existing Blocks
    from `catalog.json` into MDX (§3). Only touch schemas or components (§4)
    when no existing Block can express the content.
-3. **Design tokens only.** Blocks and primitives reference the CSS custom
-   properties defined in `artifacts/web/src/app/globals.css` — never a raw
-   hex code or a px value. Re-theming a client site means editing token
-   values there, never renaming or removing a token (every Block references
-   them by name).
+3. **Design tokens and type roles only.** Blocks and primitives reference
+   the CSS custom properties and `type-*` roles defined in
+   `artifacts/web/src/app/globals.css` — never a raw hex code, a px value, or
+   a bare `text-2xl font-semibold` stack. Re-theming a client site means
+   editing values there, never renaming or removing a token (every Block
+   references them by name). The full vocabulary is §3a.
 4. **The build is the gate — run `pnpm run checks` before delivering.** That
    one command is the whole gate (§5), and it is what CI runs, so green
    locally means green there. Fix the content, not the schema. A green build
@@ -66,7 +67,7 @@ everything below is relative to that directory, not the repo root.
 | Block component registry | `artifacts/web/src/components/blocks/index.ts` |
 | Content lockdown (the enforcement mechanism) | `artifacts/web/src/lib/content/remark-content-lockdown.ts` |
 | Content pipeline config (Velite) | `artifacts/web/velite.config.ts` |
-| Design tokens | `artifacts/web/src/app/globals.css` |
+| Design tokens and `type-*` roles (§3a) | `artifacts/web/src/app/globals.css` |
 | Allowed image hosts | `artifacts/web/next.config.mjs` (`images.remotePatterns`) |
 | Live Block reference/preview | `artifacts/web/content/pages/blocks-gallery.mdx`, served at `/blocks-gallery` |
 | Catalog/gallery generators | `artifacts/web/scripts/generate-catalog.ts`, `artifacts/web/scripts/generate-gallery.ts` |
@@ -167,6 +168,119 @@ attempts, instead of a rule an agent could simply choose to break.
   header — see its `.describe()` in `catalog.json` for the same distinction.
 
 After editing, run `pnpm content:check` (§5), then view the page.
+
+## 3a. The design system
+
+Every visual decision comes from one file — `artifacts/web/src/app/globals.css`.
+Nothing else in the tree may invent a colour, a font size, or a radius. Two
+Blocks that disagree about what an "h2" is are a bug, so each role has a name.
+
+**Scope: Blocks and the primitives they render.** Site chrome
+(`site-header.tsx`, `site-footer.tsx`, `announcement-bar.tsx`, the vendored
+`ui/` components) is **in scope for colour and radius, exempt for type and
+rhythm**, and is currently non-compliant on the exempt half — it still carries
+raw stacks like `text-sm` and `mt-16`. That is deliberate, not a backlog item:
+chrome is one instance of one shape, composed from YAML rather than content,
+with no sibling to drift against, and its type is sized to fit a fixed control
+(a 44px pill, a 40px bar) rather than to sit in a reading column. Do not
+"fix" it to the roles — a `type-caption` nav link changes the header's
+geometry. Do not read it as precedent either: a new Block uses the roles.
+
+**Colour.** The palette lives at the bottom of `globals.css`, as a `:root`
+(light) and a `.dark` block. That is the one place a raw colour value belongs,
+because it is the definition rather than a use. Everywhere else: semantic tokens only,
+never a palette colour and never a hex:
+`background` `foreground` `card` `card-foreground` `popover`
+`popover-foreground` `primary` `primary-foreground` `secondary`
+`secondary-foreground` `muted` `muted-foreground` `accent`
+`accent-foreground` `destructive` `border` `input` `ring`. Use them as
+Tailwind utilities (`bg-card`, `text-muted-foreground`, `ring-foreground/10`).
+`bg-black/10` and `outline-black/5` are wrong even though they compile —
+`foreground` is the token that means "the ink colour", and it moves when the
+palette does.
+
+**Type.** One class per role. Each bundles size, weight, line-height and
+tracking, so a heading is one class, never four that can drift apart. The
+roles are named for the job — there is exactly one way to write a section
+heading, and no numeric ladder to guess at:
+
+| Role | Size | Use it for |
+|---|---|---|
+| `type-display` | 40 → 72px | The one biggest statement on a page — a Hero's `h1`. Once per page. |
+| `type-title` | 36 → 52px | A page title that is not a Hero: article, blog index, CTA band |
+| `type-heading` | 28 → 36px | A section heading — what `SectionHeader` renders |
+| `type-subheading` | 20px | A card, entry, or FAQ title |
+| `type-lead` | 18px | The supporting line under a heading |
+| `type-para` | 16px | Body and card copy |
+| `type-caption` | 14px | Meta: dates, bylines, roles, small labels |
+| `type-overline` | 12px | Uppercase micro-labels |
+
+Ranges are `clamp()` — one class holds at every width, so a role never needs
+a `sm:` twin. Eight roles, all eight in use; if a design seems to need a
+ninth, it is nearly always one of these eight in the wrong place.
+
+Add only a COLOUR alongside a role (`class="type-heading text-foreground"`).
+Do not re-specify `font-*`, `tracking-*`, `leading-*`, or
+`text-balance`/`text-pretty` — the role sets them, and repeating one is how
+two Blocks start to disagree. `text-2xl font-semibold tracking-tight` in a
+Block is a bug even though it compiles.
+
+**Surface.** `card` is the filled card every Block draws on: ground colour
+and corner in one class. Add padding at the call site (`card p-6 sm:p-8` for a
+tile, `card p-8 sm:p-12` for a panel) — that genuinely differs by card size.
+Never write `rounded-3xl bg-card` by hand; two Blocks disagreeing about what a
+card's corner is, is the exact drift this class exists to prevent. An outlined
+card (Pricing's podium) or an image frame (Team) is a different surface and
+keeps its own `border`/`outline`.
+
+**Rhythm.** Vertical gaps are named steps, never a `mt-*` guessed per Block.
+Five classes, tightest first, all driven by the `--rhythm-*` variables:
+
+| Class | Gap | Between |
+|---|---|---|
+| `stack-tight` | 8px | A card title and its own body |
+| `stack-lede` | 16px | A heading and the lede under it |
+| `stack-near` | 24px | Copy and its buttons; a statement and the row it introduces |
+| `stack-content` | 32 → 48px | A heading block and the grid or list under it |
+| `section-y` | 64px | A section's own `padding-block`, top and bottom |
+
+Every Block opens `page-inset section-y`. `mt-8 sm:mt-12` in a Block is a bug
+even though it compiles, for the same reason a raw `text-2xl` stack is.
+
+**Changing the system globally.** Each role and step is one variable in the
+`@theme` block at the top of `globals.css`. Bumping every paragraph 2px is
+`--type-para: 1.125rem` and nothing else; widening every section is
+`--rhythm-section`. Never edit a Block to make a global change, and never
+add a variant of a step (`--rhythm-stack-content-sm`) — if two places need
+different gaps, one of them is using the wrong step.
+
+**Dark mode.** Both themes are the same tokens with different values, so a
+Block that reads `bg-card` is already correct in both and needs no work. A
+`dark:` utility in a component is almost always a bug: it means that component
+hardcoded a light value where a token belonged. Fix the token, not the
+component. The theme is chosen in the footer (System / Light / Dark) and set on
+`<html>` before first paint by an inline script in `layout.tsx`; "System"
+is the absence of a stored value, so it and a first-ever visit take the same
+code path.
+
+**Measure.** `max-w-note` (48ch) · `max-w-lede` (60ch) · `max-w-prose` (72ch).
+Prose beyond ~90 characters a line is a defect, not a preference.
+
+**Radius.** `--radius` is the base (4px); `rounded-sm` … `rounded-5xl` step off
+it additively. Change the base to re-theme every corner at once. Blocks name
+the surface rather than the step: `rounded-media` (12px) for an image frame,
+`rounded-card` (16px) for a card, `rounded-panel` (20px) for a full-bleed
+panel, `rounded-full` for every control. A bare `rounded-3xl` in a Block is the
+same class of bug as a raw hex.
+
+**Spacing.** Vertical gaps come from the rhythm steps above. Horizontal grid
+gaps are `gap-4`; gap values come from {2, 4, 6, 8, 12} — nothing else.
+
+**No shadows.** Separation is a border, a ring, or whitespace. `shadow-*` is
+not part of this system.
+
+Nothing here is imported from another project — this template's contract is
+that a re-theme is an edit to `globals.css` and nothing else.
 
 ## 4. Extend (rarer, governed)
 

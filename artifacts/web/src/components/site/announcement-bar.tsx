@@ -68,7 +68,7 @@ function MarqueeCopy({
   return (
     <span
       aria-hidden={hidden}
-      className="flex shrink-0 items-center gap-2 pr-12 text-sm whitespace-nowrap text-primary-foreground"
+      className="flex shrink-0 items-center gap-2 pr-12 type-caption whitespace-nowrap text-primary-foreground"
     >
       <span>{message}</span>
       {label ? <span className="font-medium underline underline-offset-4">{label}</span> : null}
@@ -127,7 +127,7 @@ export function AnnouncementBar() {
           suppress, so reduced-motion users never see the marquee above. */}
       <BarShell
         link={link}
-        className="hidden flex-wrap items-center justify-center gap-x-2 gap-y-1 px-6 py-2.5 text-center text-sm text-primary-foreground motion-reduce:flex sm:hidden"
+        className="page-inset hidden flex-wrap items-center justify-center gap-x-2 gap-y-2 py-2.5 text-center type-caption text-primary-foreground motion-reduce:flex sm:hidden"
       >
         <Message message={message} label={link?.label} />
       </BarShell>
@@ -137,7 +137,7 @@ export function AnnouncementBar() {
           it's never animated here regardless of motion preference. */}
       <BarShell
         link={link}
-        className="page-inset hidden flex-wrap items-center justify-center gap-x-2 gap-y-1 py-2.5 text-center text-sm text-primary-foreground sm:flex"
+        className="page-inset hidden flex-wrap items-center justify-center gap-x-2 gap-y-2 py-2.5 text-center type-caption text-primary-foreground sm:flex"
       >
         <Message message={message} label={link?.label} />
       </BarShell>

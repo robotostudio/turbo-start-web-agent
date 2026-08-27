@@ -22,24 +22,24 @@ export function PostGrid(raw: PostGridProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset section-y">
         <SectionHeader title={title} lede={lede} />
         {posts.length > 0 ? (
-          <div className="mt-14 grid grid-cols-1 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
+          <div className="stack-content grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-                <p className="flex flex-wrap items-center gap-2 font-mono text-sm text-muted-foreground">
+                <p className="flex flex-wrap items-center gap-2 type-caption font-mono text-muted-foreground">
                   <span>{post.data.category}</span>
                   <span aria-hidden="true" className="text-muted-foreground/50">
                     /
                   </span>
                   <time dateTime={post.data.pubDate}>{formatDate(post.data.pubDate)}</time>
                 </p>
-                <h3 className="mt-3 text-lg font-semibold text-foreground transition-colors group-hover:underline">
+                <h3 className="stack-tight type-subheading text-foreground transition-colors group-hover:underline">
                   {post.data.title}
                 </h3>
                 {post.data.excerpt ? (
-                  <p className="mt-2 line-clamp-3 text-pretty text-muted-foreground">
+                  <p className="stack-tight line-clamp-3 type-para text-muted-foreground">
                     {post.data.excerpt}
                   </p>
                 ) : null}
@@ -51,7 +51,7 @@ export function PostGrid(raw: PostGridProps) {
           // a legitimate content state, not a build error — parseBlock can't
           // validate live collection data, only the props shape, so this is
           // the render-time fallback rather than a thrown error.
-          <p className="mt-14 text-muted-foreground">No posts published yet.</p>
+          <p className="stack-content type-para text-muted-foreground">No posts published yet.</p>
         )}
       </div>
     </section>

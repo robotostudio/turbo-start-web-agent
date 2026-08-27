@@ -52,13 +52,13 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 
       {/* The two-column split only exists when there is a rail to put in it: a
           post with no `##` headings renders one full-width column rather than
-          reserving 16rem beside the body for an empty panel. Below `lg` it is
+          reserving 20rem beside the body for an empty panel. Below `lg` it is
           always one column with the panel first (`order-1` on the aside), so
           the reader can see the shape of the piece before committing to it. */}
       <div
         className={cn(
           "mt-12 grid grid-cols-1 gap-10",
-          hasToc && "lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-16",
+          hasToc && "lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16",
         )}
       >
         {/* `article-body` is the hook for the one CSS correction a Block
