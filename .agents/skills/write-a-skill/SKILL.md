@@ -78,7 +78,18 @@ half wherever you keep it.
    Code, and `pnpm run checks` fails on the drift — `harness:check` compares
    byte for byte.
 
-6. **Run `pnpm run checks`, then deliver it** the way `sync-changes`
+6. **Add a row to the skills table in `AGENTS.md` §2**, and correct the count
+   in the sentence above it. Nothing enforces this, and skipping it is the
+   quietest way to write a skill nobody reads: Codex, Cursor, Copilot and most
+   of the ecosystem load `AGENTS.md` and never look at `.agents/skills/` at
+   all, so that row is the only pointer they get. This step was missing from
+   this skill until 2026-08-27, when a skill written by following it landed
+   invisible to Codex and left the count saying six.
+
+   Describe *when to reach for it*, in the same voice as the rows already
+   there — the table is read by someone deciding which file to open.
+
+7. **Run `pnpm run checks`, then deliver it** the way `sync-changes`
    describes: a branch and a pull request, never a push to the live branch.
    The rule lands for everyone when it merges.
 
