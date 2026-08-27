@@ -36,14 +36,32 @@ test("getEntries returns blog posts", () => {
   assert.equal(introducing?.data.category, "Product");
 });
 
-test("getSlugs includes a noindex page so its route still builds", () => {
-  assert.ok(getSlugs("pages").includes("style-guide"));
+// Derived from the content rather than naming a slug. These tests used to
+// assert on "style-guide" specifically, so removing that page's `noindex`
+// broke two tests about the loader -- which is a fact about demo content, not
+// about the loader. Which pages carry the flag is the adopter's business.
+const noindexSlugs = (): string[] =>
+  getEntries("pages")
+    .filter((entry) => entry.data.noindex)
+    .map((entry) => entry.slug);
+
+test("getSlugs includes noindex pages so their routes still build", () => {
+  const flagged = noindexSlugs();
+  assert.ok(flagged.length > 0, "fixture: at least one page must carry noindex");
+  const slugs = getSlugs("pages");
+  for (const slug of flagged) {
+    assert.ok(slugs.includes(slug), `expected ${slug} to still build a route`);
+  }
 });
 
 test("getIndexableSlugs excludes noindex entries", () => {
   const slugs = getIndexableSlugs("pages");
-  assert.ok(slugs.includes("about"), "expected the normal page to be indexable");
-  assert.ok(!slugs.includes("style-guide"), "expected the noindex page to be excluded");
+  const flagged = noindexSlugs();
+  assert.ok(flagged.length > 0, "fixture: at least one page must carry noindex");
+  assert.ok(slugs.length > 0, "expected at least one indexable page");
+  for (const slug of flagged) {
+    assert.ok(!slugs.includes(slug), `expected ${slug} to be excluded`);
+  }
 });
 
 test("getEntry returns a published entry normally", () => {
