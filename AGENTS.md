@@ -175,6 +175,17 @@ Every visual decision comes from one file — `artifacts/web/src/app/globals.css
 Nothing else in the tree may invent a colour, a font size, or a radius. Two
 Blocks that disagree about what an "h2" is are a bug, so each role has a name.
 
+**Scope: Blocks and the primitives they render.** Site chrome
+(`site-header.tsx`, `site-footer.tsx`, `announcement-bar.tsx`, the vendored
+`ui/` components) is **in scope for colour and radius, exempt for type and
+rhythm**, and is currently non-compliant on the exempt half — it still carries
+raw stacks like `text-sm` and `mt-16`. That is deliberate, not a backlog item:
+chrome is one instance of one shape, composed from YAML rather than content,
+with no sibling to drift against, and its type is sized to fit a fixed control
+(a 44px pill, a 40px bar) rather than to sit in a reading column. Do not
+"fix" it to the roles — a `type-caption` nav link changes the header's
+geometry. Do not read it as precedent either: a new Block uses the roles.
+
 **Colour.** The palette lives at the bottom of `globals.css`, as a `:root`
 (light) and a `.dark` block. That is the one place a raw colour value belongs,
 because it is the definition rather than a use. Everywhere else: semantic tokens only,
