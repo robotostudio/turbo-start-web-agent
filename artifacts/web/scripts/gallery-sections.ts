@@ -157,6 +157,28 @@ export function assertNamesParsable(blockNames: string[]): void {
 export const stubSection = (name: string): string =>
   `<BlockSpec name="${name}" status="todo">\n</BlockSpec>`;
 
+/**
+ * Blocks whose gallery section is still the generator's empty stub.
+ *
+ * The stub exists so `pnpm catalog` can run safely the moment a Block is
+ * registered, mid-work, without inventing an example. It is not meant to
+ * survive to CI. A Block that reaches the gallery with nothing in it defeats
+ * the point of the gallery: `design-a-block` opens with "look at the gallery
+ * before you build", and an entry reading NO EXAMPLE YET teaches the next
+ * agent nothing about what already exists.
+ *
+ * That is not hypothetical either — `Comparison` arrived that way on
+ * 2026-08-27, every gate green.
+ */
+export const emptySections = (
+  blockNames: readonly string[],
+  existingSections: ReadonlyMap<string, string>,
+): string[] =>
+  blockNames.filter((name) => {
+    const section = existingSections.get(name);
+    return section === undefined || section.includes('status="todo"');
+  });
+
 /** Names in `existingSections` that are not in `blockNames` — Blocks that
  * were removed (or renamed) in the registry, so their hand-written example is
  * about to be dropped from the rendered output. Surfaced separately from
