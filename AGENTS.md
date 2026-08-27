@@ -317,14 +317,21 @@ source — write the body to a file and use `--body-file` — and gated by
 it.** Three rules written here turned out to encode one platform's abilities
 as if they were universal: "open a PR with `gh pr create`" (Codex ships no
 `gh`), "verify write access by pushing a throwaway branch" (Codex cloud has
-no git remote at all), and "amend the commit and force-push" (v0 pushes only
-through its GitHub integration, which does not expose force-push). Each read
+no git remote at all), and "amend the commit and force-push" (a shell with no
+git credentials cannot). Each read
 as a neutral instruction and each dead-ended an agent that was otherwise
 doing everything right — the failure looks like agent incompetence and is
 actually a rule written from one vantage point. When writing a rule, name
 the capability it needs and give an alternative for platforms without it, or
 write it so the requirement never arises. Getting a commit trailer right at
 commit time needs no force-push; fixing it afterwards does.
+
+The correction to that third example is itself the lesson repeating. "v0
+cannot force-push" was one observation of one code path -- a shell with no
+credentials -- written down as a property of the platform. On 2026-08-27 v0
+amended a pushed commit and force-pushed the branch through its own GitHub
+integration (`head_ref_force_pushed` on #38). A capability claim needs the
+path it was observed on attached, or it outlives the thing it described.
 
 Prose alone does not undo this: **an agent runs the command it can see.**
 After that fix, `sync-changes` still listed the platform's own PR control as

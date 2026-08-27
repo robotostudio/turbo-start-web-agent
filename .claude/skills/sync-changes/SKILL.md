@@ -193,20 +193,23 @@ they put a permanent AI-authorship marker in the history of what may be a
 public client repo, and the session link is useless to anyone but the
 account that created it.
 
-**Get this right at commit time — you may not get a second chance.** A
-trailer is part of the commit message, so correcting it means
-`git commit --amend` and a force-push, and **not every platform can
-force-push.** Some push only through their own GitHub integration, which
-does not expose it; the shell falls back to plain `git` with no credentials
-and the amend never leaves the container. On 2026-08-21 an agent read the
-failing check, diagnosed it correctly, amended the commit, and still could
-not deliver the fix. The pull request had to be closed and the work redone.
+**Get this right at commit time.** A trailer is part of the commit message,
+so correcting it means `git commit --amend` and a force-push — a bigger
+operation than getting it right once, and one that not every path can carry.
+A hosted platform's shell frequently has no git credentials at all, so an
+amend typed into a terminal never leaves the container: on 2026-08-21 an
+agent read the failing check, diagnosed it correctly, amended the commit, and
+could not deliver the fix, and the pull request had to be closed and the work
+redone. The platform's *own* integration may well be able to rewrite the
+branch even where its shell cannot — v0 does — so treat a failed force-push
+as a fact about the path you took, not about the platform.
 
 So: check the message *before* you commit. If your platform adds a trailer
 automatically, remove it in the same step rather than planning to fix it
-afterwards. And if you find yourself unable to force-push a correction, do
-not retry — say so plainly, quote the corrected message, and ask the
-operator to push it.
+afterwards. And if you find yourself unable to force-push a correction from
+the shell, do not retry it there — try the platform's own delivery path, and
+if that is not available say so plainly, quote the corrected message, and ask
+the operator to push it.
 
 ## Platform caveat — verify the push actually landed
 
