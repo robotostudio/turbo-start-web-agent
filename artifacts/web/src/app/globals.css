@@ -444,11 +444,9 @@
 }
 
 :root {
-  /* Verbatim from ~/dev/roboto-studio/pointer app/global.css `:root`, at
-     commit 7c156b2. That repo is the source of truth, not the deployed site:
-     pointer.robotostudio.com currently serves a newer build whose values
-     differ. Re-copy from the repo; never hand-tune one. Pointer also ships a
-     `.dark` block this template does not use yet. */
+  /* The one place a raw colour value belongs: this is the definition, not a
+     use. Every Block references these by name. Re-theme by editing the values;
+     never rename or remove a token. */
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.147 0.004 49.25);
   --card: oklch(0.9578 0.0054 95.1);
@@ -491,10 +489,9 @@
   --color-overscroll-bottom: var(--background);
 }
 
-/* Dark theme. Verbatim from the same pointer repo file as `:root` above, its
-   `.dark` block. `color-scheme` is what makes the browser's own furniture —
-   scrollbars, form controls, the canvas behind the page — follow the theme;
-   without it a dark page keeps light scrollbars. */
+/* `color-scheme` is what makes the browser's own furniture — scrollbars, form
+   controls, the canvas behind the page — follow the theme; without it a dark
+   page keeps light scrollbars. */
 .dark {
   --background: oklch(0.18 0.01 93.99);
   --foreground: oklch(0.985 0.001 106.423);
@@ -516,9 +513,7 @@
   --ring: oklch(0.553 0.013 58.071);
 }
 
-/* Surfaces that are not a straight token swap between themes. Declared here
-   rather than inside either palette block, both of which are verbatim copies
-   from the pointer repo. */
+/* Surfaces that are not a straight token swap between themes. */
 :root {
   color-scheme: light;
   --cta: var(--foreground);

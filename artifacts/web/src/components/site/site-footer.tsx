@@ -84,9 +84,6 @@ function Social() {
   );
 }
 
-// Optical trim: `leading-none` still leaves Geist's own empty bands in the line
-// box, 0.145em above the caps and 0.133em below the baseline. Re-measure if the
-// font changes.
 function Wordmark() {
   return (
     <p

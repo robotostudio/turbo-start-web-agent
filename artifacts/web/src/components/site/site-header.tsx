@@ -256,7 +256,6 @@ const matches = (pathname: string, href: string) =>
 const isCurrent = (pathname: string, item: NavNode) =>
   matches(pathname, item.href) || (item.children ?? []).some((c) => matches(pathname, c.href));
 
-//
 const chip = () =>
   cn(
     "relative rounded-full bg-primary text-primary-foreground ring-1 ring-background/15 transition-colors duration-200 ease-out",

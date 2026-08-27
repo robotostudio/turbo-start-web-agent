@@ -173,10 +173,9 @@ Every visual decision comes from one file — `artifacts/web/src/app/globals.css
 Nothing else in the tree may invent a colour, a font size, or a radius. Two
 Blocks that disagree about what an "h2" is are a bug, so each role has a name.
 
-**Colour.** The palette is taken verbatim from the `pointer` repo's
-`app/global.css` and lives at the bottom of `globals.css`, as a `:root` (light)
-and a `.dark` block. That is the one place a raw colour value belongs, because
-it is the definition rather than a use. Everywhere else: semantic tokens only,
+**Colour.** The palette lives at the bottom of `globals.css`, as a `:root`
+(light) and a `.dark` block. That is the one place a raw colour value belongs,
+because it is the definition rather than a use. Everywhere else: semantic tokens only,
 never a palette colour and never a hex:
 `background` `foreground` `card` `card-foreground` `popover`
 `popover-foreground` `primary` `primary-foreground` `secondary`
