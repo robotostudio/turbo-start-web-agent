@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
+
 import { Banner } from "./banner";
+import { Comparison } from "./comparison";
 import { CtaBand } from "./cta-band";
 import { Faq } from "./faq";
 import { FeatureGrid } from "./feature-grid";
@@ -21,6 +23,7 @@ export const blockComponents: Record<string, ComponentType<never>> = {
   Banner,
   Hero,
   CTA: CtaBand,
+  Comparison,
   FeatureGrid,
   FeatureSplit,
   ImageCards,

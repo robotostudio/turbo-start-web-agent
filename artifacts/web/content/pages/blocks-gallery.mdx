@@ -50,6 +50,42 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 </BlockSpec>
 
+<BlockSpec name="Comparison">
+
+<Comparison
+  title="How this approach compares"
+  lede="A quick view of what changes when content and layout live in the same system."
+  rows={[
+    {
+      criteria: "Starting a project",
+      us: "Compose a page from existing Blocks",
+      traditional: "Design and build each section from scratch",
+    },
+    {
+      criteria: "Making changes",
+      us: "Edit plain-text content in git",
+      traditional: "Wait for a developer or CMS workflow",
+    },
+    {
+      criteria: "Reviewing work",
+      us: "See the exact change in a pull request",
+      traditional: "Review a preview or a handoff thread",
+    },
+    {
+      criteria: "Keeping layouts consistent",
+      us: "Reuse Blocks with validated props",
+      traditional: "Maintain styles across custom components",
+    },
+    {
+      criteria: "Rebranding",
+      us: "Update the design tokens once",
+      traditional: "Search through the codebase for scattered styles",
+    },
+  ]}
+/>
+
+</BlockSpec>
+
 <BlockSpec name="FeatureGrid">
 
 <FeatureGrid
