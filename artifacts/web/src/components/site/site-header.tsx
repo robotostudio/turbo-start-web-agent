@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { navigation, site } from "#velite";
 
@@ -52,6 +53,8 @@ const rootLevel: Level = { title: "Menu", items: navItems };
 // (e.g. the 24rem side-panel width in `@/components/ui/drawer`).
 const SIDE_PANEL_QUERY = "(min-width: 40rem)";
 
+// No colour of its own: inherits `currentColor` from the pill. A hardcoded
+// `text-foreground` here drew the icon dark on dark.
 function MenuIcon() {
   return (
     <svg
@@ -59,7 +62,7 @@ function MenuIcon() {
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
-      className="size-6 text-foreground"
+      className="size-6"
       aria-hidden="true"
     >
       <path strokeLinecap="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
@@ -201,7 +204,7 @@ function DrilldownLevel({
                 type="button"
                 onClick={() => onDrillInto(item)}
                 className={cn(
-                  "flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-base text-foreground hover:bg-muted",
+                  "flex w-full items-center justify-between gap-4 rounded-lg px-3 py-3 text-left text-base text-foreground hover:bg-muted",
                   focusRing,
                 )}
               >
@@ -247,41 +250,66 @@ function DrilldownLevel({
   );
 }
 
+const matches = (pathname: string, href: string) =>
+  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
+const isCurrent = (pathname: string, item: NavNode) =>
+  matches(pathname, item.href) || (item.children ?? []).some((c) => matches(pathname, c.href));
+
+//
+const chip = () =>
+  cn(
+    "relative rounded-full bg-primary text-primary-foreground ring-1 ring-background/15 transition-colors duration-200 ease-out",
+    "before:pointer-events-none before:absolute before:inset-0 before:rounded-full",
+    "before:bg-linear-to-b before:from-gloss/14 before:to-transparent before:to-60%",
+    "before:inset-shadow-[0_1px_0_0_var(--color-gloss)]/25",
+  );
+
 export function SiteHeader() {
   const nav = useDrilldown();
   const isSidePanel = useSidePanel();
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-4 z-40 font-sans">
-      <div className="page-inset">
-        <div className="flex items-center gap-6 rounded-lg border border-border bg-background px-4 py-3 sm:px-6">
-          <div className="flex flex-1 items-center">
-            <Link
-              href="/"
-              aria-label="Homepage"
-              className="text-base font-semibold text-foreground"
-            >
-              {site.name}
-            </Link>
-          </div>
+    <header className="sticky top-4 z-40 mt-4 font-sans">
+      <div className="mx-auto flex w-full max-w-7xl justify-center px-3 sm:px-4">
+        <div
+          className={cn(
+            chip(),
+            "relative flex h-14 w-full items-center gap-10 py-1.5 pr-3.5 pl-5 md:w-auto md:gap-12 md:pr-1.5",
+          )}
+        >
+          <Link
+            href="/"
+            aria-label="Homepage"
+            className="flex shrink-0 items-center gap-2.5 text-primary-foreground"
+          >
+            <span className="type-lead font-medium capitalize">{site.name}</span>
+          </Link>
 
-          <nav aria-label="Primary" className="hidden items-center gap-8 xl:flex">
+          <nav aria-label="Primary" className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => (
               <SiteLink
                 key={item.label}
                 href={item.href}
-                className="text-sm text-muted-foreground hover:text-foreground"
+                aria-current={isCurrent(pathname, item) ? "page" : undefined}
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  isCurrent(pathname, item)
+                    ? "text-primary-foreground"
+                    : "text-primary-foreground/85 hover:text-primary-foreground",
+                )}
               >
                 {item.label}
               </SiteLink>
             ))}
           </nav>
 
-          <div className="flex flex-1 items-center justify-end gap-3">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <Link
               href="/style-guide"
               className={cn(
-                "hidden rounded-lg border border-border px-4 py-2 text-sm text-foreground xl:inline-block",
+                "hidden h-11 items-center rounded-full bg-background px-5 text-sm font-medium text-foreground md:inline-flex",
                 focusRing,
               )}
             >
@@ -289,6 +317,7 @@ export function SiteHeader() {
             </Link>
 
             <Drawer
+              modal
               swipeDirection={isSidePanel ? "right" : "down"}
               onOpenChangeComplete={(open) => {
                 // Preferred over a fixed-duration timeout: this fires only
@@ -303,7 +332,7 @@ export function SiteHeader() {
               <DrawerTrigger
                 aria-label="Open menu"
                 className={cn(
-                  "flex items-center justify-center rounded-lg p-1.5 xl:hidden",
+                  "flex items-center justify-center rounded-full p-1.5 md:hidden",
                   focusRing,
                 )}
               >
@@ -312,21 +341,16 @@ export function SiteHeader() {
 
               <DrawerContent
                 className={cn(
-                  "drawer-panel-inset rounded-lg border bg-background text-foreground xl:hidden",
-                  // The vendored Popup only rounds the edge-attached corners
-                  // by default (`rounded-t-xl` for a bottom sheet,
-                  // `rounded-l-xl` for a right side panel — appropriate when
-                  // the drawer is flush with the viewport edge). Now that
-                  // it's inset on every side, all four corners need to
-                  // match; these direction-scoped overrides win over the
-                  // vendor's own (via matching data-attribute specificity)
-                  // instead of leaving the two edge corners at `rounded-xl`
-                  // while the other two fall back to plain `rounded-lg`.
-                  "data-[swipe-direction=down]:rounded-t-lg data-[swipe-direction=up]:rounded-b-lg data-[swipe-direction=left]:rounded-r-lg data-[swipe-direction=right]:rounded-l-lg",
+                  // `rounded-panel!` beats the primitive's own per-direction rounding,
+                  // which wins on source order otherwise. The bleed is a 3rem
+                  // block of panel colour past the swipe edge, there to cover an
+                  // over-drag — invisible when the sheet is flush, a bar below it
+                  // once inset, so it renders as nothing.
+                  "drawer-panel-inset rounded-panel! border bg-background text-foreground [--drawer-bleed-background:transparent] md:hidden",
                 )}
               >
-                <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
-                  <div className="flex min-w-0 items-center gap-1">
+                <div className="flex shrink-0 items-center justify-between gap-4 border-b border-border px-4 py-3">
+                  <div className="flex min-w-0 items-center gap-2">
                     {nav.canGoBack ? (
                       <button
                         type="button"
@@ -340,7 +364,7 @@ export function SiteHeader() {
                         <BackIcon />
                       </button>
                     ) : null}
-                    <DrawerTitle className="truncate text-lg font-medium">
+                    <DrawerTitle className="truncate text-lg font-semibold">
                       {nav.current.title}
                     </DrawerTitle>
                   </div>
@@ -371,12 +395,12 @@ export function SiteHeader() {
                   onDrillInto={nav.drillInto}
                 />
 
-                <div className="shrink-0 border-t border-border p-4">
+                <div className="shrink-0 border-t border-border p-2">
                   <DrawerClose
                     nativeButton={false}
                     render={<Link href="/style-guide" />}
                     className={cn(
-                      "flex w-full items-center justify-center rounded-lg border border-border px-4 py-3 text-base text-foreground",
+                      "flex w-full items-center justify-center rounded-2xl border border-border px-6 py-3 text-base text-foreground",
                       focusRing,
                     )}
                   >
