@@ -175,12 +175,21 @@ const isMain = (): boolean => {
   return typeof entry === "string" && entry.endsWith("pr-hygiene.ts");
 };
 
-/** Commit messages on this branch but not on the base, NUL-separated. */
-const commitMessagesSince = (baseRef: string): string[] => {
+/**
+ * Commit messages on the pull request's branch but not on the base,
+ * NUL-separated. `--no-merges` because a `pull_request` checkout can put a
+ * synthetic "Merge <sha> into <sha>" commit in the range, which nobody wrote
+ * and no rule here should judge.
+ */
+const commitMessagesSince = (baseRef: string, headRef: string): string[] => {
   try {
-    const log = execFileSync("git", ["log", "--format=%B%x00", `${baseRef}..HEAD`], {
-      encoding: "utf8",
-    });
+    const log = execFileSync(
+      "git",
+      ["log", "--format=%B%x00", "--no-merges", `${baseRef}..${headRef}`],
+      {
+        encoding: "utf8",
+      },
+    );
     return parseCommitMessages(log);
   } catch {
     // A shallow clone, a missing base ref, or a detached checkout: report the
@@ -201,7 +210,12 @@ if (isMain()) {
   // one step and the parsing under test.
   const body = process.env.PR_BODY ?? "";
   const baseRef = process.env.BASE_REF ?? "origin/main";
-  const findings = checkPullRequest(body, commitMessagesSince(baseRef));
+  // The pull request's branch tip, read from the environment rather than
+  // checked out: the workflow checks out the BASE branch so that this script is
+  // always the current one, which leaves HEAD pointing at the base. Without
+  // this the range below is empty and every commit rule passes on nothing.
+  const headRef = process.env.HEAD_SHA || "HEAD";
+  const findings = checkPullRequest(body, commitMessagesSince(baseRef, headRef));
 
   if (findings.length === 0) {
     process.stdout.write("PR hygiene: clean\n");
