@@ -1,5 +1,8 @@
 import type { VariantProps } from "class-variance-authority";
-import { Button, type buttonVariants } from "@/components/ui/button";
+import {
+  type buttonVariants,
+  buttonVariants as variantClasses,
+} from "@/components/ui/button-variants";
 
 // Design-system reference for the Block Gallery: the primitives a Block is
 // built from, rendered live rather than described.
@@ -29,6 +32,7 @@ const VARIANTS = [
   "ghost",
   "destructive",
   "link",
+  "inverse",
 ] as const satisfies readonly ButtonVariant[];
 
 const SIZES = [
@@ -99,9 +103,13 @@ export function ButtonMatrix() {
                   </th>
                   {SIZES.map((size) => (
                     <td key={size} className="px-3 py-3">
-                      <Button variant={variant} size={size}>
+                      {/* A plain <button>, styled by the same cva config the
+                          Blocks use. Rendering Base UI's <Button> here would
+                          pull a client boundary into every page on the
+                          `[...slug]` route -- see button-variants.ts. */}
+                      <button type="button" className={variantClasses({ variant, size })}>
                         {isIconSize(size) ? <span aria-hidden="true">→</span> : <span>Button</span>}
-                      </Button>
+                      </button>
                     </td>
                   ))}
                 </tr>

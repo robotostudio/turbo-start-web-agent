@@ -1,23 +1,6 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { type HeroProps, heroSchema, parseBlock } from "@/lib/blocks/schemas";
 import { cn } from "@/lib/utils";
-
-const ActionLink = ({
-  link,
-  className,
-}: {
-  link: { label: string; href: string };
-  className?: string;
-}) =>
-  link.href.startsWith("/") ? (
-    <Link href={link.href} className={className}>
-      {link.label}
-    </Link>
-  ) : (
-    <a href={link.href} className={className}>
-      {link.label}
-    </a>
-  );
 
 export function Hero(raw: HeroProps) {
   const { variant, title, lede, primary, secondary } = parseBlock("Hero", heroSchema, raw);
@@ -34,17 +17,9 @@ export function Hero(raw: HeroProps) {
         {lede && <p className="max-w-2xl text-lg text-muted-foreground">{lede}</p>}
         {(primary || secondary) && (
           <div className="flex flex-wrap gap-4">
-            {primary && (
-              <ActionLink
-                link={primary}
-                className="rounded-lg bg-primary px-6 py-3 text-primary-foreground"
-              />
-            )}
+            {primary && <ButtonLink href={primary.href} label={primary.label} />}
             {secondary && (
-              <ActionLink
-                link={secondary}
-                className="rounded-lg border border-border px-6 py-3 text-foreground"
-              />
+              <ButtonLink href={secondary.href} label={secondary.label} variant="outline" />
             )}
           </div>
         )}
