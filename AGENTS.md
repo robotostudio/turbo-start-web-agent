@@ -72,8 +72,9 @@ everything below is relative to that directory, not the repo root.
 | Catalog/gallery generators | `artifacts/web/scripts/generate-catalog.ts`, `artifacts/web/scripts/generate-gallery.ts` |
 | Verify commands (delegate into `artifacts/web`) | root `package.json` |
 
-Deeper how-to procedures belong in `.agents/skills/`, not in this file. Four
-skills ship in this repo today:
+Deeper how-to procedures belong in `.agents/skills/`, not in this file. Five
+skills ship in this repo today, four written for it and one installed from
+elsewhere (see `skills-lock.json`):
 
 | Skill | Use it for |
 |---|---|
@@ -81,6 +82,7 @@ skills ship in this repo today:
 | `.agents/skills/sync-changes/SKILL.md` | Session-start git discipline: pull before editing, branch → commit → PR, never push to `main`, and how to confirm a push actually reached the remote on platforms where the shell has no git credentials. |
 | `.agents/skills/find-skills/SKILL.md` | How to review and install a third-party skill safely before adding it to `.agents/skills/` and `skills-lock.json`. |
 | `.agents/skills/write-a-skill/SKILL.md` | Asked to remember a rule or save a convention: write it here as a skill rather than into your platform's own memory, where only one person on one platform would ever see it. |
+| `.agents/skills/humanizer/SKILL.md` | Writing or editing any copy a visitor will read: the AI tells to remove before it ships — inflated claims, sales language, stock vocabulary, filler, and the rest. Third-party, pinned in `skills-lock.json`. |
 
 Codex, Cursor, Copilot/VS Code, Zed, and most of the rest of the ecosystem
 read only this file and never load `.agents/skills/` — for those platforms
