@@ -252,9 +252,9 @@ export function SiteHeader() {
   const isSidePanel = useSidePanel();
 
   return (
-    <header className="sticky top-4 z-40 font-sans">
+    <header className="sticky top-0 z-40 font-sans">
       <div className="page-inset">
-        <div className="flex items-center gap-6 rounded-lg border border-border bg-background px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-6 border-2 border-border bg-background px-4 py-3 sm:px-6">
           <div className="flex flex-1 items-center">
             <Link
               href="/"

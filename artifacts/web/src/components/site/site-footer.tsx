@@ -56,7 +56,7 @@ export function SiteFooter() {
   const copyright = `© ${year} ${footer.brand.name}${footer.copyrightNote ? `. ${footer.copyrightNote}` : ""}`;
 
   return (
-    <footer className="border-t border-border font-sans">
+    <footer className="border-t-2 border-border font-sans">
       <div className="page-inset py-16 sm:py-20">
         <div className="flex flex-col gap-12 sm:flex-row sm:justify-between sm:gap-16">
           <div className="max-w-xs">

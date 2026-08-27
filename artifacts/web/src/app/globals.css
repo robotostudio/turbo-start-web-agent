@@ -104,6 +104,17 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  :where(button, a, input, textarea, select) {
+    border-radius: 0;
+  }
+  :where(a, button, input, textarea, select):focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
 }
 
 @layer utilities {
@@ -275,25 +286,25 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.21 0.006 285.9);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.006 285.9);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.006 285.9);
-  --primary: oklch(0.55 0.22 264);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.967 0.001 286.4);
-  --secondary-foreground: oklch(0.21 0.006 285.9);
-  --muted: oklch(0.967 0.001 286.4);
-  --muted-foreground: oklch(0.552 0.016 285.9);
-  --accent: oklch(0.967 0.001 286.4);
-  --accent-foreground: oklch(0.21 0.006 285.9);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.3);
-  --input: oklch(0.92 0.004 286.3);
-  --ring: oklch(0.55 0.22 264);
-  --radius: 0.75rem;
+  --background: oklch(0.96 0.015 95);
+  --foreground: oklch(0.16 0.01 60);
+  --card: oklch(0.98 0.01 95);
+  --card-foreground: oklch(0.16 0.01 60);
+  --popover: oklch(0.98 0.01 95);
+  --popover-foreground: oklch(0.16 0.01 60);
+  --primary: oklch(0.72 0.19 55);
+  --primary-foreground: oklch(0.16 0.01 60);
+  --secondary: oklch(0.87 0.02 95);
+  --secondary-foreground: oklch(0.16 0.01 60);
+  --muted: oklch(0.91 0.018 95);
+  --muted-foreground: oklch(0.38 0.015 60);
+  --accent: oklch(0.72 0.19 55);
+  --accent-foreground: oklch(0.16 0.01 60);
+  --destructive: oklch(0.52 0.19 25);
+  --border: oklch(0.16 0.01 60);
+  --input: oklch(0.16 0.01 60);
+  --ring: oklch(0.72 0.19 55);
+  --radius: 0rem;
 
   /* Endpoints for the two-tone overscroll canvas above — verified against
      what actually renders at each edge, not guessed. Top matches the
