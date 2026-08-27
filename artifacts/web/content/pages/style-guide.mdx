@@ -1,11 +1,120 @@
 ---
 title: Style guide
-description: Internal reference for how this site is composed.
-noindex: true
+description: The design system behind every Block — tokens, type, rhythm, and what to reuse before building something new.
 ---
 
-## Unlisted on purpose
+## What this page is for
 
-This page is published and directly reachable, but carries `noindex: true`, so
-it stays out of the sitemap and asks search engines not to index it. Use it for
-internal references you want to share by link but not surface.
+Every Block on this site is assembled from the same small set of decisions:
+five or six type sizes, one spacing rhythm, one button primitive, one set of
+colour tokens. This page is the written half of that system.
+
+The rendered half is [the Block gallery](/blocks-gallery), which shows every
+Block, every button variant, and every type role live. Read this to know what
+the rules are; open that to see them.
+
+If you are about to design something new here, the useful order is: check the
+gallery for a Block that already does it, check the button matrix before
+styling anything clickable, then pick a type role from the scale rather than
+choosing a size.
+
+## Colour
+
+Twenty tokens, all defined in `src/app/globals.css`. Blocks reference them by
+name — `bg-primary`, `text-muted-foreground`, `border-border` — and never a
+raw hex code.
+
+| Group | Tokens |
+|---|---|
+| Surface | `background`, `card`, `popover`, `muted`, `accent` |
+| Text | `foreground`, `muted-foreground`, and the `-foreground` pair for each surface |
+| Action | `primary`, `secondary`, `destructive`, and their `-foreground` pairs |
+| Edges | `border`, `input`, `ring` |
+
+**Rebranding a client site means editing the values in that file, and nothing
+else.** That is the whole promise, and it only holds while Blocks keep
+referencing tokens by name. A Block that hardcodes a colour is a Block that
+will still be the old brand's colour after the rebrand.
+
+Never rename or remove a token — every Block refers to them by name, so a
+rename is a silent breakage across the site rather than a build error.
+
+## Type
+
+Two faces, both loaded through `next/font`: **Geist Sans** for everything a
+visitor reads, **Geist Mono** for metadata — dates, categories, labels, the
+gallery's own chrome.
+
+Five roles carry the whole site. [The gallery renders them live](/blocks-gallery).
+
+| Role | Class | Where |
+|---|---|---|
+| Page title | `text-5xl lg:text-6xl` | Hero — one per page |
+| Section title | `text-4xl font-semibold tracking-tight` | Every other Block, via `SectionHeader` |
+| Lede | `text-lg text-muted-foreground` | One sentence under a title, `max-w-md` |
+| Body | `text-base text-muted-foreground` | Prose and card copy |
+| Metadata | `font-mono text-sm text-muted-foreground` | Dates, categories, labels |
+
+Tailwind offers a dozen more steps. The point of the table is that this site
+uses these, so a new Block picks a row instead of introducing a sixth size.
+
+## Rhythm
+
+Every Block is a `<section>` wrapping a `<div class="page-inset">`. The inset
+centres content at `max-w-80rem` with `1.5rem` of side padding, and it is the
+only horizontal measure — no Block sets its own container width.
+
+Vertical spacing is `py-20 sm:py-28`, used by twelve of the fifteen Blocks. The
+three that differ are deliberate: a banner and an announcement are thin by
+nature.
+
+Two measures recur inside sections, both on `SectionHeader`: `max-w-2xl` for a
+title, `max-w-md` for a lede. A line of body text that runs the full 80rem is
+unreadable, which is why nothing does.
+
+## Buttons
+
+One primitive, `src/components/ui/button.tsx`, from shadcn against this
+project's own `components.json`. [The gallery renders every variant against
+every size](/blocks-gallery).
+
+A Block never writes its own button classes. Reach for `variant="default"` for
+a primary action and `variant="outline"` for the one beside it, at
+`size="marketing"` — the size added specifically for calls to action sitting
+under a large heading, since the stock sizes are drawn for application UI.
+
+## What this system deliberately does not have
+
+**No eyebrows.** Sections open with a statement, not a label — no small-caps
+kicker and no coloured rule above the title. That combination reads as generic
+and was rejected on purpose; `SectionHeader` carries the same note so nobody
+reintroduces it while working in the file.
+
+**No arbitrary values.** `p-[13px]` and `text-[#4a4a4a]` bypass both the
+spacing rhythm and the token system. Canonical Tailwind classes only.
+
+**No client JavaScript by default.** Blocks are server components. A Block
+ships a bundle only when it genuinely needs one, which is why the site's
+Lighthouse score is not a monthly problem.
+
+## Motion
+
+Animation is opt-in per element and always gated: `motion-safe:animate-*`, so
+a visitor who has asked their system for reduced motion gets none of it. Where
+an animation duplicates content to loop seamlessly — the announcement bar and
+the logo cloud both do — the duplicate carries `aria-hidden="true"` and
+`motion-reduce:hidden`.
+
+`--animate-marquee` already exists for horizontal scrolling. Check
+`globals.css` for a keyframe before writing a new one.
+
+## Indexable, like most pages
+
+This page carries no `noindex`, so it appears in the sitemap and search engines
+are free to index it. That is the default for every page here.
+
+Where you want the opposite — a page that stays published and directly
+reachable but out of the sitemap, with `robots: noindex` — add `noindex: true`
+to its frontmatter. `privacy.mdx`, `terms.mdx`, and `blocks-gallery.mdx` all
+do. It is the flag for internal references you share by link but do not want
+surfaced.
