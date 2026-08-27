@@ -13,6 +13,25 @@ noindex: true
 ---
 `;
 
+/**
+ * The design-system reference, appended after the Block sections.
+ *
+ * Emitted by the generator rather than written into the file by hand, for the
+ * same reason the sections are: `renderGallery` returns frontmatter plus
+ * sections and nothing else, so anything hand-added between them is dropped on
+ * the next `pnpm catalog` and fails `gallery:check` in the meantime.
+ *
+ * These two are gallery chrome injected from `mdx-content.tsx`, not registered
+ * Blocks — see `src/components/content/design-specimens.tsx`. They render the
+ * primitives every Block is built from: without them the gallery shows only
+ * the handful of button and type combinations that happen to appear inside a
+ * Block, and an agent designing a new one cannot see what already exists.
+ */
+export const SPECIMENS = `<ButtonMatrix />
+
+<TypeScale />
+`;
+
 // A Block name as it can appear in `<BlockSpec name="...">` and still be
 // found again by this parser. Must start with a letter (matching the
 // capitalised-JSX-tag rule content lockdown already enforces) and may
@@ -167,5 +186,5 @@ export function missingSections(
  * read from `existingSections` — its section is dropped. */
 export function renderGallery(blockNames: string[], existingSections: Map<string, string>): string {
   const sections = blockNames.map((name) => existingSections.get(name) ?? stubSection(name));
-  return `${FRONTMATTER}\n${sections.join("\n\n")}\n`;
+  return `${FRONTMATTER}\n${sections.join("\n\n")}\n\n${SPECIMENS}`;
 }

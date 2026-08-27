@@ -67,7 +67,27 @@ test("renderGallery preserves an existing section verbatim", () => {
 
 test("renderGallery stubs a Block with no existing section", () => {
   const rendered = renderGallery(["Hero"], new Map());
-  assert.match(rendered, /<BlockSpec name="Hero" status="todo">\n<\/BlockSpec>\n$/);
+  assert.match(rendered, /<BlockSpec name="Hero" status="todo">\n<\/BlockSpec>\n/);
+});
+
+// The design-system specimens are part of the generated structure, not
+// content anyone types into the file: `renderGallery` returns frontmatter,
+// sections, and these, so a hand-added copy would be dropped on the next
+// `pnpm catalog`. They come last, after every Block.
+test("renderGallery appends the design-system specimens after the sections", () => {
+  const rendered = renderGallery(["Hero"], new Map());
+  assert.match(rendered, /<ButtonMatrix \/>/);
+  assert.match(rendered, /<TypeScale \/>/);
+  assert.ok(
+    rendered.indexOf('name="Hero"') < rendered.indexOf("<ButtonMatrix"),
+    "specimens follow the Block sections",
+  );
+});
+
+test("renderGallery keeps the specimens out of the parsed sections", () => {
+  const rendered = renderGallery(["Hero"], new Map());
+  const reparsed = renderGallery(["Hero"], parseSections(rendered));
+  assert.equal(reparsed, rendered, "regenerating from its own output is a fixed point");
 });
 
 test("renderGallery drops a section for a Block no longer registered", () => {
