@@ -346,6 +346,17 @@ button visible in its own toolbar. Where a rule has a per-platform answer,
 put the precedence before any command, and mark every shell example with the
 route it belongs to.
 
+**A `pull_request` workflow can run a version of itself that no longer
+exists.** Both the workflow file and the code it checks out come from GitHub's
+computed merge ref, which can lag the base branch — so a fix to a CI script has
+no effect on any pull request whose branch predates it, and the check reports
+success. `pr-describe` hit this on #34, running a script fixed and merged
+thirty-three seconds earlier; `pr-hygiene` hit the identical thing on #47 six
+hours later, because the fix had been applied to one workflow and not to its
+sibling. Both now use `pull_request_target` with `ref: base.ref`, which is the
+only arrangement where an open pull request is guaranteed the current check.
+When a fix lands in one workflow, look for the other one.
+
 **A resumed session brings a stale clone with it.** Continuing a chat from a
 previous day reuses its container: the checkout is as old as the session, and
 the conversation still holds work you believe is unlanded but which merged

@@ -5,9 +5,24 @@ name: PR hygiene
 # check has to re-run and go green when it is. Adding `edited` to ci.yml would
 # re-run the entire build — install, velite, tests, typecheck, next build —
 # every time someone corrected a typo in a description.
+#
+# `pull_request_target`, not `pull_request`, and for the same reason
+# pr-describe.yml uses it: on a `pull_request` event both this workflow and the
+# script it runs are read from GitHub's computed merge ref, which can lag the
+# base branch. A fix to scripts/pr-hygiene.ts then has no effect on any pull
+# request whose branch predates it -- and the check reports "clean", which is
+# indistinguishable from passing.
+#
+# That is not hypothetical. The escaped-trailer rule merged, PR #47 was
+# reopened to pick it up, and the run printed `PR hygiene: clean` over a commit
+# the rule catches on the command line.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, synchronize]
+
+# Nothing here writes; the check only passes or fails.
+permissions:
+  contents: read
 
 jobs:
   pr-hygiene:
@@ -15,9 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Full history: the check reads every commit on the branch that is
-          # not on the base, which a shallow clone cannot see.
+          # Full history for every branch: the check reads every commit on the
+          # pull request's branch that is not on the base, which a shallow
+          # clone cannot see -- and that branch is never checked out here.
           fetch-depth: 0
+          # The base branch, so the script is always the current one. Never the
+          # head branch: that would run the version of this check that the code
+          # under review happens to carry, which is the check reviewing itself.
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -34,3 +54,6 @@ jobs:
           # would execute on the runner.
           PR_BODY: ${{ github.event.pull_request.body }}
           BASE_REF: origin/${{ github.base_ref }}
+          # The branch tip. HEAD is the base branch here, so without this the
+          # commit range is empty and every commit rule silently passes.
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
