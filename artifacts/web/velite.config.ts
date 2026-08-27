@@ -162,6 +162,10 @@ export default defineConfig({
         // Trailing legal text after the auto-generated "© {year} {brand}."
         // (the year and brand name are never content — see site-footer.tsx).
         copyrightNote: s.string().optional(),
+        // Who built the site, shown under the note. Content, not a `.tsx`
+        // constant, for the same reason the brand name is: an agency forking
+        // this template replaces its own name by editing YAML.
+        builtBy: footerLink.optional(),
       }),
     },
     // Site identity — the name and description that used to be hardcoded in
