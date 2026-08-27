@@ -31,7 +31,11 @@ export function Hero(raw: HeroProps) {
         )}
       >
         <h1 className="font-sans text-5xl text-foreground lg:text-6xl">{title}</h1>
-        {lede && <p className="max-w-2xl text-lg text-muted-foreground">{lede}</p>}
+        {lede && (
+          <p className="max-w-2xl text-pretty text-lg leading-relaxed tracking-tight text-muted-foreground">
+            {lede}
+          </p>
+        )}
         {(primary || secondary) && (
           <div className="flex flex-wrap gap-4">
             {primary && (
