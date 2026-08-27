@@ -221,6 +221,7 @@ if you like — each delegates into `artifacts/web`, except the first:
 ```sh
 pnpm run harness:check    # generated per-platform surfaces are in sync with AGENTS.md, harness.config.json, and .agents/skills/
 pnpm run content:check    # frontmatter, MDX syntax, and the content lockdown
+pnpm run brand:check      # the site's name from content/settings/site.yml appears nowhere under src/
 pnpm run catalog:check    # catalog.json is in sync with src/lib/blocks/schemas.ts
 pnpm run gallery:check    # blocks-gallery.mdx has a section for every registered Block
 pnpm run lint              # biome check (artifacts/web, plus scripts/ and harness.config.json at the root)

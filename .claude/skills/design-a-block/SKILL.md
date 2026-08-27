@@ -66,7 +66,15 @@ optional lede and nothing else — no eyebrow, no small-caps kicker, no coloured
 rule. That combination was rejected as generic; do not reintroduce it.
 
 **No arbitrary values.** `p-[13px]`, `text-[#4a4a4a]`, `w-[347px]` bypass both
-the rhythm and the tokens. Canonical Tailwind classes only.
+the rhythm and the tokens. Canonical Tailwind classes only — and the class you
+want usually exists: `min-w-[36rem]` shipped on 2026-08-27 where `min-w-xl` is
+the same 36rem.
+
+**Never write the site's name.** It lives in `content/settings/site.yml` and is
+read from `site` in `#velite` — see `src/app/layout.tsx`. A Block that spells
+the brand out is a Block that still says the template's name after a client
+rebrand, in a file nobody thought to open. `pnpm run brand:check` fails on it,
+including inside an `sr-only` caption, which is where it got through once.
 
 **Server components by default.** A Block ships client JavaScript only when it
 genuinely needs interactivity. Reach for CSS before `"use client"`.
