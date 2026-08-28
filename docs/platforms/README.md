@@ -24,15 +24,25 @@ a re-check, not a guess.
 
 The four supported platforms are not interchangeable, and the difference
 that matters most to a non-technical client is whether they can *see* their
-own change. Verified 2026-08-20 against each platform's docs and by running
-a real content change through each:
+own change. Every row below is checked against that platform's own
+documentation. The last column is the stronger claim — a real content change
+carried through to a merged pull request — and it is given as pull request
+numbers so a reader can verify it instead of believing it:
 
-| Platform | Reads the rulebook | Shows the client the rendered site | Opens the PR |
-|---|---|---|---|
-| **v0** | `AGENTS.md` + `.agents/skills/` | **Yes** — preview pane in-chat | Itself |
-| **Replit** | `replit.md` | **Yes** — preview pane in-workspace | No; on GitHub |
-| **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI |
-| **Codex** | `AGENTS.md` | No — diff only | Button in the UI |
+| Platform | Reads the rulebook | Shows the client the rendered site | Opens the PR | Run live |
+|---|---|---|---|---|
+| **v0** | `AGENTS.md` + `.agents/skills/` | **Yes** — preview pane in-chat | Itself | #25, #34, #38, #47, #51, #54 |
+| **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI | #2, #13, #17, #23 |
+| **Codex** | `AGENTS.md` | No — diff only | Button in the UI | #4, #18, #22 |
+| **Replit** | `replit.md` | **Yes** — preview pane in-workspace | No; on GitHub | **None yet** |
+
+**Replit's runbook is research, not a walked path.** No content change has
+been taken through Replit to a pull request. Its one recorded session is the
+2026-08-20 import described in [`replit.md`](./replit.md) §1, which tried to
+port the app to Vite before any prompt was given. Everything in that runbook
+past §1 is drawn from Replit's own documentation and from the harness this
+repo generates — sound, and unconfirmed. Say so to a client rather than
+implying parity with the three platforms above.
 
 Both preview panes are a property of the *cloud* product. Claude Code and
 Codex both have one in their **desktop apps**, which need a local install and
@@ -68,6 +78,27 @@ Decide it deliberately, per project:
 Check it before handover rather than discovering it on the first real
 change: open a preview URL in a private browser window. If it redirects to a
 login, the client's review step does not work yet.
+
+## `pr-hygiene` reports; nobody has to clear it
+
+`pr-hygiene` runs on every pull request and fails a mangled description, an
+empty one, or a commit carrying a vendor attribution trailer. It is **not** a
+required status check, so a finding shows a red mark beside a merge button
+that still works. Read it rather than relying on GitHub to stop you.
+
+That is a deliberate trade, not an oversight. Most of what the check finds is
+in the pull request *body*, which anyone can fix by editing the description.
+One class is not: a commit trailer joined with a literal `\n`, or a vendor
+trailer, lives in the commit message, and clearing it needs `git commit
+--amend` and a force-push. Platforms differ on whether their agent can do that
+— v0 can, through its own GitHub integration, though not from its shell; a
+session whose shell has no git credentials and no platform-side rewrite
+cannot. Requiring the check would strand a client's pull request on a defect
+the client has no way to clear.
+
+Tell a client's agent to get `Requested-by:` and `Agent:` right at commit time
+and this never arises. `.agents/skills/sync-changes/SKILL.md` says exactly
+that, and says it before it shows any command.
 
 ## Supported vs. not
 

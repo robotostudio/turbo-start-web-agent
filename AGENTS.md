@@ -228,9 +228,11 @@ if you like — each delegates into `artifacts/web`, except the first:
 
 ```sh
 pnpm run harness:check    # generated per-platform surfaces are in sync with AGENTS.md, harness.config.json, and .agents/skills/
+pnpm run skills:check     # every third-party skill under .agents/skills/ is pinned in skills-lock.json, and still hashes to what was reviewed
 pnpm run content:check    # frontmatter, MDX syntax, and the content lockdown
 pnpm run brand:check      # the site's name from content/settings/site.yml appears nowhere under src/
 pnpm run catalog:check    # catalog.json is in sync with src/lib/blocks/schemas.ts
+pnpm run claims:check     # this file, README.md and the skills do not misstate how many Blocks exist, or which
 pnpm run gallery:check    # blocks-gallery.mdx has a section for every registered Block
 pnpm run lint              # biome check (artifacts/web, plus scripts/ and harness.config.json at the root)
 pnpm run test              # lockdown, loader, and Block-prop unit tests, plus the harness generator's own tests
@@ -242,8 +244,11 @@ This is the exact sequence CI runs (`.github/workflows/ci.yml`), in the same
 order. A second workflow, `.github/workflows/pr-hygiene.yml`, runs on the
 pull request itself rather than the code: it fails a body mangled into
 literal `\n` escapes, an empty description, or a commit carrying a vendor
-attribution trailer. It has no local equivalent because there is no pull
-request to inspect until one exists — run
+attribution trailer. It reports rather than blocks: a finding does not stop a
+merge, so read it. Its commit-trailer findings can only be cleared by amending
+the commit, which is the reason to get `Requested-by:` and `Agent:` right when
+the commit is made. It has no local equivalent because there is no
+pull request to inspect until one exists — run
 `node --experimental-strip-types scripts/pr-hygiene.ts` with `PR_BODY` set
 to try a body by hand. All of it must pass before a change is considered done — but passing
 is not the same as correct: always click through the built site afterward.

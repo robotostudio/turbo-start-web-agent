@@ -40,7 +40,7 @@ reference (`pnpm catalog` regenerates it; do not hand-edit it). Its shape:
 
 ```json
 {
-  "blockCount": 14,
+  "blockCount": 16,
   "blocks": {
     "Hero": { "schema": { "properties": { "...": "..." }, "required": ["title"], "description": "..." } }
   }
@@ -50,10 +50,11 @@ reference (`pnpm catalog` regenerates it; do not hand-edit it). Its shape:
 Each key is a Block's exact tag name (PascalCase) and its JSON Schema —
 `properties` are the props you may pass, `required` are the ones you must,
 and nested `description` fields on URL-shaped props spell out the allowed
-scheme. Today's 14 Blocks: `Banner`, `Hero`, `CTA`, `FeatureGrid`,
-`FeatureSplit`, `ImageCards`, `Gallery`, `Faq`, `Testimonial`, `LogoCloud`,
-`Team`, `Stats`, `Newsletter`, `Pricing`. For a worked example of every Block
-with real props, read `artifacts/web/content/pages/blocks-gallery.mdx` or
+scheme. Today's 16 Blocks: `Banner`, `Hero`, `CTA`, `Comparison`,
+`FeatureGrid`, `FeatureSplit`, `ImageCards`, `Gallery`, `PostGrid`, `Faq`,
+`Testimonial`, `LogoCloud`, `Team`, `Stats`, `Newsletter`, `Pricing`. For a
+worked example of every Block with real props, read
+`artifacts/web/content/pages/blocks-gallery.mdx` or
 `home.mdx` — both are live composed pages, not documentation. If the Block you
 need doesn't exist, that's a code change (new schema + component), not a
 content edit — see the README's "Adding a Block" section — and is out of
