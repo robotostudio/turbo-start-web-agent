@@ -46,7 +46,7 @@ on 2026-08-21 and fixed rather than documented.
 
 Pages are composed from **Blocks** — pre-built, schema-validated sections such
 as `Hero`, `FeatureGrid`, `Testimonial`, and `CTA`. The registry currently
-ships **14 Blocks**; the full set lives at `src/lib/blocks/schemas.ts` and
+ships **16 Blocks**; the full set lives at `src/lib/blocks/schemas.ts` and
 renders live, with the exact props each one expects, at
 [`/blocks-gallery`](http://localhost:3000/blocks-gallery).
 
@@ -107,8 +107,12 @@ production deploy.
 ## The build is the gate
 
 ```sh
+pnpm run checks       # every gate below, in order, stopping at the first failure
+
 pnpm content:check    # frontmatter, MDX syntax, and the content lockdown
 pnpm catalog:check    # catalog.json is in sync with src/lib/blocks/schemas.ts
+pnpm claims:check     # the docs do not misstate how many Blocks exist, or which
+pnpm skills:check     # third-party skills are pinned, and still hash to what was reviewed
 pnpm gallery:check    # blocks-gallery.mdx has a section for every registered Block
 pnpm test             # lockdown, loader, and Block-prop unit tests
 pnpm typecheck
@@ -147,19 +151,28 @@ other platforms).
 
 ### Which platform for which client
 
-The platforms are not interchangeable. All four below were exercised in
-live sessions on 2026-08-20 — a real client-style content change, taken
-through to a merged pull request:
+The platforms are not interchangeable. Three of the four have taken a real
+client-style content change through to a merged pull request. The last column
+names them by number, so the claim can be checked rather than taken on trust:
 
-| Platform | Reads the rulebook | Shows the client the site | Opens the PR |
-|---|---|---|---|
-| **v0** | `AGENTS.md` + `.agents/skills/` | **Yes**, in-chat preview | Itself |
-| **Replit** | `replit.md` | **Yes**, workspace preview | No — on GitHub |
-| **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI |
-| **Codex** | `AGENTS.md` | No — diff only | Button in the UI |
+| Platform | Reads the rulebook | Shows the client the site | Opens the PR | Run live |
+|---|---|---|---|---|
+| **v0** | `AGENTS.md` + `.agents/skills/` | **Yes**, in-chat preview | Itself | #25, #34, #38, #47, #51, #54 |
+| **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI | #2, #13, #17, #23 |
+| **Codex** | `AGENTS.md` | No — diff only | Button in the UI | #4, #18, #22 |
+| **Replit** | `replit.md` | **Yes**, workspace preview | No — on GitHub | **None yet** |
 
-The column that decides it for a non-technical client is the middle one.
-On v0 and Replit they watch the site change as they ask for it; on Claude
+**Replit is documented, not verified.** Its runbook and its generated
+surfaces are the most carefully researched of the four, and no content change
+has ever been taken through it to a pull request. The only session on record
+is the 2026-08-20 import, which opened an unprompted task to port the app to
+Vite — the incident the generated `replit.md` now carries a standing
+instruction against, and whose prevention nobody has watched work. Read
+`docs/platforms/replit.md` as the best available account of Replit's
+documented behaviour, not as a path anyone has walked.
+
+The column that decides it for a non-technical client is **shows the
+client the site**. On v0 and Replit they watch the site change as they ask for it; on Claude
 Code and Codex they get a diff, and their only view of the result is the
 hosting preview URL — which is behind a login by default on most hosts, so
 it needs configuring rather than assuming. Both of those platforms *do*

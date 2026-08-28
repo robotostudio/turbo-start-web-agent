@@ -1,5 +1,5 @@
 {
-  "$note": "Lockfile for third-party skills installed under .agents/skills/. Supply-chain integrity for agent instructions is the same problem as for packages: an unpinned remote skill is arbitrary instruction injection with a YAML header. Every skill under .agents/skills/ that was NOT authored for this project must have a matching entry here, pinning where it came from and a content hash so upstream drift is detectable before it's trusted again. Skills authored for this project (compose-page, sync-changes, find-skills) are not listed here \u2014 see .agents/skills/find-skills/SKILL.md for the full provenance convention and install procedure.",
+  "$note": "Lockfile for third-party skills installed under .agents/skills/. Supply-chain integrity for agent instructions is the same problem as for packages: an unpinned remote skill is arbitrary instruction injection with a YAML header. Every skill under .agents/skills/ that was NOT authored for this project must have a matching entry here, pinning where it came from and a content hash so upstream drift is detectable before it's trusted again. Skills authored for this project are not listed here \u2014 see .agents/skills/find-skills/SKILL.md for the full provenance convention and install procedure.",
   "skills": [
     {
       "name": "humanizer",
