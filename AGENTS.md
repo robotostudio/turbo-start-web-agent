@@ -244,10 +244,10 @@ This is the exact sequence CI runs (`.github/workflows/ci.yml`), in the same
 order. A second workflow, `.github/workflows/pr-hygiene.yml`, runs on the
 pull request itself rather than the code: it fails a body mangled into
 literal `\n` escapes, an empty description, or a commit carrying a vendor
-attribution trailer. It is a **required check**, so it blocks a merge rather
-than reporting one — and its commit-trailer findings can only be cleared by
-amending the commit, which is the reason to get `Requested-by:` and `Agent:`
-right when the commit is made. It has no local equivalent because there is no
+attribution trailer. It reports rather than blocks: a finding does not stop a
+merge, so read it. Its commit-trailer findings can only be cleared by amending
+the commit, which is the reason to get `Requested-by:` and `Agent:` right when
+the commit is made. It has no local equivalent because there is no
 pull request to inspect until one exists — run
 `node --experimental-strip-types scripts/pr-hygiene.ts` with `PR_BODY` set
 to try a body by hand. All of it must pass before a change is considered done — but passing

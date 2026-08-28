@@ -79,19 +79,22 @@ Check it before handover rather than discovering it on the first real
 change: open a preview URL in a private browser window. If it redirects to a
 login, the client's review step does not work yet.
 
-## One required check can stall a client's pull request
+## `pr-hygiene` reports; nobody has to clear it
 
-`pr-hygiene` is a required status check on this repo, so a finding blocks the
-merge rather than sitting beside an active merge button. Most of what it finds
-is in the pull request *body*, which anyone can fix by editing the description.
+`pr-hygiene` runs on every pull request and fails a mangled description, an
+empty one, or a commit carrying a vendor attribution trailer. It is **not** a
+required status check, so a finding shows a red mark beside a merge button
+that still works. Read it rather than relying on GitHub to stop you.
 
-One class of finding is not: a commit trailer joined with a literal `\n`, or a
-vendor attribution trailer, lives in the commit message. Clearing it needs
-`git commit --amend` and a force-push. Platforms differ on whether their agent
-can do that — v0 can, through its own GitHub integration, though not from its
-shell; a session whose shell has no git credentials and no platform-side
-rewrite cannot. When it cannot, the pull request waits for an operator to push
-the corrected commit.
+That is a deliberate trade, not an oversight. Most of what the check finds is
+in the pull request *body*, which anyone can fix by editing the description.
+One class is not: a commit trailer joined with a literal `\n`, or a vendor
+trailer, lives in the commit message, and clearing it needs `git commit
+--amend` and a force-push. Platforms differ on whether their agent can do that
+— v0 can, through its own GitHub integration, though not from its shell; a
+session whose shell has no git credentials and no platform-side rewrite
+cannot. Requiring the check would strand a client's pull request on a defect
+the client has no way to clear.
 
 Tell a client's agent to get `Requested-by:` and `Agent:` right at commit time
 and this never arises. `.agents/skills/sync-changes/SKILL.md` says exactly
