@@ -5,6 +5,15 @@ one-time procedure per project, not per session. Do this once when the
 client project is ready to hand to Replit's Agent; it doesn't need
 repeating unless the connection is torn down and rebuilt.
 
+> **Status: researched, not verified.** No content change has been taken
+> through Replit to a pull request — `git log` carries commits from v0, Claude
+> Code and Codex, and none from Replit. The one recorded session is the import
+> in §1, which tried to port the app to Vite. Everything below traces to
+> Replit's own documentation or to the harness this repo generates, and the
+> parts that describe how a session *goes* are the parts nobody has watched.
+> The `replit.md` instruction in §1.4 is the clearest case: it exists to stop
+> the port, and whether it does is unknown.
+
 ## 0. Before you start
 
 The repo should already have the generated harness surfaces in place:
@@ -154,10 +163,9 @@ rewrite the whole file" habit, a workflow that encourages committing
 straight to a branch without review — and turn it off for this workspace,
 or confirm it's scoped elsewhere.
 
-The project's own skills (`.agents/skills/compose-page`,
-`.agents/skills/sync-changes`, `.agents/skills/find-skills`) need no setup;
-Replit's Agent discovers anything under `.agents/skills/` automatically
-per the agentskills.io spec.
+The project's own skills need no setup: Replit's Agent discovers anything
+under `.agents/skills/` automatically, per the agentskills.io spec. The set
+ships with the repo and changes with it, which is why it is not listed here.
 
 ## 6. Branch protection: what you can actually rely on
 
