@@ -15,24 +15,18 @@ What it enforces on the default branch:
   is `0`, so a solo maintainer can still merge their own PR — the rule being
   enforced is "not a direct push", not "someone else must approve")
 - The `checks` job in `.github/workflows/ci.yml` must pass
-- The `pr-hygiene` job in `.github/workflows/pr-hygiene.yml` must pass
 - No force pushes, no branch deletion
 
-**Why `pr-hygiene` is required and not merely reported.** It ran as an
-advisory check for its first eight days, which meant a pull request could
-carry a body mangled into literal `\n` escapes, or a commit whose trailers had
-been joined with a literal `\n` so every trailer after the first was lost, and
-still merge with a red mark beside an active merge button. A check nobody has
-to clear is a check that reports rather than gates.
-
-One consequence to be straight with a client about: `pr-hygiene`'s
-commit-trailer findings live in the commit message, so clearing one needs
-`git commit --amend` and a force-push. On a platform whose shell has no git
-credentials that is not always possible from inside the session, and the pull
-request stalls until an operator pushes the corrected commit. That is the
-intended pressure — get the trailers right when the commit is made, and this
-never arises — but it should be a known cost, not a surprise. See
-`docs/platforms/README.md`.
+**`pr-hygiene` is deliberately not required.** It runs on every pull request
+and reports, but a finding does not block the merge. That is a real gap —
+a body mangled into literal `\n` escapes, or a commit whose trailers were
+joined with one so every trailer after the first was lost, can merge with a
+red mark beside an active merge button — and it is a gap accepted on purpose.
+Its commit-trailer findings live in the commit message, so clearing one needs
+`git commit --amend` and a force-push, which not every platform's agent can
+do from inside a session. Requiring it would stall a client's pull request on
+a defect the client cannot clear. Read the check, act on it, and get the
+trailers right at commit time; do not let GitHub hold the merge hostage to it.
 
 **Keeping this file and GitHub in step.** `main.json` is the source; GitHub is
 where it takes effect, and the two are separate lists that can drift. Applying

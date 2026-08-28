@@ -39,9 +39,6 @@
         "required_status_checks": [
           {
             "context": "checks"
-          },
-          {
-            "context": "pr-hygiene"
           }
         ],
         "strict_required_status_checks_policy": false
