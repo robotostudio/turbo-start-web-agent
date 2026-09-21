@@ -1,6 +1,6 @@
 import { footer } from "#velite";
 import { SiteLink } from "@/components/site/site-link";
-import { CornerTick, SiteMark } from "@/components/site/site-mark";
+import { CornerTick, EdgeScrims, SiteMark } from "@/components/site/site-mark";
 import { GridField } from "@/components/texture/grid-field";
 
 // Direction: Ledger — the columns sit in a bordered grid rather than floating
@@ -33,7 +33,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative isolate overflow-hidden font-sans">
-      <div className="page-inset py-16 sm:py-20">
+      <div className="page-inset pt-16 sm:pt-24">
         {/* The ledger. `relative` so the corner crosshairs can hang off it. */}
         <div className="relative border-y border-border">
           <CornerTick className="absolute -top-1 -left-1 size-2 text-muted-foreground" />
@@ -98,7 +98,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar, outside the ledger. */}
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-[26px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
             <span>{copyright}</span>
             {footer.builtBy ? (
@@ -141,14 +141,20 @@ export function SiteFooter() {
           bed. Decorative and behind everything. The texture does not animate: a
           moving field under a column of links is harder to read than a still
           one, and `animate={false}` keeps the footer free of client JS. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 sm:h-80">
-        <GridField animate={false} className="size-full opacity-[0.10]" preset="dense" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-30 h-80 sm:h-[26rem]">
+        <GridField animate={false} className="size-full opacity-[0.16]" preset="dense" />
       </div>
+      {/* Vignette and corner scrims over the bed, so it falls away into the page
+          instead of ending on a line. Sits above the texture and below the mark,
+          which is the order the design stacks them in. */}
+      <EdgeScrims className="pointer-events-none absolute inset-0 -z-20" />
+      {/* 72px below the bottom bar, matching the design. It sat directly under
+          it before, which read as one block instead of two. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none relative -z-10 -mb-24 flex justify-center sm:-mb-32"
+        className="pointer-events-none relative -z-10 flex justify-center pt-[72px] pb-12"
       >
-        <SiteMark className="h-52 w-auto text-foreground/85 sm:h-72" />
+        <SiteMark className="h-44 w-auto text-foreground/85 sm:h-[270px]" />
       </div>
     </footer>
   );

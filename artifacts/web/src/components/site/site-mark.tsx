@@ -48,3 +48,51 @@ export function CornerTick({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// The edge treatment under the footer: a vignette plus three corner scrims,
+// which is what stops the textured bed ending in a hard line and lets it fall
+// away into the page.
+//
+// Measured from the design. Every stop is `--background` at some alpha, which
+// is why these are written with color-mix against the token rather than as the
+// literal oklab values Paper reports -- a re-theme has to carry them, or the
+// footer keeps fading to a colour the rest of the page no longer uses.
+//
+// Inline styles rather than Tailwind arbitrary values: these are four
+// multi-stop gradients with commas and percentages in them, and the escaped
+// class-name version is unreadable for no gain.
+const bg = (alpha: number) =>
+  alpha >= 100
+    ? "var(--background)"
+    : `color-mix(in oklab, var(--background) ${alpha}%, transparent)`;
+
+export function EdgeScrims({ className }: { className?: string }) {
+  return (
+    <div aria-hidden="true" className={className}>
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(in oklab 76.16deg, ${bg(0)} 49.11%, ${bg(55)} 60.69%, ${bg(100)} 79.03%)`,
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(in oklab 79.1deg, ${bg(100)} 15.69%, ${bg(55)} 40.21%, ${bg(0)} 55.71%)`,
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(in oklab 168.06deg, ${bg(100)} 49.22%, ${bg(55)} 63.4%, ${bg(0)} 72.36%)`,
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `radial-gradient(ellipse 75.01% 96.44% at 50% 53.18% in oklab, ${bg(15)} 0%, ${bg(72)} 58%, ${bg(100)} 100%)`,
+        }}
+      />
+    </div>
+  );
+}
