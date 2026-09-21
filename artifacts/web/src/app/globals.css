@@ -53,6 +53,35 @@
      `motion-safe:` at the call site, never applied unconditionally: this
      utility itself has no opinion on `prefers-reduced-motion`. */
   --animate-marquee: marquee 20s linear infinite;
+
+  /* Type roles from the 2026-09 redesign comp, measured off the artboard
+     rather than derived from a ratio. Blocks reference these by role name
+     (`text-display`, `text-title`) instead of picking a Tailwind step, so
+     the scale is one decision in one place rather than a size chosen per
+     Block. Same reasoning as the colour tokens above.
+
+     Letter-spacing is in px, not em, because the comp applies the same
+     -0.48px to both display and title rather than scaling it with size.
+     The eyebrow is the exception and is genuinely proportional, so it keeps
+     em. Weight is deliberately NOT part of these tokens: the comp sets every
+     title at 400, which is the inherited default, so a role that needed a
+     weight would be the odd one out rather than the rule. */
+  --text-display: 4rem; /* 64px */
+  --text-display--line-height: 4.375rem; /* 70px */
+  --text-display--letter-spacing: -0.48px;
+
+  --text-title: 2.25rem; /* 36px */
+  --text-title--line-height: 2.75rem; /* 44px */
+  --text-title--letter-spacing: -0.48px;
+
+  --text-lede: 1.125rem; /* 18px */
+  --text-lede--line-height: 1.75rem; /* 28px */
+
+  /* Used by the eyebrow label SectionHeader gains in ROB-3209. Defined here
+     so the whole scale lands in one commit. */
+  --text-eyebrow: 0.75rem; /* 12px */
+  --text-eyebrow--line-height: 1rem; /* 16px */
+  --text-eyebrow--letter-spacing: 0.14em;
 }
 
 /* Slides a track exactly half its own width — the track renders its content
