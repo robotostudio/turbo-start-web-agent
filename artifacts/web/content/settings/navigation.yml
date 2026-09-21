@@ -29,10 +29,12 @@ cta:
 
 # Icon links beside the button. `icon` picks one of the marks in
 # src/components/site/social-icons.tsx; it is not markup, only which one.
+#
+# One icon, because that is what the design has. An X link was briefly added
+# here on the reasoning that moving social out of the footer should not lose it.
+# That was inventing, not following: the design carries no X mark anywhere, so
+# neither does this.
 social:
   - label: Harbour on GitHub
     href: https://github.com
     icon: github
-  - label: Harbour on X
-    href: https://x.com
-    icon: x

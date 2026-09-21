@@ -34,11 +34,10 @@ columns:
         href: /style-guide
       - label: Blocks gallery
         href: /blocks-gallery
-  # The design names four docs pages that do not exist yet: Quickstart, The
-  # Block system, How content works, The build is the gate. Rather than ship
-  # four dead links, each points at the page that actually covers it today --
-  # mostly the starter posts, which were written as exactly this documentation.
-  # Repoint them if real docs pages land.
+  # Labels are the design's, exactly. The pages behind them do not exist yet, so
+  # each href points at the closest thing that does -- mostly the starter posts,
+  # which were written as this documentation. Repoint the hrefs when real pages
+  # land; do not reword the labels to match what happens to exist.
   - title: Docs
     links:
       - label: Quickstart
@@ -47,14 +46,14 @@ columns:
         href: /blog/composing-pages
       - label: How content works
         href: /blog/what-content-cannot-contain
-      - label: Handing over a site
+      - label: The build is the gate
         href: /blog/handing-over-the-site
   - title: Project
     links:
       - label: GitHub
         href: https://github.com
-      - label: Anatomy of a post
-        href: /blog/anatomy-of-a-post
+      - label: Changelog
+        href: https://github.com
       - label: MIT licence
         href: /terms
 
