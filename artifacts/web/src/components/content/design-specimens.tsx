@@ -271,8 +271,10 @@ export function TextureField() {
 
         <div className="flex flex-col gap-8">
           <div className="border-t border-border pt-6">
-            <p className={`${MONO} mb-4 text-muted-foreground`}>dense — animated</p>
-            <GridField className="h-56 w-full rounded-lg" preset="dense" />
+            <p className={`${MONO} mb-4 text-muted-foreground`}>
+              dense — animated, pointer={"{true}"} — move the cursor over it
+            </p>
+            <GridField className="h-56 w-full rounded-lg" pointer preset="dense" />
           </div>
 
           <div className="border-t border-border pt-6">
