@@ -33,6 +33,7 @@ import { GridFieldCanvas } from "./grid-field-canvas";
 export function GridField({
   animate = true,
   className,
+  pointer = false,
   preset = "coarse",
 }: {
   /**
@@ -42,6 +43,13 @@ export function GridField({
    */
   animate?: boolean;
   className?: string;
+  /**
+   * Whether the field lights up under the cursor. Off by default: it suits one
+   * large placement and reads as a gimmick on six. Ignored where there is no
+   * hovering pointer, and inert under reduced motion, since the canvas that
+   * draws it never mounts there.
+   */
+  pointer?: boolean;
   preset?: GridPresetName;
 }) {
   const mask = `url(/texture/${preset}.svg)`;
@@ -63,7 +71,7 @@ export function GridField({
           WebkitMaskSize: "cover",
         }}
       />
-      {animate && <GridFieldCanvas preset={preset} />}
+      {animate && <GridFieldCanvas pointer={pointer} preset={preset} />}
     </div>
   );
 }
