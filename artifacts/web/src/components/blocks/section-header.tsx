@@ -18,10 +18,13 @@
 export function SectionHeader({ title, lede }: { title: string; lede?: string }) {
   return (
     <>
-      <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-balance text-foreground">
-        {title}
-      </h2>
-      {lede && <p className="mt-4 max-w-md text-lg text-pretty text-muted-foreground">{lede}</p>}
+      {/* font-normal is not decoration: the comp sets every section title at
+          400, where this was 600. It is the single largest visual difference
+          between the old type and the new, and changing it here moves every
+          section at once. `text-title` carries the -0.48px tracking, so the
+          old `tracking-tight` (-0.025em, about -0.9px here) is gone. */}
+      <h2 className="max-w-2xl text-title font-normal text-balance text-foreground">{title}</h2>
+      {lede && <p className="mt-4 max-w-md text-lede text-pretty text-muted-foreground">{lede}</p>}
     </>
   );
 }
