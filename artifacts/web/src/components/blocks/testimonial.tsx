@@ -23,7 +23,7 @@ export function Testimonial(raw: TestimonialProps) {
                   alt={testimonial.person.avatar.alt}
                   width={40}
                   height={40}
-                  className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-black/5"
+                  className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-foreground/5"
                 />
                 <div>
                   <div className="text-sm font-semibold text-foreground">

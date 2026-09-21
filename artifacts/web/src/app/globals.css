@@ -18,12 +18,21 @@
    including from v0 or third-party registries — lands already themed to
    these values instead of shadcn's stock zinc palette.
 
-   No .dark overrides: this template is light-mode-only today. `@custom-
-   variant dark` below is left in place as cheap forward-compat scaffolding
-   (shadcn's own convention) for a future theme toggle, but nothing in this
-   file or the component tree applies a `.dark` class or uses a `dark:`
-   utility yet — verify both are still true before trusting `dark:` classes
-   added elsewhere to actually do anything.
+   This template is DARK-only. It was light-only until the 2026-09 redesign,
+   which retired the light theme rather than adding a second one: the values
+   below were replaced in place, so there is exactly one set to reason about
+   and no toggle, no `.dark` block, and no `prefers-color-scheme` branch. The
+   trade is deliberate — a visitor whose OS is set to light still gets the
+   dark site, and re-theming a client project back to light means editing
+   these values again rather than flipping a switch.
+
+   `@custom-variant dark` below therefore remains inert scaffolding (shadcn's
+   own convention), kept because `npx shadcn add` components arrive carrying
+   `dark:` utilities and it is cheaper to let them parse than to strip them.
+   Nothing applies a `.dark` class, so those utilities never match — including
+   the four in `ui/button-variants.ts`. Adding a `.dark` class later would
+   wake all of them at once, so verify that before trusting any `dark:` class
+   to do anything.
    ========================================================================== */
 
 @theme {
@@ -275,24 +284,39 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.21 0.006 285.9);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.006 285.9);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.006 285.9);
-  --primary: oklch(0.55 0.22 264);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.967 0.001 286.4);
-  --secondary-foreground: oklch(0.21 0.006 285.9);
-  --muted: oklch(0.967 0.001 286.4);
-  --muted-foreground: oklch(0.552 0.016 285.9);
-  --accent: oklch(0.967 0.001 286.4);
-  --accent-foreground: oklch(0.21 0.006 285.9);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.3);
-  --input: oklch(0.92 0.004 286.3);
-  --ring: oklch(0.55 0.22 264);
+  /* Tells the browser this page is dark, so native scrollbars, form controls
+     and the UA's own chrome match it. Without it those stay light against a
+     dark page — the one part of the theme CSS custom properties cannot reach. */
+  color-scheme: dark;
+
+  --background: oklch(0.178 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.226 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.664 0.273 348.8);
+  /* Near-black, not white. White on this accent measures 3.53:1, which fails
+     WCAG AA for normal text and passes only as large text; button labels here
+     are 16px regular. The ground colour gives 5.35:1 and passes at any size.
+     A deliberate divergence from the design, where the pill is white. */
+  --primary-foreground: oklch(0.178 0 0);
+  --secondary: oklch(0.226 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.226 0 0);
+  --muted-foreground: oklch(0.716 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  /* Lifted from 0.577, which measures 3.96:1 on the dark ground and fails.
+     0.65 gives 5.35:1. Same hue and a slightly lower chroma to stay in gamut. */
+  --destructive: oklch(0.65 0.19 27.325);
+  /* --border and --input are no longer the same value. --border is the hairline
+     rule used for section dividers and cell borders (a 10% white overlay on the
+     ground); --input is the heavier border that reads on a control, such as the
+     outline button. The light theme had no reason to separate them. */
+  --border: oklch(0.281 0 0);
+  --input: oklch(0.321 0 0);
+  --ring: oklch(0.664 0.273 348.8);
   --radius: 0.75rem;
 
   /* Endpoints for the two-tone overscroll canvas above — verified against
