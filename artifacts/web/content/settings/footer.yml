@@ -1,14 +1,22 @@
-# Site footer: wordmark, link columns, social links, legal row, and a short
-# note. Rendered by src/components/site/site-footer.tsx. Every `href` is
-# validated by velite.config.ts (Zod .refine(isSafeUrl, ...)) because YAML
-# never passes through the MDX content-lockdown remark plugin.
+# The footer. Four columns, a brand block with status pills, and a bottom bar.
 #
-# Not content, and not here: the copyright year (computed at build time) and
-# the "©"/brand-name assembly around it, and the actual social-icon SVGs
-# (`icon` below just selects one of the two hardcoded in the component).
+# Every href here is checked by the same isSafeUrl rule the MDX lockdown
+# applies, through a Zod .refine() in velite.config.ts. YAML never passes
+# through remark, so that refine is the only thing standing between an edit here
+# and an unsafe URL in production.
 brand:
   name: Harbour
   href: /
+
+# Small status badges under the brand note. Decorative but factual: do not put a
+# claim here the repository cannot back up. `tone` picks the dot colour --
+# "accent" gets a filled dot, "muted" gets none.
+pills:
+  - label: Build passing
+    tone: accent
+  - label: MIT licensed
+    tone: muted
+
 columns:
   - title: Site
     links:
@@ -18,29 +26,52 @@ columns:
         href: /about
       - label: Blog
         href: /blog
+      - label: Contact
+        href: /contact
   - title: Design system
     links:
       - label: Style guide
         href: /style-guide
       - label: Blocks gallery
         href: /blocks-gallery
-  - title: Resources
+  # The design names four docs pages that do not exist yet: Quickstart, The
+  # Block system, How content works, The build is the gate. Rather than ship
+  # four dead links, each points at the page that actually covers it today --
+  # mostly the starter posts, which were written as exactly this documentation.
+  # Repoint them if real docs pages land.
+  - title: Docs
+    links:
+      - label: Quickstart
+        href: /blog/introducing-harbour
+      - label: The Block system
+        href: /blog/composing-pages
+      - label: How content works
+        href: /blog/what-content-cannot-contain
+      - label: Handing over a site
+        href: /blog/handing-over-the-site
+  - title: Project
     links:
       - label: GitHub
         href: https://github.com
-      - label: X
-        href: https://x.com
-social:
-  - label: Harbour on X
-    href: https://x.com
-    icon: x
-  - label: Harbour on GitHub
-    href: https://github.com
-    icon: github
+      - label: Anatomy of a post
+        href: /blog/anatomy-of-a-post
+      - label: MIT licence
+        href: /terms
+
 legal:
   - label: Privacy
     href: /privacy
   - label: Terms
     href: /terms
-note: Harbour is MIT-licensed. Clone it, edit the content in Git or through any AI agent, and ship your own site.
+
+# Who built it, shown in the bottom bar next to the copyright. Optional: leave
+# it out and the bottom bar just carries the copyright and the legal links.
+builtBy:
+  label: Roboto
+  href: https://robotostudio.com
+
+# Label for the anchor back to the top of the page. Optional.
+backToTop: Back to top
+
+note: Harbour is MIT-licensed. Clone it, edit the content in git or through any AI agent, and ship your own site.
 copyrightNote: Released under the MIT license.

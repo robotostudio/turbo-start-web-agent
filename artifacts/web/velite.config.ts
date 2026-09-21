@@ -92,10 +92,18 @@ const footerColumn = s.object({
   links: s.array(footerLink),
 });
 
+// A small status badge under the footer's brand note. `tone` is a
+// hardcoded-in-component enum for the same reason `icon` is below: which
+// treatment to use is content, the colour value is not.
+const footerPill = s.object({
+  label: s.string().min(1),
+  tone: s.enum(["accent", "muted"]),
+});
+
 // The wordmark shown next to the site name in the footer. `icon` is a
 // hardcoded-in-component enum, not markup from content — the actual SVG (see
-// XIcon/GitHubIcon in site-footer.tsx) can't safely live in YAML, only which
-// one to render and where it links.
+// social-icons.tsx) can't safely live in YAML, only which one to render and
+// where it links.
 const footerSocialLink = s.object({
   label: s.string().min(1),
   href: href(),
@@ -104,6 +112,14 @@ const footerSocialLink = s.object({
 
 const footerBrand = s.object({
   name: s.string().min(1),
+  href: href(),
+});
+
+// Attribution in the bottom bar. Optional, and deliberately so: the template is
+// MIT-licensed precisely so an agency can ship a client site with no credit
+// line, and a required field here would put one back.
+const footerBuiltBy = s.object({
+  label: s.string().min(1),
   href: href(),
 });
 
@@ -174,9 +190,15 @@ export default defineConfig({
       single: true,
       schema: s.object({
         brand: footerBrand,
+        pills: s.array(footerPill).optional(),
         columns: s.array(footerColumn),
-        social: s.array(footerSocialLink),
+        // Optional: the 2026-09 design moves these to the header, where
+        // navigation.yml drives them. Kept in the schema so a project that
+        // wants them back in the footer only edits YAML.
+        social: s.array(footerSocialLink).optional(),
         legal: s.array(footerLink),
+        builtBy: footerBuiltBy.optional(),
+        backToTop: s.string().optional(),
         note: s.string().optional(),
         // Trailing legal text after the auto-generated "© {year} {brand}."
         // (the year and brand name are never content — see site-footer.tsx).
