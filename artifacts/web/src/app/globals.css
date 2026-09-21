@@ -83,6 +83,15 @@
   --text-eyebrow--line-height: 1rem; /* 16px */
   --text-eyebrow--letter-spacing: 0.14em;
 
+  /* Smaller than the eyebrow, for the footer's column headings. The design sets
+     these at 10px, which is below what this repo's own guidance is comfortable
+     with for anything a visitor reads -- it is here as a role so that size is a
+     deliberate label treatment rather than an arbitrary value someone typed. Not
+     for prose. */
+  --text-label: 0.625rem; /* 10px */
+  --text-label--line-height: 0.875rem; /* 14px */
+  --text-label--letter-spacing: 0.14em;
+
   /* Buttons in the comp sit on a soft drop shadow, and the primary one adds a
      close halo in a darker tint of the accent. Both live here rather than in
      button-variants.ts because a raw colour in a component is what makes a
@@ -319,6 +328,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -361,6 +371,12 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.226 0 0);
   --muted-foreground: oklch(0.716 0 0);
+  /* A third text tier, dimmer than --muted-foreground, measured from the
+     design's footer headings and bottom bar. It is 3.70:1 on the ground, so it
+     clears AA for large text and non-text but NOT for body copy. Use it for
+     de-emphasised chrome labels only; --muted-foreground is still the general
+     muted. */
+  --subtle-foreground: oklch(0.538 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   /* Lifted from 0.577, which measures 3.96:1 on the dark ground and fails.

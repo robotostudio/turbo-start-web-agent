@@ -83,7 +83,10 @@ export function SiteFooter() {
                 className={`${CELL} lg:flex-1 ${index === footer.columns.length - 1 ? "lg:border-r" : ""}`}
                 key={column.title}
               >
-                <p className="font-mono text-eyebrow uppercase text-muted-foreground">
+                {/* text-label, not text-eyebrow: the design sets these at
+                    10px, a step below a section eyebrow. And subtle rather than
+                    muted, because it is the dimmest of the three text tiers. */}
+                <p className="font-mono text-label uppercase text-subtle-foreground">
                   {column.title}
                 </p>
                 <ul className="flex flex-col gap-3">
@@ -105,7 +108,7 @@ export function SiteFooter() {
 
         {/* Bottom bar, outside the ledger. */}
         <div className="mt-[26px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+          <p className="flex flex-wrap items-center gap-x-2 text-sm text-subtle-foreground">
             <span>{copyright}</span>
             {footer.builtBy ? (
               <>
@@ -141,7 +144,7 @@ export function SiteFooter() {
               <SiteLink
                 key={link.label}
                 href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-sm text-subtle-foreground hover:text-foreground"
               >
                 {link.label}
               </SiteLink>

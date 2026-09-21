@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { navigation, site } from "#velite";
 
 import { SiteLink } from "@/components/site/site-link";
+import { SiteMark } from "@/components/site/site-mark";
 import { socialIcons } from "@/components/site/social-icons";
 import { ButtonLink } from "@/components/ui/button-link";
 import {
@@ -256,20 +257,28 @@ export function SiteHeader() {
   const isSidePanel = useSidePanel();
 
   return (
-    <header className="sticky top-4 z-40 font-sans">
+    // A flat bar on the page, not a floating panel. It carried
+    // `sticky top-4` with a rounded border and its own background until the
+    // 2026-09 redesign; the design draws the masthead as a plain row with no
+    // panel around it, so the panel is gone rather than restyled.
+    //
+    // `page-inset` supplies the horizontal gutter, which is 48px from lg up and
+    // matches the design. The vertical 16px is here.
+    <header className="z-40 font-sans">
       <div className="page-inset">
-        <div className="flex items-center gap-6 rounded-lg border border-border bg-background px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-6 py-4">
           <div className="flex flex-1 items-center">
             <Link
               href="/"
               aria-label="Homepage"
-              className="text-base font-semibold text-foreground"
+              className="flex items-center gap-2.5 text-base font-semibold text-foreground"
             >
+              <SiteMark className="h-6 w-auto" />
               {site.name}
             </Link>
           </div>
 
-          <nav aria-label="Primary" className="hidden items-center gap-8 xl:flex">
+          <nav aria-label="Primary" className="hidden items-center gap-10 xl:flex">
             {navItems.map((item) => (
               <SiteLink
                 key={item.label}
