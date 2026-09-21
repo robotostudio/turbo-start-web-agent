@@ -22,10 +22,12 @@
     "harness:check": "node --experimental-strip-types scripts/harness-gen/index.ts --check",
     "skills:check": "node --experimental-strip-types scripts/skills-lock-check.ts",
     "claims:check": "node --experimental-strip-types scripts/claims-check.ts",
-    "checks": "pnpm run harness:check && pnpm run skills:check && pnpm run content:check && pnpm run brand:check && pnpm run catalog:check && pnpm run claims:check && pnpm run gallery:check && pnpm run lint && pnpm run test && pnpm run typecheck && pnpm run build",
+    "checks": "pnpm run harness:check && pnpm run skills:check && pnpm run content:check && pnpm run brand:check && pnpm run catalog:check && pnpm run claims:check && pnpm run gallery:check && pnpm run texture:check && pnpm run lint && pnpm run test && pnpm run typecheck && pnpm run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --if-present run typecheck",
-    "brand:check": "pnpm --filter @workspace/web run brand:check"
+    "brand:check": "pnpm --filter @workspace/web run brand:check",
+    "texture": "pnpm --filter @workspace/web run texture",
+    "texture:check": "pnpm --filter @workspace/web run texture:check"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.5",

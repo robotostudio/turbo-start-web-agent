@@ -1,5 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { SectionHeader } from "@/components/blocks/section-header";
+import { GridField } from "@/components/texture/grid-field";
 import {
   type buttonVariants,
   buttonVariants as variantClasses,
@@ -230,6 +231,45 @@ export function SectionHeaderSlots() {
               title="Every section opens with a statement"
               lede="One supporting sentence, never two paragraphs."
             />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// The procedural grid texture, at both densities. Like the section-header
+// specimen above, this exists because no Block composes the texture yet -- each
+// section ticket adds it as that section lands -- and a primitive with no call
+// site is one nobody can look at.
+//
+// Worth knowing while looking: what renders first is SVG from the server, and
+// the canvas replaces it on mount. With JavaScript disabled the two panels below
+// are still filled, just still.
+export function TextureField() {
+  return (
+    <section className="border-t border-border font-sans">
+      <div className="page-inset flex flex-col gap-6 py-12">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
+            Grid texture
+          </h2>
+          <p className={`${MONO} text-muted-foreground`}>
+            src/components/texture/grid-field.tsx · server SVG + canvas · 2 presets
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-8">
+          <div className="border-t border-border pt-6">
+            <p className={`${MONO} mb-4 text-muted-foreground`}>dense — animated</p>
+            <GridField className="h-56 w-full rounded-lg" preset="dense" />
+          </div>
+
+          <div className="border-t border-border pt-6">
+            <p className={`${MONO} mb-4 text-muted-foreground`}>
+              coarse — animate={"{false}"}, ships no client JS
+            </p>
+            <GridField animate={false} className="h-40 w-full rounded-lg" preset="coarse" />
           </div>
         </div>
       </div>

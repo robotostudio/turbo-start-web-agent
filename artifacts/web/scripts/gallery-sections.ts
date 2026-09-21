@@ -36,6 +36,8 @@ export const SPECIMENS = `<ButtonMatrix />
 <TypeScale />
 
 <SectionHeaderSlots />
+
+<TextureField />
 `;
 
 // A Block name as it can appear in `<BlockSpec name="...">` and still be
