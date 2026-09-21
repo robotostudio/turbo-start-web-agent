@@ -58,14 +58,6 @@ columns:
       - label: MIT licence
         href: /terms
 
-social:
-  - label: Harbour on X
-    href: https://x.com
-    icon: x
-  - label: Harbour on GitHub
-    href: https://github.com
-    icon: github
-
 legal:
   - label: Privacy
     href: /privacy

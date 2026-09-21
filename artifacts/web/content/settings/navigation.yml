@@ -33,3 +33,6 @@ social:
   - label: Harbour on GitHub
     href: https://github.com
     icon: github
+  - label: Harbour on X
+    href: https://x.com
+    icon: x

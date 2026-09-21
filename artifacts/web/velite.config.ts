@@ -192,7 +192,10 @@ export default defineConfig({
         brand: footerBrand,
         pills: s.array(footerPill).optional(),
         columns: s.array(footerColumn),
-        social: s.array(footerSocialLink),
+        // Optional: the 2026-09 design moves these to the header, where
+        // navigation.yml drives them. Kept in the schema so a project that
+        // wants them back in the footer only edits YAML.
+        social: s.array(footerSocialLink).optional(),
         legal: s.array(footerLink),
         builtBy: footerBuiltBy.optional(),
         backToTop: s.string().optional(),
