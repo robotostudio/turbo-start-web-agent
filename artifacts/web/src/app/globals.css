@@ -118,10 +118,24 @@
 @layer utilities {
   /* Horizontal page gutter shared by every Block, so sections align down the
      page without each Block inventing its own padding. */
+  /* Sized to the 2026-09 redesign comp, which is drawn on a 1440px artboard
+     with 48px gutters, so its content column is 1344px. Because these boxes
+     are border-box, matching that means a 90rem (1440px) cap with 3rem
+     (48px) of inline padding: 1440 - 96 = 1344. It was 80rem with 1.5rem of
+     padding, giving 1232px of content, which would have left every section
+     112px narrower than drawn.
+
+     The 48px gutter only applies from `lg` up. Below that it stays at
+     1.5rem, because 48px each side of a phone screen is most of the screen. */
   .page-inset {
     margin-inline: auto;
-    max-width: 80rem;
+    max-width: 90rem;
     padding-inline: 1.5rem;
+  }
+  @media (min-width: 64rem) {
+    .page-inset {
+      padding-inline: 3rem;
+    }
   }
 
   /* Top gap under the sticky header (`site-header.tsx`'s `<header class="sticky
