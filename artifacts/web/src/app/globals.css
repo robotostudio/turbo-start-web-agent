@@ -82,6 +82,19 @@
   --text-eyebrow: 0.75rem; /* 12px */
   --text-eyebrow--line-height: 1rem; /* 16px */
   --text-eyebrow--letter-spacing: 0.14em;
+
+  /* Buttons in the comp sit on a soft drop shadow, and the primary one adds a
+     close halo in a darker tint of the accent. Both live here rather than in
+     button-variants.ts because a raw colour in a component is what makes a
+     retheme more than one file.
+
+     The halo is derived from --primary with color-mix instead of pinned to the
+     measured #B32080, so re-theming the accent carries the glow with it. The
+     drop shadow is a near-black at 20%: it reads as depth against any ground,
+     so it does not need to track a token. */
+  --shadow-button: 0 4px 4px oklch(0.06 0.03 264 / 0.2);
+  --shadow-button-primary:
+    0 0 2px color-mix(in oklab, var(--primary), black 22%), 0 4px 4px oklch(0.06 0.03 264 / 0.2);
 }
 
 /* Slides a track exactly half its own width — the track renders its content

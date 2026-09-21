@@ -5,6 +5,7 @@ import {
   type buttonVariants,
   buttonVariants as variantClasses,
 } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 
 // Design-system reference for the Block Gallery: the primitives a Block is
 // built from, rendered live rather than described.
@@ -109,7 +110,16 @@ export function ButtonMatrix() {
                           Blocks use. Rendering Base UI's <Button> here would
                           pull a client boundary into every page on the
                           `[...slug]` route -- see button-variants.ts. */}
-                      <button type="button" className={variantClasses({ variant, size })}>
+                      {/* cn(), not the raw cva output. The base config carries
+                          `border-transparent` and the `outline` variant adds
+                          `border-input`; both are border-color utilities at equal
+                          specificity, so source order decides and transparent
+                          wins. Every Block escapes that because ButtonLink wraps
+                          the classes in cn(), where tailwind-merge drops the
+                          loser. Without it this table renders `outline`
+                          identical to `ghost` -- the one place meant to show the
+                          variants was the one place showing them wrong. */}
+                      <button type="button" className={cn(variantClasses({ variant, size }))}>
                         {isIconSize(size) ? <span aria-hidden="true">→</span> : <span>Button</span>}
                       </button>
                     </td>
