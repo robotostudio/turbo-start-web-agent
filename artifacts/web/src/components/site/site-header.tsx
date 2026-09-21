@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { navigation, site } from "#velite";
 
 import { SiteLink } from "@/components/site/site-link";
+import { socialIcons } from "@/components/site/social-icons";
+import { ButtonLink } from "@/components/ui/button-link";
 import {
   Drawer,
   DrawerClose,
@@ -40,6 +42,8 @@ type NavLink = { label: string; href: string };
 type NavNode = NavLink & { children?: NavLink[] };
 
 const navItems: NavNode[] = navigation.items;
+const navCta = navigation.cta;
+const navSocial = navigation.social ?? [];
 
 type Level = { title: string; items: NavNode[] };
 type Direction = "forward" | "back";
@@ -278,15 +282,39 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex flex-1 items-center justify-end gap-3">
-            <Link
-              href="/style-guide"
-              className={cn(
-                "hidden rounded-lg border border-border px-4 py-2 text-sm text-foreground xl:inline-block",
-                focusRing,
-              )}
-            >
-              Read the docs
-            </Link>
+            {navSocial.map((link) => {
+              const Icon = socialIcons[link.icon];
+              return (
+                <SiteLink
+                  key={link.label}
+                  href={link.href}
+                  aria-label={link.label}
+                  className={cn(
+                    "hidden text-muted-foreground hover:text-foreground xl:inline-flex",
+                    focusRing,
+                  )}
+                >
+                  <Icon />
+                </SiteLink>
+              );
+            })}
+            {navCta && (
+              <ButtonLink
+                href={navCta.href}
+                label={navCta.label}
+                variant="outline"
+                // border-foreground, not the variant's --input edge. The comp
+                // draws this one brighter than the outline button in the CTA
+                // band, and it is the header's primary action, so receding is
+                // the wrong behaviour rather than a subtler one.
+                //
+                // An override rather than a new variant on purpose: one bright
+                // outline in site chrome is a call site, and adding a variant
+                // for it would put a second outline treatment in front of every
+                // Block author who opens the matrix.
+                className="hidden border-foreground xl:inline-flex"
+              />
+            )}
 
             <Drawer
               swipeDirection={isSidePanel ? "right" : "down"}
@@ -371,18 +399,29 @@ export function SiteHeader() {
                   onDrillInto={nav.drillInto}
                 />
 
-                <div className="shrink-0 border-t border-border p-4">
-                  <DrawerClose
-                    nativeButton={false}
-                    render={<Link href="/style-guide" />}
-                    className={cn(
-                      "flex w-full items-center justify-center rounded-lg border border-border px-4 py-3 text-base text-foreground",
-                      focusRing,
-                    )}
-                  >
-                    Read the docs
-                  </DrawerClose>
-                </div>
+                {navCta && (
+                  <div className="shrink-0 border-t border-border p-4">
+                    <DrawerClose
+                      nativeButton={false}
+                      // Same internal/external split the nav rows use above.
+                      // The href comes from YAML now, so it can be either.
+                      render={
+                        navCta.href.startsWith("/") ? (
+                          <Link href={navCta.href} />
+                        ) : (
+                          // biome-ignore lint/a11y/useAnchorContent: DrawerClose supplies the children
+                          <a href={navCta.href} />
+                        )
+                      }
+                      className={cn(
+                        "flex w-full items-center justify-center rounded-full border border-input px-5 py-3 text-base text-foreground",
+                        focusRing,
+                      )}
+                    >
+                      {navCta.label}
+                    </DrawerClose>
+                  </div>
+                )}
               </DrawerContent>
             </Drawer>
           </div>

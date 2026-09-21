@@ -65,6 +65,23 @@ const navItem = s.object({
   children: s.array(navLink).optional(),
 });
 
+// The header's own call to action, and the icon link beside it. Both were
+// hardcoded in site-header.tsx before the 2026-09 redesign -- a label and an
+// href written into a .tsx file, which is exactly the kind of edit this
+// template exists to keep out of code. `icon` is the same hardcoded enum the
+// footer's social links use: which mark to render is content, the path data is
+// not.
+const navCta = s.object({
+  label: s.string().min(1),
+  href: href(),
+});
+
+const navSocialLink = s.object({
+  label: s.string().min(1),
+  href: href(),
+  icon: s.enum(["x", "github"]),
+});
+
 const footerLink = s.object({
   label: s.string().min(1),
   href: href(),
@@ -147,6 +164,8 @@ export default defineConfig({
       single: true,
       schema: s.object({
         items: s.array(navItem),
+        cta: navCta.optional(),
+        social: s.array(navSocialLink).optional(),
       }),
     },
     footer: {
