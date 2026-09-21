@@ -75,8 +75,14 @@ export function SiteFooter() {
               ) : null}
             </div>
 
-            {footer.columns.map((column) => (
-              <div className={`${CELL} lg:flex-1`} key={column.title}>
+            {footer.columns.map((column, index) => (
+              <div
+                // Only the last column closes the ledger on its right. Every
+                // other edge in the row is some cell's left border, so without
+                // this the grid is open on one side.
+                className={`${CELL} lg:flex-1 ${index === footer.columns.length - 1 ? "lg:border-r" : ""}`}
+                key={column.title}
+              >
                 <p className="font-mono text-eyebrow uppercase text-muted-foreground">
                   {column.title}
                 </p>
@@ -104,10 +110,26 @@ export function SiteFooter() {
             {footer.builtBy ? (
               <>
                 <span aria-hidden="true">·</span>
-                <span>
-                  Built by{" "}
-                  <SiteLink href={footer.builtBy.href} className="text-foreground hover:underline">
-                    {footer.builtBy.label}
+                <span className="flex items-center gap-2">
+                  Built by
+                  <SiteLink href={footer.builtBy.href} aria-label={footer.builtBy.label}>
+                    {/* The builder's own wordmark, taken from the design file.
+                        The one binary in this repo, and a deliberate exception:
+                        a logo is not content, it cannot be a Block, and tracing
+                        it to vector by hand would be reproducing someone's mark
+                        by eye. `label` still carries the name for assistive tech
+                        and for a project that swaps this out.
+
+                        A plain <img>: next/image buys nothing for a fixed 80px
+                        asset already in /public, and a mask would recolour a
+                        third party's mark, which is not ours to do. */}
+                    <img
+                      alt=""
+                      className="h-2.5 w-auto"
+                      height={296}
+                      src="/brand/roboto-wordmark.png"
+                      width={2352}
+                    />
                   </SiteLink>
                 </span>
               </>
