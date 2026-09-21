@@ -10,7 +10,10 @@ export function Newsletter(raw: NewsletterProps) {
       <div className="page-inset py-20 sm:py-28">
         <div className="flex flex-col items-center gap-6 text-center">
           <div>
-            <h2 className="mx-auto max-w-lg text-3xl font-semibold tracking-tight text-balance text-foreground">
+            {/* Centred rather than left-aligned, so it does not use
+                SectionHeader and carries the title role by hand. Weight 400 to
+                match every other section title; it was 600 before. */}
+            <h2 className="mx-auto max-w-lg text-title font-normal text-balance text-foreground">
               {title}
             </h2>
             {lede && (
