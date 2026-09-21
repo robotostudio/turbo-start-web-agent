@@ -1,0 +1,59 @@
+---
+title: Contact
+description: How to reach the team behind Harbour, and what to expect back.
+---
+
+<Hero
+  variant="left"
+  title="Talk to the people who built it"
+  lede="Harbour is maintained by a small team. A real person reads what you send."
+  primary={{ label: "Email us", href: "mailto:hello@example.com" }}
+  secondary={{ label: "Open an issue", href: "https://github.com" }}
+/>
+
+<FeatureGrid
+  title="Where to send what"
+  lede="Three places, so your message reaches someone who can act on it."
+  features={[
+    {
+      title: "A bug, or something broken.",
+      body: "Open a GitHub issue. Include the page, what you expected, and what happened instead. A failing build log is worth more than a description of one.",
+    },
+    {
+      title: "A question about your own build.",
+      body: "Email us. Tell us what you are trying to compose and what the build said when it refused, and we can usually point at the rule rather than guess.",
+    },
+    {
+      title: "Anything commercial.",
+      body: "Email us and say so in the subject line. Licensing, support, and work-for-hire all go to the same address and get answered by a person, not a form.",
+    },
+  ]}
+/>
+
+<Faq
+  title="Before you write"
+  faqs={[
+    {
+      question: "How quickly do you reply?",
+      answer: "Within a couple of working days for email. GitHub issues are triaged less predictably, because they queue behind whatever is being built that week. If something is time-critical, email and say so rather than waiting on an issue.",
+    },
+    {
+      question: "Can you build the site for me?",
+      answer: "Sometimes. Harbour is a template rather than a service, but the team that maintains it does take client work. Email with what you need and roughly when, and you will get a straight yes or no rather than a discovery call.",
+    },
+    {
+      question: "Is there a support contract?",
+      answer: "Not as a product. The template is MIT-licensed and comes with no warranty, which is stated plainly in the licence. If you need something firmer than that for a client engagement, that is a commercial conversation and the answer is the email address above.",
+    },
+    {
+      question: "Do you take feature requests?",
+      answer: "Yes, and the useful ones arrive as a description of what you were trying to compose rather than as a proposed API. A Block that solves one real page tends to be the right shape; a Block designed in the abstract usually is not.",
+    },
+  ]}
+/>
+
+<CTA
+  title="Start from this template"
+  lede="Clone it, edit the content in git or through any AI agent, and ship your own site."
+  primary={{ label: "Read the docs", href: "/about" }}
+/>
