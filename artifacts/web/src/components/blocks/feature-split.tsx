@@ -25,7 +25,7 @@ export function FeatureSplit(raw: FeatureSplitProps) {
               </ul>
             )}
           </div>
-          <div className="overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-black/10">
+          <div className="overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-foreground/10">
             <Image
               src={image.src}
               alt={image.alt}

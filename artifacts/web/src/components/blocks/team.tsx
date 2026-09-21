@@ -12,7 +12,7 @@ export function Team(raw: TeamProps) {
         <ul className="mt-16 grid grid-cols-2 gap-x-8 gap-y-12 sm:mt-20 sm:grid-cols-3">
           {team.map((person) => (
             <li key={person.name}>
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-black/5">
+              <div className="relative aspect-square w-full overflow-hidden rounded-lg outline-1 -outline-offset-1 outline-foreground/5">
                 <Image
                   src={person.avatar.src}
                   alt={person.avatar.alt}
