@@ -21,15 +21,21 @@ noindex: true
  * sections and nothing else, so anything hand-added between them is dropped on
  * the next `pnpm catalog` and fails `gallery:check` in the meantime.
  *
- * These two are gallery chrome injected from `mdx-content.tsx`, not registered
+ * These are gallery chrome injected from `mdx-content.tsx`, not registered
  * Blocks — see `src/components/content/design-specimens.tsx`. They render the
  * primitives every Block is built from: without them the gallery shows only
  * the handful of button and type combinations that happen to appear inside a
  * Block, and an agent designing a new one cannot see what already exists.
+ *
+ * Adding one here is the only way to get it into the gallery: this generator
+ * owns the file's structure, so a specimen appended to the MDX by hand is
+ * drift and `gallery:check` fails it.
  */
 export const SPECIMENS = `<ButtonMatrix />
 
 <TypeScale />
+
+<SectionHeaderSlots />
 `;
 
 // A Block name as it can appear in `<BlockSpec name="...">` and still be

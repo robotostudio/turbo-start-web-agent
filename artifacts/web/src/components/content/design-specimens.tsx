@@ -1,4 +1,5 @@
 import type { VariantProps } from "class-variance-authority";
+import { SectionHeader } from "@/components/blocks/section-header";
 import {
   type buttonVariants,
   buttonVariants as variantClasses,
@@ -129,21 +130,27 @@ export function ButtonMatrix() {
 // steps; the point of this table is that this site uses these.
 const TYPE_ROLES = [
   {
+    role: "Eyebrow",
+    where: "SectionHeader — above a title",
+    className: "font-mono text-eyebrow uppercase text-muted-foreground",
+    sample: "What you get",
+  },
+  {
     role: "Page title",
     where: "Hero — one per page",
-    className: "text-5xl lg:text-6xl",
+    className: "text-5xl lg:text-display",
     sample: "Your website, editable by any AI agent",
   },
   {
     role: "Section title",
     where: "SectionHeader — every other Block",
-    className: "text-4xl font-semibold tracking-tight",
+    className: "text-title font-normal",
     sample: "Every section opens with a statement",
   },
   {
     role: "Lede",
     where: "Under a title, max-w-md",
-    className: "text-lg text-muted-foreground",
+    className: "text-lede text-muted-foreground",
     sample: "One supporting sentence, never two paragraphs.",
   },
   {
@@ -183,6 +190,48 @@ export function TypeScale() {
             </div>
           ))}
         </dl>
+      </div>
+    </section>
+  );
+}
+
+// SectionHeader's two optional slots, rendered live. Both were added for the
+// 2026-09 redesign and no Block passes them yet -- each section ticket adds
+// its own `eyebrow` prop as it lands -- so without this specimen the feature
+// would ship with no call site and nothing to look at. Same reasoning as
+// ButtonMatrix above: the system is real but otherwise invisible.
+export function SectionHeaderSlots() {
+  return (
+    <section className="border-t border-border font-sans">
+      <div className="page-inset flex flex-col gap-6 py-12">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
+            Section header slots
+          </h2>
+          <p className={`${MONO} text-muted-foreground`}>
+            src/components/blocks/section-header.tsx · eyebrow, meta · both optional
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-10">
+          <div className="border-t border-border pt-6">
+            <p className={`${MONO} mb-4 text-muted-foreground`}>eyebrow + meta</p>
+            <SectionHeader
+              eyebrow="By the numbers"
+              title="The numbers behind the pitch."
+              meta="Measured across 40+ client builds"
+              lede="One supporting sentence, never two paragraphs."
+            />
+          </div>
+
+          <div className="border-t border-border pt-6">
+            <p className={`${MONO} mb-4 text-muted-foreground`}>neither — unchanged from before</p>
+            <SectionHeader
+              title="Every section opens with a statement"
+              lede="One supporting sentence, never two paragraphs."
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
