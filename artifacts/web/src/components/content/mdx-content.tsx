@@ -3,7 +3,12 @@ import type { ComponentProps, ComponentType, ReactNode } from "react";
 import * as runtime from "react/jsx-runtime";
 import { blockComponents } from "@/components/blocks";
 import { BlockSpec } from "@/components/blocks/block-spec";
-import { ButtonMatrix, SectionHeaderSlots, TypeScale } from "@/components/content/design-specimens";
+import {
+  ButtonMatrix,
+  SectionHeaderSlots,
+  TextureField,
+  TypeScale,
+} from "@/components/content/design-specimens";
 
 // How a top-level markdown element is wrapped. Every variant below keeps the
 // same three-layer shape, and each layer is load-bearing:
@@ -161,6 +166,7 @@ export async function MdxContent({
         BlockSpec,
         ButtonMatrix,
         SectionHeaderSlots,
+        TextureField,
         TypeScale,
         ...componentsByVariant[variant],
       }}
