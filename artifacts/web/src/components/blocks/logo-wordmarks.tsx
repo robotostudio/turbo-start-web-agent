@@ -17,15 +17,16 @@ import { cn } from "@/lib/utils";
 // same split `--text-display` uses.
 //
 // Colour comes from the call site through currentColor, as it does in
-// site-mark.tsx and social-icons.tsx. The ledger wants `text-muted-foreground`
-// — that is the token nearest the comp's #9A9A9A. Northbeam's mark is the one
-// exception: its third square is a second, dimmer tone in the comp (#5C5C5C),
-// which is `--subtle-foreground` here, so that square is pinned to the token
-// rather than following currentColor. Two-tone is a property of that fictional
-// logo, not of the row it sits in.
+// site-mark.tsx and social-icons.tsx. The ledger sets `text-ledger-wordmark`
+// on the grid (logo-cloud.tsx), which is the comp's #9A9A9A exactly.
+// Northbeam's mark is the one exception: its third square is a second, dimmer
+// tone in the comp (#5C5C5C), carried by `--ledger-wordmark-dim`, so that
+// square is pinned to that token rather than following currentColor. Two-tone
+// is a property of that fictional logo, not of the row it sits in.
 //
-// Nothing consumes this yet. The ledger Block that lays the twelve out in a
-// bordered grid is a separate change.
+// The LogoCloud Block (logo-cloud.tsx) is the only consumer: it lays the
+// twelve out in the comp's bordered 6x2 grid. They are fixed decoration drawn
+// from the design, so no Block prop selects, reorders or replaces them.
 
 // Three squares, upper-left and lower-right in the primary tone, upper-right
 // dimmed. 16x16.
@@ -40,7 +41,7 @@ function NorthbeamMark() {
     >
       <rect height="6" width="6" x="1" y="1" />
       <rect height="6" width="6" x="9" y="9" />
-      <rect className="fill-subtle-foreground" height="6" width="6" x="9" y="1" />
+      <rect className="fill-ledger-wordmark-dim" height="6" width="6" x="9" y="1" />
     </svg>
   );
 }
