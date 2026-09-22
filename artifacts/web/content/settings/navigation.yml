@@ -36,5 +36,5 @@ cta:
 # neither does this.
 social:
   - label: Harbour on GitHub
-    href: https://github.com
+    href: https://github.com/robotostudio/turbo-start-web-agent
     icon: github
