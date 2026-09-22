@@ -83,6 +83,16 @@
   --text-eyebrow--line-height: 1rem; /* 16px */
   --text-eyebrow--letter-spacing: 0.14em;
 
+  /* The ledger figure. 60px rather than the 64px display role: the comp sets
+     the stats band a step below the hero headline, and picking `text-display`
+     here would have been a 4px lie against the artboard. Tracking is in em,
+     not the px the display and title roles use, because it was measured that
+     way. Weight stays off the token for the reason given above -- the comp
+     draws this one at 300, the only place on the site that is not 400. */
+  --text-stat: 3.75rem; /* 60px */
+  --text-stat--line-height: 4rem; /* 64px */
+  --text-stat--letter-spacing: -0.035em;
+
   /* Smaller than the eyebrow, for the footer's column headings. The design sets
      these at 10px, which is below what this repo's own guidance is comfortable
      with for anything a visitor reads -- it is here as a role so that size is a
@@ -406,6 +416,8 @@
   --color-ledger-rule: var(--ledger-rule);
   --color-ledger-tick: var(--ledger-tick);
   --color-ledger-meta: var(--ledger-meta);
+  --color-ledger-meter: var(--ledger-meter);
+  --color-ledger-meter-empty: var(--ledger-meter-empty);
   --color-ledger-wordmark: var(--ledger-wordmark);
   --color-ledger-wordmark-dim: var(--ledger-wordmark-dim);
   --color-destructive: var(--destructive);
@@ -493,6 +505,12 @@
   --ledger-rule: #ffffff17;
   --ledger-tick: rgb(255 255 255 / 32%);
   --ledger-meta: #b0b0b0;
+  /* The stats band's meter. A filled tick is a shade under --foreground, and
+     on a cell with nothing filled the empty slots are outlined at 22% rather
+     than the 9% rule, which disappears at 7px wide. Measured off the band,
+     same as the others here. */
+  --ledger-meter: #e8e8e8;
+  --ledger-meter-empty: rgb(255 255 255 / 22%);
   --ledger-wordmark: #9a9a9a;
   /* The second, dimmer tone inside a wordmark: only Northbeam's third
      square is drawn in it, read off that cell in the comp rather than
