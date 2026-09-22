@@ -45,7 +45,7 @@ description: A starter marketing site you can edit with any AI agent.
 
 <FeatureGrid
   title="A template that stays out of your way once the client signs off."
-  lede="Fourteen pieces, each one doing a single job well."
+  lede="Each piece doing a single job well."
   features={[
     {
       title: "Block system.",
@@ -89,12 +89,30 @@ description: A starter marketing site you can edit with any AI agent.
 />
 
 <Stats
+  eyebrow="By the numbers"
   title="The numbers behind the pitch."
+  meta="Measured across 40+ client builds"
   stats={[
-    { value: "14", label: "Blocks in the registry today" },
-    { value: "2.6 hrs", label: "Average time to reskin a client site" },
-    { value: "1", label: "Token file to rebrand" },
-    { value: "0kb", label: "Client JS shipped by default" },
+    {
+      value: "16",
+      label: "Blocks in the registry today",
+      meter: { filled: 16 },
+    },
+    {
+      value: "2.6 hrs",
+      label: "Average time to reskin a client site",
+      meter: { filled: 2, partial: 0.6, total: 8, note: "/ 8 HR DAY" },
+    },
+    {
+      value: "1",
+      label: "Token file to rebrand",
+      meter: { filled: 1, tone: "accent", note: "tokens.css" },
+    },
+    {
+      value: "0kb",
+      label: "Client JS shipped by default",
+      meter: { filled: 0, total: 8, tone: "outline" },
+    },
   ]}
 />
 
