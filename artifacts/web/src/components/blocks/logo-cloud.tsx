@@ -65,7 +65,13 @@ export function LogoCloud(raw: LogoCloudProps) {
             {logos.map((logo, index) => (
               <li
                 className="flex h-29 items-center justify-center border-r border-b border-ledger-rule"
-                key={"src" in logo ? logo.src : logo.name}
+                // The index is in the key deliberately: the schema allows two
+                // entries with the same name or the same src (two clients can
+                // share a wordmark), so content alone is not unique — see the
+                // duplicate-entry test in schemas.test.ts. Position is the
+                // identity here, same as the cadence below.
+                // biome-ignore lint/suspicious/noArrayIndexKey: the ledger is a fixed positional grid and its entries may repeat
+                key={`${index}-${"src" in logo ? logo.src : logo.name}`}
               >
                 {"src" in logo ? (
                   // Unoptimized because these are usually SVG logotypes, which

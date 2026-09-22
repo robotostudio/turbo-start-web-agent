@@ -437,6 +437,26 @@ test("LogoCloud mixes images, marked names and bare names in one array", () => {
   assert.deepEqual(parsed.logos[2], { name: "MERIDIAN" });
 });
 
+// Nothing dedupes a ledger: two clients can legitimately share a wordmark, and
+// the comp's grid is positional anyway. This is what makes the index in
+// logo-cloud.tsx's list key necessary rather than defensive noise — src and
+// name are both content, and content here is allowed to repeat.
+test("LogoCloud accepts duplicate entries", () => {
+  const parsed = parseBlock("LogoCloud", logoCloudSchema, {
+    eyebrow: "Powering marketing teams at",
+    logos: [
+      { name: "Northbeam" },
+      { name: "Northbeam" },
+      { src: "https://assets.ui.sh/logos/align.svg", alt: "Align" },
+      { src: "https://assets.ui.sh/logos/align.svg", alt: "Align" },
+      ...sixLogos.slice(0, 2),
+    ],
+  });
+  assert.equal(parsed.logos.length, 6);
+  assert.deepEqual(parsed.logos[0], parsed.logos[1]);
+  assert.deepEqual(parsed.logos[2], parsed.logos[3]);
+});
+
 test("LogoCloud rejects fewer than 6 logos (6 is one whole row at every breakpoint)", () => {
   assert.throws(
     () => parseBlock("LogoCloud", logoCloudSchema, { eyebrow: "x", logos: sixLogos.slice(0, 5) }),
