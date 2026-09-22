@@ -524,36 +524,17 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-          "lede": {
+          "eyebrow": {
             "type": "string"
           },
-          "logos": {
-            "minItems": 6,
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "src": {
-                  "type": "string",
-                  "minLength": 1,
-                  "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
-                },
-                "alt": {
-                  "default": "",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "src"
-              ]
-            }
+          "meta": {
+            "type": "string"
           }
         },
         "required": [
-          "lede",
-          "logos"
+          "eyebrow"
         ],
-        "description": "A row of customer or partner logos under a short line of supporting text, no heading, six per row. Use to signal adoption or social proof without making an argument — provide at least 6, ideally a multiple of 6."
+        "description": "A bordered ledger of twelve client wordmarks, under a small-caps label with an optional note opposite it. The twelve wordmarks are fixed artwork from the design, not a list you supply — this Block carries only the label above them, so use it to signal adoption without making an argument. To show real client logos, replace the wordmarks in components/blocks/logo-wordmarks.tsx."
       }
     },
     "Team": {

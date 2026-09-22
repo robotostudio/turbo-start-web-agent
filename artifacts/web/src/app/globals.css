@@ -403,6 +403,10 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-ledger-rule: var(--ledger-rule);
+  --color-ledger-tick: var(--ledger-tick);
+  --color-ledger-meta: var(--ledger-meta);
+  --color-ledger-wordmark: var(--ledger-wordmark);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -467,6 +471,27 @@
      outline button. The light theme had no reason to separate them. */
   --border: oklch(0.281 0 0);
   --input: oklch(0.321 0 0);
+
+  /* ------------------------------------------------------------------
+     LEDGER
+     The bordered-grid treatment the comp uses for the logo ledger, the
+     stats band and the footer. These four carry the comp's EXACT values
+     rather than the nearest existing token, because each of those was
+     near but not equal: --border is oklch(0.281 0 0) against the comp's
+     9% white rule, --subtle-foreground is ~#6E6E6E against a 32% white
+     crosshair, and --muted-foreground is #A3A3A3 against the #B0B0B0
+     meta note and the #9A9A9A wordmark tone. Reusing them would have
+     shifted four measured values by eye, so they are tokens of their own.
+
+     They are white at an alpha, and grey, deliberately: that is how the
+     comp draws them. A client re-theming --background to a light ground
+     has to give these four new values too -- the alpha rules would vanish
+     and the greys would go muddy. That is the cost of carrying the
+     design exactly, and it is recorded here rather than hidden. */
+  --ledger-rule: #ffffff17;
+  --ledger-tick: rgb(255 255 255 / 32%);
+  --ledger-meta: #b0b0b0;
+  --ledger-wordmark: #9a9a9a;
   --ring: oklch(0.664 0.273 348.8);
   --radius: 0.75rem;
 

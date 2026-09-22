@@ -284,14 +284,11 @@ export type TestimonialProps = z.input<typeof testimonialSchema>;
 
 export const logoCloudSchema = z
   .object({
-    lede: z.string(),
-    // The grid is a fixed 6-column row (sm:grid-cols-6) — fewer than 6 logos
-    // leaves the row left-aligned with empty trailing columns instead of a
-    // full band. More than 6 wraps cleanly onto additional full-width rows.
-    logos: z.array(media).min(6),
+    eyebrow: z.string(),
+    meta: z.string().optional(),
   })
   .describe(
-    "A row of customer or partner logos under a short line of supporting text, no heading, six per row. Use to signal adoption or social proof without making an argument — provide at least 6, ideally a multiple of 6.",
+    "A bordered ledger of twelve client wordmarks, under a small-caps label with an optional note opposite it. The twelve wordmarks are fixed artwork from the design, not a list you supply — this Block carries only the label above them, so use it to signal adoption without making an argument. To show real client logos, replace the wordmarks in components/blocks/logo-wordmarks.tsx.",
   );
 export type LogoCloudProps = z.input<typeof logoCloudSchema>;
 

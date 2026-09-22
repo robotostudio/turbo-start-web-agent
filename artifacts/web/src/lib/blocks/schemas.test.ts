@@ -398,42 +398,28 @@ test("Testimonial rejects an unsafe avatar URL", () => {
 
 // --- LogoCloud --------------------------------------------------------
 
-const sixLogos = Array.from({ length: 6 }, (_, i) => ({
-  src: `https://assets.ui.sh/logos/logo-${i}.svg`,
-  alt: `Logo ${i}`,
-}));
-
 test("LogoCloud parses valid props", () => {
   const parsed = parseBlock("LogoCloud", logoCloudSchema, {
-    lede: "Powering marketing sites for teams like these.",
-    logos: sixLogos,
+    eyebrow: "Powering marketing teams at",
+    meta: "40+ teams",
   });
-  assert.equal(parsed.logos.length, 6);
+  assert.equal(parsed.meta, "40+ teams");
 });
 
 test("LogoCloud rejects a missing required prop", () => {
   assert.throws(
     () => parseBlock("LogoCloud", logoCloudSchema, {}),
-    (error: Error) => error.message.includes("<LogoCloud>") && error.message.includes("lede"),
+    (error: Error) => error.message.includes("<LogoCloud>") && error.message.includes("eyebrow"),
   );
 });
 
-test("LogoCloud rejects fewer than 6 logos (the grid is a fixed 6-column row)", () => {
-  assert.throws(
-    () => parseBlock("LogoCloud", logoCloudSchema, { lede: "x", logos: sixLogos.slice(0, 3) }),
-    /logos/,
-  );
-});
-
-test("LogoCloud rejects an unsafe logo URL", () => {
-  assert.throws(
-    () =>
-      parseBlock("LogoCloud", logoCloudSchema, {
-        lede: "x",
-        logos: [...sixLogos.slice(0, 5), { src: "javascript:alert(1)", alt: "logo" }],
-      }),
-    /src/,
-  );
+// The twelve wordmarks are fixed artwork (components/blocks/logo-wordmarks.tsx),
+// so the meta note is the only optional thing an author can leave out.
+test("LogoCloud parses with the meta note omitted", () => {
+  const parsed = parseBlock("LogoCloud", logoCloudSchema, {
+    eyebrow: "Powering marketing teams at",
+  });
+  assert.equal(parsed.meta, undefined);
 });
 
 // --- Team --------------------------------------------------------
