@@ -12,6 +12,14 @@ import { GridField } from "@/components/texture/grid-field";
 // top and bottom, each cell a 1px rule on its left, cells are 34px block and
 // 24px inline, and the brand cell is a fixed 380px against four equal columns.
 //
+// The crosshairs are the ledger's, exactly: 9px at --ledger-tick (32% white),
+// the same values the logo cloud carries. The rules are not. The footer comp
+// draws them at #FFFFFF1A, which is 10% white, where the logo ledger's are 9%.
+// So they stay on --border: that token is the 10% overlay, and over this
+// ground it lands within a third of one 8-bit step of what the comp draws.
+// Moving them to --ledger-rule would walk them away from the design rather
+// than toward it. Read off the footer comp, not assumed from the logo row.
+//
 // Server component. The wordmark, columns, status pills, links, attribution and
 // notes all come from the `footer` singleton (content/settings/footer.yml),
 // validated at build time by velite.config.ts — every href through the same
@@ -36,10 +44,17 @@ export function SiteFooter() {
       <div className="page-inset pt-16 sm:pt-24">
         {/* The ledger. `relative` so the corner crosshairs can hang off it. */}
         <div className="relative border-y border-border">
-          <CornerTick className="absolute -top-1 -left-1 size-2 text-muted-foreground" />
-          <CornerTick className="absolute -top-1 -right-1 size-2 text-muted-foreground" />
-          <CornerTick className="absolute -bottom-1 -left-1 size-2 text-muted-foreground" />
-          <CornerTick className="absolute -right-1 -bottom-1 size-2 text-muted-foreground" />
+          {/* -1.25 (5px) on the block axis, -1 (4px) on the inline axis. An
+              absolutely positioned child is laid out against its ancestor's
+              PADDING box, and this one carries `border-y`, so a symmetric -1
+              would drop all four crosshairs 1px below the rule they are meant
+              to be centred on. The comp pins its top tick at -5 for exactly
+              this reason. The inline axis needs no such correction: the box has
+              no left or right border of its own, the first cell's does that. */}
+          <CornerTick className="absolute -top-1.25 -left-1 size-2.25 text-ledger-tick" />
+          <CornerTick className="absolute -top-1.25 -right-1 size-2.25 text-ledger-tick" />
+          <CornerTick className="absolute -bottom-1.25 -left-1 size-2.25 text-ledger-tick" />
+          <CornerTick className="absolute -right-1 -bottom-1.25 size-2.25 text-ledger-tick" />
 
           <div className="flex flex-col lg:flex-row">
             <div className={`${CELL} gap-5 lg:w-[380px] lg:shrink-0 lg:pr-12`}>
