@@ -37,9 +37,12 @@ export const FIELD_LOOK: FieldLook = {
 
 /**
  * Cells are taller than they are wide, which is why the texture reads as
- * vertical bars rather than dots.
+ * vertical bars rather than dots. The figure is the comp's: its band measures a
+ * 14.06px column pitch against a 20.66px row pitch, and 12 / (12 / 0.63 + 3)
+ * reproduces that ratio once the mask is scaled to cover a 1440-wide band. It
+ * was 0.42, which is a good deal more elongated than the design.
  */
-export const CELL_ASPECT = 0.42;
+export const CELL_ASPECT = 0.63;
 
 export const CORNER_RADIUS_PERCENT = 25;
 
@@ -52,9 +55,14 @@ type GridPreset = Omit<ToolcraftGridGeometryInput, "cellAspect" | "cornerRadiusP
  * `coarse` is what the server renders for the still frame, and what a smaller
  * placement such as the footer watermark uses outright.
  */
+// `dense`'s counts are the comp's, measured off the band's own exported bitmap
+// rather than chosen: an autocorrelation of that PNG gives a 14.06px column
+// pitch and a 20.66px row pitch across the 1440x430 band, which is 102 by 21.
+// It was 128 by 32, and since the mask stretches to whatever element carries it,
+// those extra rows read as a visibly busier field than the design has.
 export const GRID_PRESETS: Record<GridPresetName, GridPreset> = {
   coarse: { cellSize: 28, columns: 55, gap: 7, rows: 9 },
-  dense: { cellSize: 12, columns: 128, gap: 3, rows: 32 },
+  dense: { cellSize: 12, columns: 102, gap: 3, rows: 21 },
 };
 
 /** How long one loop takes. The field stitches end to end, so it never jumps. */

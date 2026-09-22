@@ -16,6 +16,22 @@ noindex: true
 <BlockSpec name="Hero">
 
 <Hero
+  variant="showcase"
+  lede="The default variant: opening copy and calls to action, over a full-bleed textured band carrying a card that shows an agent mid-instruction."
+  primary={{ label: "Read the docs", href: "/about" }}
+  agents={[
+    { src: "/agents/claude.svg", alt: "Claude" },
+    { src: "/agents/openai.svg", alt: "OpenAI" },
+    { src: "/agents/replit.svg", alt: "Replit" },
+  ]}
+  prompt={[
+    { text: "Swap the testimonial on the" },
+    { text: "pricing", icon: "/prompt/page.svg" },
+    { text: "page for the one from Orbital, and move it above the table" },
+  ]}
+/>
+
+<Hero
   variant="centered"
   title="Your website, editable by any AI agent"
   lede="Harbour is a starter marketing site. Your developers keep working in git; your team edits through the agent they already use."

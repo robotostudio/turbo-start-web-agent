@@ -104,6 +104,10 @@
   --shadow-button: 0 4px 4px oklch(0.06 0.03 264 / 0.2);
   --shadow-button-primary:
     0 0 2px color-mix(in oklab, var(--primary), black 22%), 0 4px 4px oklch(0.06 0.03 264 / 0.2);
+  /* The Hero's prompt card. An inset top shadow hollows the panel out so it
+     reads as recessed against the textured band behind it, over the same drop
+     shadow the buttons carry. Both values are the 2026-09 comp's. */
+  --shadow-prompt-card: inset 0 2px 16px oklch(0.13 0 0), 0 4px 4px oklch(0.06 0.03 264 / 0.2);
 }
 
 /* Slides a track exactly half its own width — the track renders its content

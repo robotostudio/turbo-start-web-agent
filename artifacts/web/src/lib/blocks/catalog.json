@@ -40,9 +40,10 @@
         "type": "object",
         "properties": {
           "variant": {
-            "default": "centered",
+            "default": "showcase",
             "type": "string",
             "enum": [
+              "showcase",
               "centered",
               "left"
             ]
@@ -86,12 +87,56 @@
               "label",
               "href"
             ]
+          },
+          "prompt": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          },
+          "model": {
+            "default": "Claude Opus 5",
+            "type": "string"
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                },
+                "alt": {
+                  "default": "",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "src"
+              ]
+            }
+          },
+          "agentsLabel": {
+            "default": "Edit with agents",
+            "type": "string"
           }
         },
-        "required": [
-          "title"
-        ],
-        "description": "The page-opening section: a large headline, an optional supporting line, and up to two calls to action. Use once per page, at the top."
+        "description": "The page-opening section: an optional headline, a supporting line, and up to two calls to action. Use once per page, at the top. `showcase` (the default) is the home-page treatment: the copy and calls to action sit above a full-bleed textured band carrying a floating card that shows an agent mid-instruction, so it wants `prompt` and `agents` supplied. `centered` and `left` are the plain interior-page treatments, which ignore `prompt`, `model`, `agents` and `agentsLabel`."
       }
     },
     "CTA": {

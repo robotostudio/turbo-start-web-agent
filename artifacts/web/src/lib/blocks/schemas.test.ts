@@ -36,7 +36,8 @@ test("parseBlock returns parsed data for valid props", () => {
 
 test("parseBlock applies schema defaults", () => {
   const parsed = parseBlock("Hero", heroSchema, { title: "Hi" });
-  assert.equal(parsed.variant, "centered");
+  assert.equal(parsed.variant, "showcase");
+  assert.equal(parsed.agentsLabel, "Edit with agents");
 });
 
 test("parseBlock names the Block and the bad prop path", () => {
@@ -57,8 +58,11 @@ test("parseBlock rejects a link missing href", () => {
   );
 });
 
+// Uses CTA rather than Hero: Hero's `title` became optional when the showcase
+// variant landed, since the home comp's hero opens on the lede and carries no
+// headline. CTA still requires both a title and a primary link.
 test("parseBlock rejects a missing required prop", () => {
-  assert.throws(() => parseBlock("Hero", heroSchema, {}), /title/);
+  assert.throws(() => parseBlock("CTA", ctaBandSchema, {}), /title/);
 });
 
 test("link schema rejects javascript: hrefs", () => {
