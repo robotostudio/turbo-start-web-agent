@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { globSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -137,11 +137,46 @@ export const checkEnumeration = (file: string, source: string, registry: Registr
   return claims;
 };
 
+/**
+ * Rule 4 — a Stats cell counting the registry.
+ *
+ * The three rules above read prose, and content MDX does not make its claim in
+ * prose. It makes it as data: `{ value: "14", label: "Blocks in the registry
+ * today" }`, where the figure and the noun are separated by a quote, a comma
+ * and a key, so rule 1's digit-then-Block pattern never sees them. That gap
+ * let the same claim drift three different ways at once -- 14 on the home
+ * page, 12 in the gallery, 14 again in a blog post -- against a registry of
+ * 16, with every gate green.
+ *
+ * Deliberately narrow: it keys off the literal label rather than trying to
+ * read MDX generally, because a Block prop is data and the only claim in it
+ * that has ever gone stale is this one. A general prose checker over content
+ * is a different and much larger thing.
+ */
+export const checkStatCell = (file: string, source: string, registry: Registry): Claim[] => {
+  const claims: Claim[] = [];
+  // `value` then `label`, the order the Block's own schema declares them in.
+  const pattern = /value:\s*"(\d+)"[^}]*?label:\s*"Blocks in the registry/g;
+  for (const match of source.matchAll(pattern)) {
+    const claimed = Number(match[1]);
+    if (claimed === registry.count) continue;
+    claims.push({
+      file,
+      line: lineAt(source, match.index ?? 0),
+      message:
+        `a Stats cell counts ${claimed} Blocks in the registry, but the catalog holds ` +
+        `${registry.count}. Correct the value, or regenerate the catalog if a Block was added.`,
+    });
+  }
+  return claims;
+};
+
 /** Every rule, over one file. */
 export const checkClaims = (file: string, source: string, registry: Registry): Claim[] => [
   ...checkCount(file, source, registry),
   ...checkSample(file, source, registry),
   ...checkEnumeration(file, source, registry),
+  ...checkStatCell(file, source, registry),
 ];
 
 // --- CLI ---------------------------------------------------------------------
@@ -158,7 +193,14 @@ const CATALOG = join(repoRoot, "artifacts", "web", "src", "lib", "blocks", "cata
  * byte-identical mirror, so a claim corrected here is corrected there by
  * `pnpm harness`, and `harness:check` fails if it was not. Listing both would
  * report every finding twice.
+ *
+ * Content MDX is here too, and it is the reason rule 4 exists: a page can
+ * count the registry just as wrongly as a doc can, and until now nothing read
+ * it. Listed by glob rather than by name so a new page is covered the day it
+ * is written instead of the day someone remembers this file.
  */
+const CONTENT_GLOB = "artifacts/web/content/**/*.mdx";
+
 const SOURCES = [
   "README.md",
   "AGENTS.md",
@@ -178,13 +220,15 @@ const isMain = (): boolean => {
 if (isMain()) {
   const registry = registryFrom(readFileSync(CATALOG, "utf8"));
 
-  const claims = SOURCES.flatMap((file) =>
+  const files = [...SOURCES, ...globSync(CONTENT_GLOB, { cwd: repoRoot }).sort()];
+
+  const claims = files.flatMap((file) =>
     checkClaims(file, readFileSync(join(repoRoot, file), "utf8"), registry),
   );
 
   if (claims.length === 0) {
     process.stdout.write(
-      `Claims check: ${SOURCES.length} files agree with the registry (${registry.count} Blocks)\n`,
+      `Claims check: ${files.length} files agree with the registry (${registry.count} Blocks)\n`,
     );
     process.exit(0);
   }

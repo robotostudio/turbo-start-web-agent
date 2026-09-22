@@ -5,6 +5,7 @@ import {
   checkCount,
   checkEnumeration,
   checkSample,
+  checkStatCell,
   type Registry,
   registryFrom,
 } from "./claims-check.ts";
@@ -133,4 +134,43 @@ test("checkClaims runs every rule over one file", () => {
 test("a file with no claims about the registry is silent", () => {
   const source = "# A skill\n\nCompose pages from Blocks. Read the catalog first.\n";
   assert.deepEqual(checkClaims("SKILL.md", source, REGISTRY), []);
+});
+
+// --- Rule 4: a Stats cell counting the registry ------------------------------
+
+// home.mdx as it stood on 2026-09-22: the claim is data, not prose, so every
+// rule above walked straight past it while three pages disagreed with the
+// registry and with each other.
+const STAT_CELL = `    {
+      value: "14",
+      label: "Blocks in the registry today",
+      meter: { filled: 14 },
+    },`;
+
+test("checkStatCell catches a Stats cell that miscounts the registry", () => {
+  const claims = checkStatCell("home.mdx", STAT_CELL, REGISTRY);
+  assert.equal(claims.length, 1);
+  assert.match(claims[0].message, /counts 14 Blocks/);
+  assert.match(claims[0].message, /catalog holds 4/);
+});
+
+test("checkStatCell passes a cell that agrees with the registry", () => {
+  assert.deepEqual(checkStatCell("home.mdx", STAT_CELL.replace('"14"', '"4"'), REGISTRY), []);
+});
+
+test("checkStatCell ignores a stat that is not counting Blocks", () => {
+  const other = '{ value: "2.6 hrs", label: "Average time to reskin a client site" },';
+  assert.deepEqual(checkStatCell("home.mdx", other, REGISTRY), []);
+});
+
+// The gap this rule exists to close: rule 1 wants a digit immediately followed
+// by the word, and a Block prop never puts them together.
+test("the prose rules cannot see a Stats cell, which is why rule 4 exists", () => {
+  assert.deepEqual(checkCount("home.mdx", STAT_CELL, REGISTRY), []);
+});
+
+test("checkClaims runs rule 4 alongside the prose rules", () => {
+  const claims = checkClaims("home.mdx", STAT_CELL, REGISTRY);
+  assert.equal(claims.length, 1);
+  assert.match(claims[0].message, /Blocks in the registry/);
 });

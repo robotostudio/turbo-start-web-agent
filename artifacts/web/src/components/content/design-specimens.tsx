@@ -207,9 +207,10 @@ export function TypeScale() {
 }
 
 // SectionHeader's two optional slots, rendered live. Both were added for the
-// 2026-09 redesign and no Block passes them yet -- each section ticket adds
-// its own `eyebrow` prop as it lands -- so without this specimen the feature
-// would ship with no call site and nothing to look at. Same reasoning as
+// 2026-09 redesign, and Stats became the first Block to pass them when the
+// stats ledger landed -- each remaining section ticket adds its own `eyebrow`
+// as it arrives. The specimen stays because it is the only place both slots
+// are shown together, and against the copy the comp uses. Same reasoning as
 // ButtonMatrix above: the system is real but otherwise invisible.
 export function SectionHeaderSlots() {
   return (
