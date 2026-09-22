@@ -15,6 +15,7 @@ import {
   gallerySchema,
   heroSchema,
   imageCardsSchema,
+  ledgerMarkIds,
   logoCloudSchema,
   media,
   newsletterSchema,
@@ -398,11 +399,15 @@ test("Testimonial rejects an unsafe avatar URL", () => {
 
 // --- LogoCloud --------------------------------------------------------
 
+const sixLogos = Array.from({ length: 6 }, (_, i) => ({ name: `Client ${i}` }));
+
 test("LogoCloud parses valid props", () => {
   const parsed = parseBlock("LogoCloud", logoCloudSchema, {
     eyebrow: "Powering marketing teams at",
     meta: "40+ teams",
+    logos: sixLogos,
   });
+  assert.equal(parsed.logos.length, 6);
   assert.equal(parsed.meta, "40+ teams");
 });
 
@@ -413,11 +418,70 @@ test("LogoCloud rejects a missing required prop", () => {
   );
 });
 
-// The twelve wordmarks are fixed artwork (components/blocks/logo-wordmarks.tsx),
-// so the meta note is the only optional thing an author can leave out.
+// The three entry shapes are one array, not three props: the comp's ledger
+// mixes marked and unmarked names, and a client replacing it swaps them for
+// images a few at a time rather than all at once.
+test("LogoCloud mixes images, marked names and bare names in one array", () => {
+  const parsed = parseBlock("LogoCloud", logoCloudSchema, {
+    eyebrow: "Powering marketing teams at",
+    logos: [
+      { src: "https://assets.ui.sh/logos/align.svg", alt: "Align" },
+      { name: "Northbeam", mark: "squares" },
+      { name: "MERIDIAN" },
+      ...sixLogos.slice(0, 3),
+    ],
+  });
+  assert.equal(parsed.logos.length, 6);
+  assert.deepEqual(parsed.logos[0], { src: "https://assets.ui.sh/logos/align.svg", alt: "Align" });
+  assert.deepEqual(parsed.logos[1], { name: "Northbeam", mark: "squares" });
+  assert.deepEqual(parsed.logos[2], { name: "MERIDIAN" });
+});
+
+test("LogoCloud rejects fewer than 6 logos (6 is one whole row at every breakpoint)", () => {
+  assert.throws(
+    () => parseBlock("LogoCloud", logoCloudSchema, { eyebrow: "x", logos: sixLogos.slice(0, 5) }),
+    /logos/,
+  );
+});
+
+test("LogoCloud rejects an unsafe logo image URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("LogoCloud", logoCloudSchema, {
+        eyebrow: "x",
+        logos: [...sixLogos.slice(0, 5), { src: "javascript:alert(1)", alt: "logo" }],
+      }),
+    /logos/,
+  );
+});
+
+// A mark names one of the five glyphs logo-wordmarks.tsx draws. Anything else
+// would render as a name with no mark, silently, so the schema stops it.
+test("LogoCloud rejects a mark that names no glyph", () => {
+  assert.throws(
+    () =>
+      parseBlock("LogoCloud", logoCloudSchema, {
+        eyebrow: "x",
+        logos: [...sixLogos.slice(0, 5), { name: "Halcyon", mark: "hexagon" }],
+      }),
+    /logos/,
+  );
+});
+
+// The ids the schema offers and the glyphs the component draws are one list.
+// The drawing side is typecheck's: ledgerMarks in logo-wordmarks.tsx is a
+// total Record over LedgerMarkId, so an id with no glyph — or a glyph with no
+// id — fails tsc rather than rendering a name with nothing beside it. What
+// this test pins is the authoring side: the enum reaches catalog.json, so
+// adding or dropping an id changes what an author is told they may write.
+test("the mark enum offers exactly the five glyphs drawn from the comp", () => {
+  assert.deepEqual([...ledgerMarkIds], ["squares", "diamond", "chevron", "grid", "triangle"]);
+});
+
 test("LogoCloud parses with the meta note omitted", () => {
   const parsed = parseBlock("LogoCloud", logoCloudSchema, {
     eyebrow: "Powering marketing teams at",
+    logos: sixLogos,
   });
   assert.equal(parsed.meta, undefined);
 });
