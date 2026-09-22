@@ -88,16 +88,40 @@ export const person = z.object({
   avatar: media,
 });
 
+/** One run of the prompt shown in the Hero's floating card. Plain text by
+ * default; supplying `icon` turns the run into a chip, which is how the comp
+ * marks out the things an agent would act on (a section, a design file, a
+ * repository). */
+export const promptSegment = z.object({
+  text: z.string(),
+  icon: mediaSrc().optional(),
+});
+export type PromptSegment = z.infer<typeof promptSegment>;
+
 export const heroSchema = z
   .object({
-    variant: z.enum(["centered", "left"]).default("centered"),
-    title: z.string(),
+    variant: z.enum(["showcase", "centered", "left"]).default("showcase"),
+    /** Optional because the home comp's hero leads on the lede and carries no
+     * headline at all, while the interior variants always want one. Rendered
+     * whenever it is supplied, in every variant. */
+    title: z.string().optional(),
     lede: z.string().optional(),
     primary: link.optional(),
     secondary: link.optional(),
+    /** `showcase` only: the prompt inside the card floating over the textured
+     * band, as a run of segments. The card is markup rather than an exported
+     * image, so its copy is content like any other and stays editable here. */
+    prompt: z.array(promptSegment).optional(),
+    /** `showcase` only: the model named in the card's toolbar. */
+    model: z.string().default("Claude Opus 5"),
+    /** `showcase` only: the marks beside `agentsLabel`. Reuses `media`, so a
+     * relative path served from /public validates without touching
+     * next.config.mjs — `{ src: "/agents/claude.svg", alt: "Claude" }`. */
+    agents: z.array(media).optional(),
+    agentsLabel: z.string().default("Edit with agents"),
   })
   .describe(
-    "The page-opening section: a large headline, an optional supporting line, and up to two calls to action. Use once per page, at the top.",
+    "The page-opening section: an optional headline, a supporting line, and up to two calls to action. Use once per page, at the top. `showcase` (the default) is the home-page treatment: the copy and calls to action sit above a full-bleed textured band carrying a floating card that shows an agent mid-instruction, so it wants `prompt` and `agents` supplied. `centered` and `left` are the plain interior-page treatments, which ignore `prompt`, `model`, `agents` and `agentsLabel`.",
   );
 export type HeroProps = z.input<typeof heroSchema>;
 

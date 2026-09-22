@@ -60,6 +60,13 @@ export function GridField({
       className={cn("pointer-events-none relative isolate overflow-hidden", className)}
       data-texture={preset}
     >
+      {/* Both layers scale uniformly and crop ("cover" here, `object-cover` on
+          the canvas), never stretch. Stretching made the field's density a
+          function of the caller's shape: the same grid squeezed into the
+          footer's shorter bed came out denser than the Hero band's, and at
+          phone width 102 columns across 410px collapsed into 4px slivers.
+          Scaling both the same way keeps a cell a cell whatever the box, and
+          keeps the two layers registered with each other. */}
       <div
         className="size-full bg-foreground"
         style={{

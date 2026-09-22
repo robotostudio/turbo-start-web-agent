@@ -218,7 +218,7 @@ export function GridFieldCanvas({
 
   return (
     <canvas
-      className="absolute inset-0 size-full text-foreground transition-opacity duration-300"
+      className="absolute inset-0 size-full object-cover text-foreground transition-opacity duration-300"
       ref={canvasRef}
       style={{ opacity: painted ? 1 : 0 }}
     />

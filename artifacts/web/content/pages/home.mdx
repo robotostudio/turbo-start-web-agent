@@ -4,11 +4,24 @@ description: A starter marketing site you can edit with any AI agent.
 ---
 
 <Hero
-  variant="centered"
-  title="Your website, editable by any AI agent"
-  lede="Harbour is a starter marketing site your team can edit through the AI agent they already use, while your developers keep working in git."
+  variant="showcase"
+  lede="Turbo start agent is a starter marketing site. Your developers keep working in git. Your team edits through the agent they already use."
   primary={{ label: "Read the docs", href: "/about" }}
-  secondary={{ label: "Browse the blocks", href: "/blocks-gallery" }}
+  agents={[
+    { src: "/agents/claude.svg", alt: "Claude" },
+    { src: "/agents/openai.svg", alt: "OpenAI" },
+    { src: "/agents/replit.svg", alt: "Replit" },
+  ]}
+  prompt={[
+    { text: "Update the" },
+    { text: "hero", icon: "/prompt/page.svg" },
+    { text: "to match the" },
+    { text: "home.fig", icon: "/prompt/figma.svg" },
+    { text: "design and do a quick code-review before syncing" },
+    { text: "with" },
+    { text: "Github", icon: "/prompt/github.svg" },
+  ]}
+  model="Claude Opus 5"
 />
 
 <LogoCloud

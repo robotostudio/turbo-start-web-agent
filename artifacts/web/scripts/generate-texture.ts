@@ -56,6 +56,12 @@ function renderPreset(preset: GridPresetName): string {
   // Fill is solid white because only the alpha reaches the mask. The colour a
   // visitor sees comes from the element behind it, which reads a design token.
   return [
+    // No preserveAspectRatio override: the viewBox alone gives the file an
+    // intrinsic ratio, which is what `mask-size: cover` needs to scale it
+    // uniformly. Setting it to "none" removes that ratio, and cover then
+    // degenerates into a stretch -- which on a phone drew the field as thin
+    // vertical bars. The mask and the canvas both scale by cover, so they
+    // agree without either of them distorting.
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${plan.viewBox}">`,
     `<style>rect{width:${plan.cell.width}px;height:${plan.cell.height}px;rx:${plan.cell.radius}px;fill:#fff}</style>`,
     groups,
