@@ -110,6 +110,81 @@
   --shadow-prompt-card: inset 0 2px 16px oklch(0.13 0 0), 0 4px 4px oklch(0.06 0.03 264 / 0.2);
 }
 
+/* ==========================================================================
+   LOGO-LEDGER WORDMARK TYPE
+   Deliberately a SECOND @theme block, not part of the design system above.
+   These are not site type roles — nothing but the logo ledger's twelve
+   placeholder marks (components/blocks/logo-wordmarks.tsx) may reference
+   them, and a client replacing the ledger with real client logos deletes
+   this block whole rather than re-theming it.
+
+   Why they exist at all: the twelve cells in the comp are fictional brand
+   logotypes, and the comp gives every one a different size, weight and
+   tracking so the grid reads as twelve logos rather than one list set in one
+   font. That variety IS the design — snapping the sizes to Tailwind's scale
+   collapses halcyon/Prism/tessera (23/22/25px) onto a single text-2xl and
+   pushes Cairn 3px. So each logotype gets its own named role, carrying the
+   comp's size, leading and tracking together, which is what keeps every
+   number out of the component the way every other component here is free of
+   raw px.
+
+   Weight is not part of these roles, matching the convention set by
+   --text-display above: it stays a `font-*` utility at the call site.
+   Measured per cell off the Paper comp (page Desktop, artboard "home",
+   Row 1 / Row 2), not derived from a ratio.
+   ========================================================================== */
+@theme {
+  /* Row 1 */
+  --text-wordmark-meridian: 1rem; /* 16px */
+  --text-wordmark-meridian--line-height: 1.25rem; /* 20px */
+  --text-wordmark-meridian--letter-spacing: 0.2em;
+
+  --text-wordmark-northbeam: 1.3125rem; /* 21px */
+  --text-wordmark-northbeam--line-height: 1.625rem; /* 26px */
+  --text-wordmark-northbeam--letter-spacing: -0.025em;
+
+  --text-wordmark-halcyon: 1.4375rem; /* 23px */
+  --text-wordmark-halcyon--line-height: 1.75rem; /* 28px */
+  --text-wordmark-halcyon--letter-spacing: -0.01em;
+
+  --text-wordmark-lumen: 1.25rem; /* 20px */
+  --text-wordmark-lumen--line-height: 1.5rem; /* 24px */
+  --text-wordmark-lumen--letter-spacing: -0.02em;
+
+  --text-wordmark-tessera: 1.5625rem; /* 25px */
+  --text-wordmark-tessera--line-height: 1.875rem; /* 30px */
+  --text-wordmark-tessera--letter-spacing: -0.015em;
+
+  --text-wordmark-kestrel: 1rem; /* 16px */
+  --text-wordmark-kestrel--line-height: 1.25rem; /* 20px */
+  --text-wordmark-kestrel--letter-spacing: 0.24em;
+
+  /* Row 2 */
+  --text-wordmark-foundry: 1.1875rem; /* 19px */
+  --text-wordmark-foundry--line-height: 1.5rem; /* 24px */
+  --text-wordmark-foundry--letter-spacing: -0.01em;
+
+  --text-wordmark-openlane: 1.125rem; /* 18px */
+  --text-wordmark-openlane--line-height: 1.375rem; /* 22px */
+  --text-wordmark-openlane--letter-spacing: -0.005em;
+
+  --text-wordmark-atlas-grid: 0.9375rem; /* 15px */
+  --text-wordmark-atlas-grid--line-height: 1.25rem; /* 20px */
+  --text-wordmark-atlas-grid--letter-spacing: 0.08em;
+
+  --text-wordmark-prism: 1.375rem; /* 22px */
+  --text-wordmark-prism--line-height: 1.625rem; /* 26px */
+  --text-wordmark-prism--letter-spacing: 0.01em;
+
+  --text-wordmark-cairn: 1.6875rem; /* 27px */
+  --text-wordmark-cairn--line-height: 2rem; /* 32px */
+  --text-wordmark-cairn--letter-spacing: -0.03em;
+
+  --text-wordmark-vantage: 0.9375rem; /* 15px */
+  --text-wordmark-vantage--line-height: 1.25rem; /* 20px */
+  --text-wordmark-vantage--letter-spacing: 0.16em;
+}
+
 /* Slides a track exactly half its own width — the track renders its content
    twice (see `announcement-bar.tsx`'s duplicate `aria-hidden` copy), so a
    50% translate lines the second copy up exactly where the first started,
@@ -328,6 +403,11 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-ledger-rule: var(--ledger-rule);
+  --color-ledger-tick: var(--ledger-tick);
+  --color-ledger-meta: var(--ledger-meta);
+  --color-ledger-wordmark: var(--ledger-wordmark);
+  --color-ledger-wordmark-dim: var(--ledger-wordmark-dim);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -392,6 +472,32 @@
      outline button. The light theme had no reason to separate them. */
   --border: oklch(0.281 0 0);
   --input: oklch(0.321 0 0);
+
+  /* ------------------------------------------------------------------
+     LEDGER
+     The bordered-grid treatment the comp uses for the logo ledger, the
+     stats band and the footer. These five carry the comp's EXACT values
+     rather than the nearest existing token, because each of those was
+     near but not equal: --border is oklch(0.281 0 0) against the comp's
+     9% white rule, --subtle-foreground is ~#6E6E6E against both a 32%
+     white crosshair and the #5C5C5C second tone inside Northbeam's mark,
+     and --muted-foreground is #A3A3A3 against the #B0B0B0 meta note and
+     the #9A9A9A wordmark tone. Reusing them would have shifted five
+     measured values by eye, so they are tokens of their own.
+
+     They are white at an alpha, and grey, deliberately: that is how the
+     comp draws them. A client re-theming --background to a light ground
+     has to give these five new values too -- the alpha rules would vanish
+     and the greys would go muddy. That is the cost of carrying the
+     design exactly, and it is recorded here rather than hidden. */
+  --ledger-rule: #ffffff17;
+  --ledger-tick: rgb(255 255 255 / 32%);
+  --ledger-meta: #b0b0b0;
+  --ledger-wordmark: #9a9a9a;
+  /* The second, dimmer tone inside a wordmark: only Northbeam's third
+     square is drawn in it, read off that cell in the comp rather than
+     derived from --ledger-wordmark above. */
+  --ledger-wordmark-dim: #5c5c5c;
   --ring: oklch(0.664 0.273 348.8);
   --radius: 0.75rem;
 

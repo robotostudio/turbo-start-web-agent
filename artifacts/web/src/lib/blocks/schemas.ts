@@ -282,16 +282,44 @@ export const testimonialSchema = z
   );
 export type TestimonialProps = z.input<typeof testimonialSchema>;
 
+// The five marks the ledger can draw beside a name, by the shape each one is
+// rather than the comp placeholder it was drawn for — `mark: "diamond"` still
+// means something once the ledger holds real clients. The list lives here, not
+// beside the drawings in components/blocks/logo-wordmarks.tsx, because
+// generate-catalog.ts and schemas.test.ts both import THIS file under Node's
+// --experimental-strip-types, which cannot load a .tsx file. The drawings key
+// a total Record off LedgerMarkId, so the enum and the glyphs cannot drift:
+// an id with no glyph, or a glyph with no id, fails typecheck.
+export const ledgerMarkIds = ["squares", "diamond", "chevron", "grid", "triangle"] as const;
+export type LedgerMarkId = (typeof ledgerMarkIds)[number];
+
+/** One cell of the ledger, in either of the two forms a cell can take: an
+ * image (a real client logo, validated like every other media prop), or a name
+ * set as a wordmark — on its own, or with one of the five marks beside it.
+ * Three authorable shapes, mixable in any order within one `logos` array. */
+export const logoCloudEntry = z.union([
+  media,
+  z.object({
+    name: z.string(),
+    mark: z.enum(ledgerMarkIds).optional(),
+  }),
+]);
+
 export const logoCloudSchema = z
   .object({
-    lede: z.string(),
-    // The grid is a fixed 6-column row (sm:grid-cols-6) — fewer than 6 logos
-    // leaves the row left-aligned with empty trailing columns instead of a
-    // full band. More than 6 wraps cleanly onto additional full-width rows.
-    logos: z.array(media).min(6),
+    eyebrow: z.string(),
+    meta: z.string().optional(),
+    // The grid is 2 columns, 3 at sm and 6 at lg, and every cell draws its own
+    // right and bottom rule — so a count that is not a multiple of 6 leaves a
+    // short final row at the widest breakpoint, with the bottom-right
+    // crosshair hanging in space beside it rather than sitting on the rule.
+    // Six is the floor: one whole row at every breakpoint. Twelve, the comp's
+    // count, is the one that divides by 2, 3 AND 6, so nothing is ragged
+    // anywhere.
+    logos: z.array(logoCloudEntry).min(6),
   })
   .describe(
-    "A row of customer or partner logos under a short line of supporting text, no heading, six per row. Use to signal adoption or social proof without making an argument — provide at least 6, ideally a multiple of 6.",
+    "A bordered ledger of client logos under a small-caps label, with an optional note opposite it. Each entry is one of three shapes, mixable in any order: an image ({ src, alt }), a name with one of the five marks beside it ({ name, mark }), or a name on its own ({ name }) — a name is set as a wordmark in the ledger's own type, which varies by position so the grid reads as separate logos rather than one list. Marks: squares, diamond, chevron, grid, triangle. Use to signal adoption without making an argument — provide at least 6, ideally a multiple of 6, since anything else leaves a short final row.",
   );
 export type LogoCloudProps = z.input<typeof logoCloudSchema>;
 
