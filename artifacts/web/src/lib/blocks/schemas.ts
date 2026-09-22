@@ -343,20 +343,49 @@ export type TeamProps = z.input<typeof teamSchema>;
 // the count is exported for tests to reference rather than hard-coded twice.
 export const statsCount = 4;
 
+/** The small segmented meter beside a stat's value. Measured off the comp
+ * rather than invented: the ledger's four cells each encode something
+ * different, and a single filled-bar prop could express only the first.
+ * `filled` ticks are drawn solid, `partial` adds a shorter tick for the
+ * fraction after them, and the remainder up to `total` are drawn empty.
+ *
+ * `tone` selects the EMPTY treatment as much as the filled one. A cell with
+ * nothing filled (0kb of client JS) still has to show its slots, and a dim
+ * fill reads there as missing data rather than as a deliberate zero, so it
+ * outlines them instead. */
+export const statMeter = z.object({
+  filled: z.number().int().min(0),
+  /** Total slots. Defaults to `filled`, which is the plain tally case. */
+  total: z.number().int().min(1).optional(),
+  /** Fraction of the tick after the filled ones, drawn at part height. */
+  partial: z.number().min(0).max(1).optional(),
+  tone: z.enum(["solid", "accent", "outline"]).default("solid"),
+  /** A short note after the ticks naming the unit or the thing counted
+   * ("/ 8 hr day", "tokens.css"). Unlike the ticks it is not hidden from
+   * assistive tech: it says something the value and label do not. */
+  note: z.string().optional(),
+});
+export type StatMeterProps = z.infer<typeof statMeter>;
+
 export const statsSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
+    /** The note set opposite the title, naming what the figures are drawn
+     * from. The same slot LogoCloud puts its note in. */
+    meta: z.string().optional(),
     stats: z
       .array(
         z.object({
           value: z.string(),
           label: z.string(),
+          meter: statMeter.optional(),
         }),
       )
       .length(statsCount),
   })
   .describe(
-    "A row of exactly four large numeric stats, each with a short label, divided at wider widths. Use to make a quantitative case — scale, results, usage — at a glance.",
+    "A bordered ledger of exactly four large figures, each with a short label and an optional segmented meter beneath it. Use to make a quantitative case — scale, results, usage — at a glance. The meter is what makes it a ledger rather than four numbers: give each stat a `meter` whose `filled` count reads against its `total`, and a `note` naming the unit it is measured in.",
   );
 export type StatsProps = z.input<typeof statsSchema>;
 

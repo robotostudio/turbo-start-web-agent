@@ -354,12 +354,30 @@ show only one category's posts.
 <BlockSpec name="Stats">
 
 <Stats
+  eyebrow="By the numbers"
   title="The numbers behind the pitch."
+  meta="Measured across 40+ client builds"
   stats={[
-    { value: "12", label: "Blocks in the registry today" },
-    { value: "3.2 hrs", label: "Average time to reskin a client site" },
-    { value: "94%", label: "Sections shipped without custom code" },
-    { value: "0kb", label: "Client JS shipped by default" },
+    {
+      value: "16",
+      label: "Blocks in the registry today",
+      meter: { filled: 16 },
+    },
+    {
+      value: "3.2 hrs",
+      label: "Average time to reskin a client site",
+      meter: { filled: 3, partial: 0.2, total: 8, note: "/ 8 HR DAY" },
+    },
+    {
+      value: "94%",
+      label: "Sections shipped without custom code",
+      meter: { filled: 15, total: 16 },
+    },
+    {
+      value: "0kb",
+      label: "Client JS shipped by default",
+      meter: { filled: 0, total: 8, tone: "outline" },
+    },
   ]}
 />
 
