@@ -45,15 +45,21 @@ export function CtaBand(raw: CtaBandProps) {
           fixed 520px. Below that the three pieces stack in reading order, and
           the band grows to fit them instead of pinning them into each other. */}
       <div className="page-inset flex min-h-100 flex-col justify-between gap-12 py-14 lg:h-130">
-        {/* text-4xl below lg, the fallback the Hero uses for its display
-            heading: 52px is most of a phone's width per word. */}
-        <h2 className="text-4xl text-balance text-foreground lg:text-statement">
+        {/* Three steps, not one jump. 52px is most of a phone's width per
+            word, so the statement is 30px on a phone, the section-title role
+            (36px, with its tracking) from sm, and the comp's 52px from lg. */}
+        <h2 className="text-3xl text-balance text-foreground sm:text-title lg:text-statement">
           <span className="block">{title}</span>
           {titleMuted && <span className="block text-muted-foreground">{titleMuted}</span>}
         </h2>
 
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
-          {lede && <p className="max-w-md text-xl text-pretty text-muted-foreground">{lede}</p>}
+          {/* The site's lede role until lg, then the comp's 20px. */}
+          {lede && (
+            <p className="max-w-md text-lede text-pretty text-muted-foreground lg:text-xl">
+              {lede}
+            </p>
+          )}
           {/* ml-auto keeps the buttons in the right-hand corner when there is
               no lede to push them there. */}
           <div className="flex flex-wrap items-center gap-3 lg:ml-auto">
