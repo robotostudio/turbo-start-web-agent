@@ -112,3 +112,58 @@ export function CompanyPanel({
     </div>
   );
 }
+
+/** One quote given the whole width: the quote and the person on the left, the
+ * company on a textured panel to the right. FeaturedQuote is this and an
+ * eyebrow; Testimonial draws it above its ledger when given `featured`. */
+export function FeaturedFigure({
+  quote,
+  highlight,
+  person,
+  company,
+  className,
+}: {
+  quote: string;
+  highlight?: string;
+  person: Person;
+  company?: CompanyEntry;
+  className?: string;
+}) {
+  return (
+    // A figure, so the quote and the person it belongs to are one thing to
+    // assistive tech rather than a paragraph followed by a name. Side by side
+    // only from xl. At lg the 406px panel took nearly half of a 928px inset
+    // and set the quote six lines deep in a column four words wide; stacked,
+    // the quote gets the whole measure.
+    //
+    // A border, not an outline. An outline sits a pixel outside the box, so
+    // above Testimonial's ledger (whose rules are borders, inside theirs) the
+    // two edges missed by a pixel each side; pulling the outline in with a
+    // negative offset put it under the company panel, which painted over it.
+    // A border is inside the box and under nothing.
+    <figure className={cn("flex flex-col border border-border xl:flex-row", className)}>
+      <div className="flex flex-1 flex-col justify-between gap-12 px-6 py-8 sm:px-12 xl:pt-11 xl:pr-14 xl:pb-10 xl:pl-12">
+        {/* 24px on a phone, where 36px set a quote this long nine lines deep,
+            and the comp's size from sm. The comp breaks the lines by hand;
+            this lets them wrap under a measure instead, since the copy is an
+            author's and its line breaks cannot be. */}
+        <blockquote>
+          <p className="max-w-3xl text-2xl font-light text-pretty text-foreground sm:text-title">
+            <QuoteText highlight={highlight} quote={quote} />
+          </p>
+        </blockquote>
+        <QuoteAttribution person={person} />
+      </div>
+
+      {company && (
+        // min-h-84 is the comp's 337px (336, the nearest step): the panel sets
+        // the band's height there, not the quote, so a short quote still gets
+        // the full textured panel beside it.
+        <CompanyPanel
+          className="h-56 xl:h-auto xl:min-h-84 xl:w-101.5 xl:shrink-0"
+          company={company}
+        />
+      )}
+    </figure>
+  );
+}

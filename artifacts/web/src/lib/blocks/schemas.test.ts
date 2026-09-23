@@ -498,6 +498,45 @@ test("Testimonial rejects a company logo on a host next/image is not configured 
   );
 });
 
+test("Testimonial parses a featured quote above the three", () => {
+  const parsed = parseBlock("Testimonial", testimonialSchema, {
+    title: "What people say",
+    featured: {
+      quote: "Nothing broke.",
+      highlight: "Nothing broke.",
+      person: samplePerson,
+      company: { name: "Meridian" },
+    },
+    testimonials: threeTestimonials,
+  });
+  assert.equal(parsed.featured?.highlight, "Nothing broke.");
+  assert.equal(parsed.testimonials.length, 3);
+});
+
+test("Testimonial checks the featured quote's highlight like the others'", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        featured: { quote: "Nothing broke.", highlight: "Everything broke.", person: samplePerson },
+        testimonials: threeTestimonials,
+      }),
+    /featured\.highlight/,
+  );
+});
+
+test("Testimonial still needs three in the ledger when it has a featured quote", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        featured: threeTestimonials[0],
+        testimonials: threeTestimonials.slice(1),
+      }),
+    /testimonials/,
+  );
+});
+
 test("Testimonial rejects an unsafe avatar URL", () => {
   assert.throws(
     () =>

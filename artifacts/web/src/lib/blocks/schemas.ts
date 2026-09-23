@@ -345,42 +345,47 @@ export type LogoCloudProps = z.input<typeof logoCloudSchema>;
 export const HIGHLIGHT_RULE =
   "An exact phrase from `quote` to mark in the accent colour. Must appear in `quote` word for word, or the build fails.";
 
-/** Declared below logoCloudEntry, not beside the other card rows, because
- * `company` reuses it and a const cannot be read before its declaration. */
+/** One quote in a Testimonial, as the ledger's cells and its `featured` panel
+ * both take it. Declared below logoCloudEntry, not beside the other card rows,
+ * because `company` reuses it and a const cannot be read before its
+ * declaration. */
+export const testimonialEntry = z
+  .object({
+    quote: z.string(),
+    person,
+    /** The comp marks one phrase in each quote. A substring rather than markup
+     * inside `quote`, because content carries no markup
+     * (remark-content-lockdown.ts). */
+    highlight: z.string().min(1).optional().describe(HIGHLIGHT_RULE),
+    /** The company, drawn on a textured panel. The ledger's entry shape, as
+     * FeaturedQuote's `company` is. */
+    company: logoCloudEntry.optional(),
+  })
+  // The refine is what actually fails the build; the describe() above is what
+  // carries the rule into catalog.json, since toJSONSchema() drops
+  // refinements. Without it, a mistyped phrase would render as an unmarked
+  // quote and nothing would say why.
+  .refine((t) => t.highlight === undefined || t.quote.includes(t.highlight), {
+    message: HIGHLIGHT_RULE,
+    path: ["highlight"],
+  });
+
 export const testimonialSchema = z
   .object({
     eyebrow: z.string().optional(),
     title: z.string(),
+    /** One quote drawn the whole width, above the ledger, in FeaturedQuote's
+     * panel: the section's lead endorsement with the rest beneath it. */
+    featured: testimonialEntry.optional(),
     testimonials: z
-      .array(
-        z
-          .object({
-            quote: z.string(),
-            person,
-            /** The comp marks one phrase in each quote. A substring rather
-             * than markup inside `quote`, because content carries no markup
-             * (remark-content-lockdown.ts). */
-            highlight: z.string().min(1).optional().describe(HIGHLIGHT_RULE),
-            /** The company strip at the foot of the cell. The ledger's entry
-             * shape, as FeaturedQuote's `company` is. */
-            company: logoCloudEntry.optional(),
-          })
-          // The refine is what actually fails the build; the describe() above
-          // is what carries the rule into catalog.json, since toJSONSchema()
-          // drops refinements. Without it, a mistyped phrase would render as
-          // an unmarked quote and nothing would say why.
-          .refine((t) => t.highlight === undefined || t.quote.includes(t.highlight), {
-            message: HIGHLIGHT_RULE,
-            path: ["highlight"],
-          }),
-      )
+      .array(testimonialEntry)
       // The ledger is a fixed 3-column row from lg, and every cell draws its
       // own right and bottom rule, so fewer than 3 quotes leaves the row open.
       // More than 3 wraps onto further full rows, which close cleanly.
       .min(3),
   })
   .describe(
-    "A bordered row of customer quotes, three per row, each attributed to a named person with their role and a greyscale photo. Each quote can mark one phrase in the accent colour (`highlight`, an exact phrase from the quote) and carry its company in a textured strip at the foot of the cell (`company`, the same shapes as a LogoCloud entry: { src, alt }, { name, mark } or { name }). Use to build trust with third-party praise rather than first-party claims. Provide at least 3, ideally a multiple of 3. For one quote given the whole width, use FeaturedQuote.",
+    "A bordered row of customer quotes, three per row, each attributed to a named person with their role and a greyscale photo, optionally led by one `featured` quote drawn the full width above them. Each quote can mark one phrase in the accent colour (`highlight`, an exact phrase from the quote) and carry its company on a textured panel (`company`, the same shapes as a LogoCloud entry: { src, alt }, { name, mark } or { name }). Use to build trust with third-party praise rather than first-party claims. Provide at least 3 in `testimonials`, ideally a multiple of 3. For one quote on its own, use FeaturedQuote.",
   );
 export type TestimonialProps = z.input<typeof testimonialSchema>;
 
