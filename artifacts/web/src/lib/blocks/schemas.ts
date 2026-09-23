@@ -360,6 +360,23 @@ export const logoCloudSchema = z
   );
 export type LogoCloudProps = z.input<typeof logoCloudSchema>;
 
+export const featuredQuoteSchema = z
+  .object({
+    eyebrow: z.string().optional(),
+    quote: z.string(),
+    person,
+    /** The company the quote comes from, drawn large on a textured panel
+     * beside it. The ledger's entry shape, reused: a logo image, a name set as
+     * a wordmark, or a name with one of the five marks. Optional, so a quote
+     * with no logo to show takes the panel's full width instead of prompting a
+     * made-up one. */
+    company: logoCloudEntry.optional(),
+  })
+  .describe(
+    "One quote, set large in a bordered panel, attributed to a named person with their role and photo, with the company it comes from drawn large on a textured panel beside it. `company` takes the same three shapes as a LogoCloud entry: an image ({ src, alt }), a name with a mark ({ name, mark }), or a name alone ({ name }); leave it out and the quote takes the full width. Use once, for the single strongest endorsement on a page. For three or more quotes side by side, use Testimonial.",
+  );
+export type FeaturedQuoteProps = z.input<typeof featuredQuoteSchema>;
+
 export const teamSchema = z
   .object({
     title: z.string(),
@@ -485,6 +502,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "PostGrid", schema: postGridSchema },
   { name: "Faq", schema: faqSchema },
   { name: "Testimonial", schema: testimonialSchema },
+  { name: "FeaturedQuote", schema: featuredQuoteSchema },
   { name: "LogoCloud", schema: logoCloudSchema },
   { name: "Team", schema: teamSchema },
   { name: "Stats", schema: statsSchema },
