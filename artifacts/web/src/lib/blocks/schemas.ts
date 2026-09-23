@@ -303,7 +303,18 @@ export type PostGridProps = z.input<typeof postGridSchema>;
 
 export const faqSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
+    contact: z
+      .object({
+        prompt: z.string().optional(),
+        label: z.string(),
+        href: safeUrl(),
+      })
+      .optional()
+      .describe(
+        'An optional text link under the title for anyone whose question is not listed, e.g. { prompt: "Still unsure?", label: "Ask us directly", href: "/contact" }.',
+      ),
     faqs: z
       .array(
         z.object({
@@ -314,7 +325,7 @@ export const faqSchema = z
       .min(1),
   })
   .describe(
-    "A single-column list of question/answer pairs, question and answer sharing a line at wider widths. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA.",
+    "A numbered list of questions that each open to show their answer, beside the section title. Uses the browser's native disclosure, so every answer is in the page and it works without JavaScript; the first question starts open. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA.",
   );
 export type FaqProps = z.input<typeof faqSchema>;
 

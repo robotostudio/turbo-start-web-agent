@@ -1234,3 +1234,30 @@ test("blockSchemas and blockComponents register the exact same Block names", () 
     `Block(s) in blockComponents with no matching blockSchemas entry (unvalidated): ${noSchema.join(", ")}`,
   );
 });
+
+test("Faq takes an optional eyebrow and contact link", () => {
+  const faqs = [{ question: "Q?", answer: "A." }];
+  const parsed = parseBlock("Faq", faqSchema, {
+    eyebrow: "Questions",
+    title: "x",
+    contact: { prompt: "Still unsure?", label: "Ask us directly", href: "/contact" },
+    faqs,
+  });
+  assert.equal(parsed.eyebrow, "Questions");
+  assert.equal(parsed.contact?.href, "/contact");
+  const bare = parseBlock("Faq", faqSchema, { title: "x", faqs });
+  assert.equal(bare.eyebrow, undefined);
+  assert.equal(bare.contact, undefined);
+});
+
+test("Faq rejects an unsafe contact href", () => {
+  assert.throws(
+    () =>
+      parseBlock("Faq", faqSchema, {
+        title: "x",
+        contact: { label: "Ask", href: "javascript:alert(1)" },
+        faqs: [{ question: "Q?", answer: "A." }],
+      }),
+    /contact/,
+  );
+});

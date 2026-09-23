@@ -531,8 +531,32 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
+          },
+          "contact": {
+            "description": "An optional text link under the title for anyone whose question is not listed, e.g. { prompt: \"Still unsure?\", label: \"Ask us directly\", href: \"/contact\" }.",
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
           },
           "faqs": {
             "minItems": 1,
@@ -558,7 +582,7 @@
           "title",
           "faqs"
         ],
-        "description": "A single-column list of question/answer pairs, question and answer sharing a line at wider widths. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA."
+        "description": "A numbered list of questions that each open to show their answer, beside the section title. Uses the browser's native disclosure, so every answer is in the page and it works without JavaScript; the first question starts open. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA."
       }
     },
     "Testimonial": {
