@@ -455,6 +455,88 @@ test("Testimonial rejects fewer than 3 testimonials (the grid is a fixed 3-colum
   );
 });
 
+test("Testimonial parses an eyebrow, highlights, and every company shape", () => {
+  const parsed = parseBlock("Testimonial", testimonialSchema, {
+    eyebrow: "From the agencies",
+    title: "What people say",
+    testimonials: [
+      { ...threeTestimonials[0], highlight: "number 1", company: { name: "Northbound" } },
+      { ...threeTestimonials[1], company: { name: "Attic Digital", mark: "grid" } },
+      { ...threeTestimonials[2], company: { src: "/agents/claude.svg", alt: "Claude" } },
+    ],
+  });
+  assert.equal(parsed.eyebrow, "From the agencies");
+  assert.equal(parsed.testimonials[0].highlight, "number 1");
+  assert.deepEqual(parsed.testimonials[1].company, { name: "Attic Digital", mark: "grid" });
+});
+
+test("Testimonial rejects a highlight that is not in its quote, naming the prop", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        testimonials: [
+          { ...threeTestimonials[0], highlight: "not in the quote" },
+          ...threeTestimonials.slice(1),
+        ],
+      }),
+    /testimonials\.0\.highlight/,
+  );
+});
+
+test("Testimonial rejects a company logo on a host next/image is not configured for", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        testimonials: [
+          { ...threeTestimonials[0], company: { src: "https://example.com/logo.svg", alt: "" } },
+          ...threeTestimonials.slice(1),
+        ],
+      }),
+    /company/,
+  );
+});
+
+test("Testimonial parses a featured quote above the three", () => {
+  const parsed = parseBlock("Testimonial", testimonialSchema, {
+    title: "What people say",
+    featured: {
+      quote: "Nothing broke.",
+      highlight: "Nothing broke.",
+      person: samplePerson,
+      company: { name: "Meridian" },
+    },
+    testimonials: threeTestimonials,
+  });
+  assert.equal(parsed.featured?.highlight, "Nothing broke.");
+  assert.equal(parsed.testimonials.length, 3);
+});
+
+test("Testimonial checks the featured quote's highlight like the others'", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        featured: { quote: "Nothing broke.", highlight: "Everything broke.", person: samplePerson },
+        testimonials: threeTestimonials,
+      }),
+    /featured\.highlight/,
+  );
+});
+
+test("Testimonial still needs three in the ledger when it has a featured quote", () => {
+  assert.throws(
+    () =>
+      parseBlock("Testimonial", testimonialSchema, {
+        title: "x",
+        featured: threeTestimonials[0],
+        testimonials: threeTestimonials.slice(1),
+      }),
+    /testimonials/,
+  );
+});
+
 test("Testimonial rejects an unsafe avatar URL", () => {
   assert.throws(
     () =>

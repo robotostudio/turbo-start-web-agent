@@ -535,8 +535,103 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
+          },
+          "featured": {
+            "type": "object",
+            "properties": {
+              "quote": {
+                "type": "string"
+              },
+              "person": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "object",
+                    "properties": {
+                      "src": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                      },
+                      "alt": {
+                        "default": "",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "src"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "role",
+                  "avatar"
+                ]
+              },
+              "highlight": {
+                "description": "An exact phrase from `quote` to mark in the accent colour. Must appear in `quote` word for word, or the build fails.",
+                "type": "string",
+                "minLength": 1
+              },
+              "company": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "src": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                      },
+                      "alt": {
+                        "default": "",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "src"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "mark": {
+                        "type": "string",
+                        "enum": [
+                          "squares",
+                          "diamond",
+                          "chevron",
+                          "grid",
+                          "triangle"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "quote",
+              "person"
+            ]
           },
           "testimonials": {
             "minItems": 3,
@@ -579,6 +674,53 @@
                     "role",
                     "avatar"
                   ]
+                },
+                "highlight": {
+                  "description": "An exact phrase from `quote` to mark in the accent colour. Must appear in `quote` word for word, or the build fails.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "company": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "src": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                        },
+                        "alt": {
+                          "default": "",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "src"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "mark": {
+                          "type": "string",
+                          "enum": [
+                            "squares",
+                            "diamond",
+                            "chevron",
+                            "grid",
+                            "triangle"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ]
+                    }
+                  ]
                 }
               },
               "required": [
@@ -592,7 +734,7 @@
           "title",
           "testimonials"
         ],
-        "description": "A row of short customer quotes, three per row, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims — provide at least 3, ideally a multiple of 3."
+        "description": "A bordered row of customer quotes, three per row, each attributed to a named person with their role and a greyscale photo, optionally led by one `featured` quote drawn the full width above them. Each quote can mark one phrase in the accent colour (`highlight`, an exact phrase from the quote) and carry its company on a textured panel (`company`, the same shapes as a LogoCloud entry: { src, alt }, { name, mark } or { name }). Use to build trust with third-party praise rather than first-party claims. Provide at least 3 in `testimonials`, ideally a multiple of 3. For one quote on its own, use FeaturedQuote."
       }
     },
     "FeaturedQuote": {
