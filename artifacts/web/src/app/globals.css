@@ -70,6 +70,14 @@
   --text-display--line-height: 4.375rem; /* 70px */
   --text-display--letter-spacing: -0.48px;
 
+  /* The closing statement, a step under display: the CTA band's two-tone
+     heading is 52/62 in the comp, which neither display (64) nor title (36)
+     is within a size of. Its tracking was measured in em, like the stat role
+     below, so it keeps em rather than the px the roles either side use. */
+  --text-statement: 3.25rem; /* 52px */
+  --text-statement--line-height: 3.875rem; /* 62px */
+  --text-statement--letter-spacing: -0.032em;
+
   --text-title: 2.25rem; /* 36px */
   --text-title--line-height: 2.75rem; /* 44px */
   --text-title--letter-spacing: -0.48px;

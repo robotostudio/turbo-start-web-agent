@@ -38,12 +38,6 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        // Added to the stock shadcn variants, for a button sitting ON a
-        // primary-filled surface -- the CTA band is the only one today. The
-        // stock `default` is primary-on-background and disappears there, and
-        // the alternative was a per-Block className override, which is how a
-        // second button treatment gets into a design system unnoticed.
-        inverse: "bg-background text-foreground hover:bg-background/90",
       },
       size: {
         default:

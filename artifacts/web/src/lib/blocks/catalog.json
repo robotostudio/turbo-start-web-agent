@@ -147,10 +147,30 @@
           "title": {
             "type": "string"
           },
+          "titleMuted": {
+            "type": "string"
+          },
           "lede": {
             "type": "string"
           },
           "primary": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Must be an http(s), mailto, tel, or relative URL."
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ]
+          },
+          "secondary": {
             "type": "object",
             "properties": {
               "label": {
@@ -172,7 +192,7 @@
           "title",
           "primary"
         ],
-        "description": "A full-bleed, brand-colored closing band with a heading, optional supporting copy, and a single button — the highest-contrast CTA treatment available. Use as the last section on a page for the strongest possible visual close."
+        "description": "A full-bleed closing band on the site's dark animated texture, with its content pinned to the corners: the heading top left (optionally a second line in a muted tone, via `titleMuted`), the supporting copy bottom left, and a primary button with an optional outline `secondary` bottom right. Use once, as the last section on a page."
       }
     },
     "Comparison": {
