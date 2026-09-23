@@ -110,58 +110,30 @@ description: A starter marketing site you can edit with any AI agent.
   company={{ name: "Northbound" }}
 />
 
-<ImageCards
-  title="Three ways agencies put it to work."
-  cards={[
-    {
-      title: "Agency portfolio",
-      body: "A five-page site for a three-person studio, live two days after the kickoff call.",
-      image: {
-        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mauve",
-        alt: "",
-      },
-    },
-    {
-      title: "SaaS marketing site",
-      body: "Pricing, changelog, and docs pulled from three different content sources.",
-      image: {
-        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mist",
-        alt: "",
-      },
-    },
-    {
-      title: "Client rebrand",
-      body: "Same block tree, new tokens — the whole site retheme took an afternoon.",
-      image: {
-        src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=olive",
-        alt: "",
-      },
-    },
-  ]}
-/>
-
 <Faq
+  eyebrow="Questions"
   title="The questions every agency asks first."
+  contact={{ prompt: "Still unsure?", label: "Ask us directly", href: "/contact" }}
   faqs={[
     {
       question: "Do I need to know a CMS, or is plain Markdown enough?",
-      answer: "There's no CMS to learn — content is just MDX files in content/, validated by Zod at build time. A remark plugin locks down what MDX can contain, so an agent can edit those files directly without ever touching a database or an admin panel.",
+      answer: "There is no CMS to learn. Content is MDX files in content/, validated at build time, and a lockdown on what MDX can contain means an agent can edit those files directly, without a database or an admin panel.",
     },
     {
       question: "How long does a client rebuild actually take?",
-      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week — layout, spacing, responsive behavior — are already decided.",
+      answer: "Most agencies using this go from clone to a live client preview in an afternoon: swap the token file, drop in the client's copy and logo, pick block variants per section. The parts that used to take a week (layout, spacing, responsive behavior) are already decided.",
     },
     {
       question: "How long does a rebrand take on a site that's already live?",
-      answer: "Most take an afternoon. A rebrand is a token swap rather than a rebuild — the block tree and the copy stay exactly where they are while the design tokens carry the new palette, type, and spacing across every section at once.",
+      answer: "Most take an afternoon. A rebrand is a token swap rather than a rebuild: the block tree and the copy stay exactly where they are while the design tokens carry the new palette, type, and spacing across every section at once.",
     },
     {
       question: "What happens when a client wants a block that doesn't exist yet?",
-      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It's not a fork of the template — it's an addition to it, so the next client project gets it for free too.",
+      answer: "You build it once, following the same props-and-schema pattern as every other block, and it slots into the registry alongside the built-ins. It is an addition to the template rather than a fork of it, so the next client project gets it for free too.",
     },
     {
       question: "Is the block registry locked to a specific CMS?",
-      answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time — swap the source and you'd rebuild that check, not just add an adapter.",
+      answer: "Today it only reads from MDX in git. The registry is a mapping from a type string to a component, but the safety guarantee comes from the lockdown that inspects MDX at build time. Swap the source and you'd rebuild that check, not just add an adapter.",
     },
     {
       question: "Can we host the site on our own servers?",
@@ -169,18 +141,19 @@ description: A starter marketing site you can edit with any AI agent.
     },
     {
       question: "Can I white-label this for resale?",
-      answer: "Yes. It ships MIT-licensed specifically so agencies can rebrand, resell, and reuse it across client engagements without asking permission or crediting the template anywhere client-facing. That includes the footer — there is no attribution line to keep or link back to, so the only name in a client's footer is the client's own.",
+      answer: "Yes. It ships MIT-licensed specifically so agencies can rebrand, resell, and reuse it across client engagements without asking permission or crediting the template anywhere client-facing. That includes the footer: there is no attribution line to keep or link back to, so the only name in a client's footer is the client's own.",
     },
   ]}
 />
 
-<PostGrid eyebrow="Writing" title="From the blog" count={3} />
-
 <Newsletter
+  eyebrow="Newsletter"
   title="Get notified when new blocks ship."
   lede="One email a month, unsubscribe anytime."
   action="https://forms.example.com/subscribe"
 />
+
+<PostGrid eyebrow="Writing" title="From the blog" count={3} />
 
 <CTA
   title="Compose pages from Blocks."

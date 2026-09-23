@@ -154,13 +154,14 @@ export type CtaBandProps = z.input<typeof ctaBandSchema>;
 
 export const newsletterSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     action: safeUrl(),
     buttonLabel: z.string().default("Subscribe"),
   })
   .describe(
-    "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide. Use to grow an email list without embedding a third-party widget.",
+    "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide, on a full-bleed band of the site's texture. Use to grow an email list without embedding a third-party widget.",
   );
 export type NewsletterProps = z.input<typeof newsletterSchema>;
 
@@ -239,6 +240,7 @@ export type PreviewStageProps = z.input<typeof previewStageSchema>;
 
 export const imageCardsSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     cards: z
       .array(
@@ -254,7 +256,7 @@ export const imageCardsSchema = z
       .min(3),
   })
   .describe(
-    "A row of cards, each pairing an image with a short title and body copy, three per row. Use to showcase several examples, case studies, or products side by side — provide at least 3, ideally a multiple of 3.",
+    "A row of cards, each pairing an image with a short title and body copy, three per row, in the same framed 4:3 card PostGrid uses for posts. Use to showcase several examples, case studies, or products side by side — provide at least 3, ideally a multiple of 3.",
   );
 export type ImageCardsProps = z.input<typeof imageCardsSchema>;
 
@@ -301,7 +303,18 @@ export type PostGridProps = z.input<typeof postGridSchema>;
 
 export const faqSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
+    contact: z
+      .object({
+        prompt: z.string().optional(),
+        label: z.string(),
+        href: safeUrl(),
+      })
+      .optional()
+      .describe(
+        'An optional text link under the title for anyone whose question is not listed, e.g. { prompt: "Still unsure?", label: "Ask us directly", href: "/contact" }.',
+      ),
     faqs: z
       .array(
         z.object({
@@ -312,7 +325,7 @@ export const faqSchema = z
       .min(1),
   })
   .describe(
-    "A single-column list of question/answer pairs, question and answer sharing a line at wider widths. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA.",
+    "A numbered list of questions that each open to show their answer, beside the section title. Uses the browser's native disclosure, so every answer is in the page and it works without JavaScript; the first question starts open. Use to pre-empt objections or answer common questions, typically ahead of a closing CTA.",
   );
 export type FaqProps = z.input<typeof faqSchema>;
 

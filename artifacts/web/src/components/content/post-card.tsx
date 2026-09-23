@@ -4,7 +4,7 @@ import { groundAt } from "@/components/site/site-mark";
 import { GridField } from "@/components/texture/grid-field";
 import type { Entry } from "@/lib/content/loader";
 import { formatDate } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { cardFrame } from "./card-image";
 
 // One post as a card: its cover, its title, and a category-and-date line.
 // Everything comes from the post's own frontmatter, never from the page that
@@ -47,16 +47,15 @@ export function PostCard({
 
   const media = (
     <div
-      className={cn(
-        "relative aspect-4/3 overflow-hidden",
-        // A standalone card draws its own hairline round the cover. The
-        // featured card's panel is the frame instead, so its cover takes only
-        // the rule that divides it from the text: below it when stacked, beside
-        // it from lg.
+      className={
+        // A standalone card sits in the shared card frame (card-image.tsx),
+        // hairline and all. The featured card's panel is the frame instead,
+        // so its cover takes only the rule that divides it from the text:
+        // below it when stacked, beside it from lg.
         featured
-          ? "border-border border-b lg:col-span-7 lg:border-r lg:border-b-0"
-          : "outline outline-ledger-rule",
-      )}
+          ? "relative aspect-4/3 overflow-hidden border-border border-b lg:col-span-7 lg:border-r lg:border-b-0"
+          : cardFrame
+      }
     >
       {cover ? (
         // alt="" because the title follows directly: describing the picture
