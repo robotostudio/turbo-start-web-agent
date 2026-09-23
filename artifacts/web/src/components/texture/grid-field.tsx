@@ -35,6 +35,7 @@ export function GridField({
   className,
   pointer = false,
   preset = "coarse",
+  tile,
 }: {
   /**
    * Whether the canvas layer mounts at all. `false` ships no client JavaScript
@@ -51,8 +52,24 @@ export function GridField({
    */
   pointer?: boolean;
   preset?: GridPresetName;
+  /**
+   * Draw the field at a fixed width, anchored at `position` and repeated to
+   * fill the box, instead of scaled to cover it. For a placement measured off
+   * a comp that sets its texture at an explicit size (PreviewStage's bed is
+   * `1056px` at `100% 80%`): cover scales cells with the box, so a large box
+   * gets large cells, which is the one thing such a comp is specifying.
+   *
+   * Still only. The canvas layer can only cover, so it would draw a different
+   * grid over this one; a tiled field never mounts it, whatever `animate` says.
+   */
+  tile?: { width: string; position?: string };
 }) {
   const mask = `url(/texture/${preset}.svg)`;
+  const maskSize = tile ? `${tile.width} auto` : "cover";
+  const maskPosition = tile?.position ?? "center";
+  // Left unset without `tile`, so every existing placement renders the exact
+  // style it did before this option existed.
+  const maskRepeat = tile ? "repeat" : undefined;
 
   return (
     <div
@@ -71,14 +88,16 @@ export function GridField({
         className="size-full bg-foreground"
         style={{
           maskImage: mask,
-          maskPosition: "center",
-          maskSize: "cover",
+          maskPosition,
+          maskRepeat,
+          maskSize,
           WebkitMaskImage: mask,
-          WebkitMaskPosition: "center",
-          WebkitMaskSize: "cover",
+          WebkitMaskPosition: maskPosition,
+          WebkitMaskRepeat: maskRepeat,
+          WebkitMaskSize: maskSize,
         }}
       />
-      {animate && <GridFieldCanvas pointer={pointer} preset={preset} />}
+      {animate && !tile && <GridFieldCanvas pointer={pointer} preset={preset} />}
     </div>
   );
 }

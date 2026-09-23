@@ -14,6 +14,7 @@ import { ImageCards } from "./image-cards";
 import { LogoCloud } from "./logo-cloud";
 import { Newsletter } from "./newsletter";
 import { PostGrid } from "./post-grid";
+import { PreviewStage } from "./preview-stage";
 import { Pricing } from "./pricing";
 import { Stats } from "./stats";
 import { Team } from "./team";
@@ -29,6 +30,7 @@ export const blockComponents: Record<string, ComponentType<never>> = {
   FeatureGrid,
   FeatureSplit,
   FeatureRows,
+  PreviewStage,
   ImageCards,
   Gallery,
   PostGrid,

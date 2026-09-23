@@ -40,7 +40,7 @@ reference (`pnpm catalog` regenerates it; do not hand-edit it). Its shape:
 
 ```json
 {
-  "blockCount": 18,
+  "blockCount": 19,
   "blocks": {
     "Hero": { "schema": { "properties": { "...": "..." }, "required": ["title"], "description": "..." } }
   }
@@ -50,10 +50,10 @@ reference (`pnpm catalog` regenerates it; do not hand-edit it). Its shape:
 Each key is a Block's exact tag name (PascalCase) and its JSON Schema —
 `properties` are the props you may pass, `required` are the ones you must,
 and nested `description` fields on URL-shaped props spell out the allowed
-scheme. Today's 18 Blocks: `Banner`, `Hero`, `CTA`, `Comparison`,
-`FeatureGrid`, `FeatureSplit`, `FeatureRows`, `ImageCards`, `Gallery`,
-`PostGrid`, `Faq`, `Testimonial`, `FeaturedQuote`, `LogoCloud`, `Team`,
-`Stats`, `Newsletter`, `Pricing`. For a
+scheme. Today's 19 Blocks: `Banner`, `Hero`, `CTA`, `Comparison`,
+`FeatureGrid`, `FeatureSplit`, `FeatureRows`, `PreviewStage`, `ImageCards`,
+`Gallery`, `PostGrid`, `Faq`, `Testimonial`, `FeaturedQuote`, `LogoCloud`,
+`Team`, `Stats`, `Newsletter`, `Pricing`. For a
 worked example of every Block with real props, read
 `artifacts/web/content/pages/blocks-gallery.mdx` or
 `home.mdx` — both are live composed pages, not documentation. If the Block you

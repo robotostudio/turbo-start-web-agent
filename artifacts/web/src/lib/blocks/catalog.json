@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 18,
+  "blockCount": 19,
   "blocks": {
     "Banner": {
       "schema": {
@@ -372,6 +372,27 @@
           "rows"
         ],
         "description": "Exactly three full-width rows, each pairing a numbered title, a short body and an optional text link against its own illustration. The illustrations are fixed artwork from the design, not something you supply: row 1 draws a content file listing its Blocks, row 2 a branch merging into main, row 3 a file of design tokens — so the copy has to describe those three things, in that order. The 01/02/03 index is derived from position and is not a prop. Use mid-page to walk through three capabilities in more depth than a feature grid allows; for one capability against one image of your own, use FeatureSplit."
+      }
+    },
+    "PreviewStage": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lede": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "description": "A heading and optional lede above a full-width illustration of this site being edited in place: a browser showing the home page's Hero under selection, the Block toolbar over it, an AI agent's cursor, and status pills for the file being edited and the content check. The illustration is fixed artwork, not something you supply; it reads the site's name and description from content/settings/site.yml, so it follows a rebrand. Use once, to show what editing with an agent looks like."
       }
     },
     "ImageCards": {

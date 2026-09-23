@@ -226,6 +226,17 @@ export const featureRowsSchema = z
   );
 export type FeatureRowsProps = z.input<typeof featureRowsSchema>;
 
+export const previewStageSchema = z
+  .object({
+    eyebrow: z.string().optional(),
+    title: z.string(),
+    lede: z.string().optional(),
+  })
+  .describe(
+    "A heading and optional lede above a full-width illustration of this site being edited in place: a browser showing the home page's Hero under selection, the Block toolbar over it, an AI agent's cursor, and status pills for the file being edited and the content check. The illustration is fixed artwork, not something you supply; it reads the site's name and description from content/settings/site.yml, so it follows a rebrand. Use once, to show what editing with an agent looks like.",
+  );
+export type PreviewStageProps = z.input<typeof previewStageSchema>;
+
 export const imageCardsSchema = z
   .object({
     title: z.string(),
@@ -531,6 +542,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "FeatureGrid", schema: featureGridSchema },
   { name: "FeatureSplit", schema: featureSplitSchema },
   { name: "FeatureRows", schema: featureRowsSchema },
+  { name: "PreviewStage", schema: previewStageSchema },
   { name: "ImageCards", schema: imageCardsSchema },
   { name: "Gallery", schema: gallerySchema },
   { name: "PostGrid", schema: postGridSchema },
