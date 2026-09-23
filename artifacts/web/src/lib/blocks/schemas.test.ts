@@ -10,6 +10,8 @@ import {
   ctaBandSchema,
   faqSchema,
   featureGridSchema,
+  featureRowsCount,
+  featureRowsSchema,
   featureSplitSchema,
   galleryImageCount,
   gallerySchema,
@@ -169,6 +171,78 @@ test("FeatureSplit rejects an unsafe image URL", () => {
       }),
     /src/,
   );
+});
+
+// --- FeatureRows --------------------------------------------------------
+
+const threeRows = [
+  { title: "Block system", body: "Compose pages from a library of finished sections." },
+  { title: "Content lives in git", body: "Pages are plain-text MDX, so a change is diffable." },
+  { title: "One token file", body: "Rebrand a site by editing a handful of CSS variables." },
+];
+
+test("FeatureRows parses valid props", () => {
+  const parsed = parseBlock("FeatureRows", featureRowsSchema, {
+    eyebrow: "What you get",
+    title: "A template that stays out of your way",
+    rows: threeRows,
+  });
+  assert.equal(parsed.rows.length, featureRowsCount);
+});
+
+test("FeatureRows rejects a missing required prop", () => {
+  assert.throws(
+    () => parseBlock("FeatureRows", featureRowsSchema, { rows: threeRows }),
+    (error: Error) => error.message.includes("<FeatureRows>") && error.message.includes("title"),
+  );
+});
+
+test("FeatureRows rejects a count other than exactly 3 (each row's art is fixed by position)", () => {
+  assert.throws(
+    () => parseBlock("FeatureRows", featureRowsSchema, { title: "x", rows: threeRows.slice(0, 2) }),
+    /rows/,
+  );
+  assert.throws(
+    () =>
+      parseBlock("FeatureRows", featureRowsSchema, {
+        title: "x",
+        rows: [...threeRows, { title: "One too many", body: "There is no fourth drawing." }],
+      }),
+    /rows/,
+  );
+});
+
+test("FeatureRows rejects a row missing its body", () => {
+  assert.throws(
+    () =>
+      parseBlock("FeatureRows", featureRowsSchema, {
+        title: "x",
+        rows: [{ title: "Only a title" }, ...threeRows.slice(1)],
+      }),
+    /body/,
+  );
+});
+
+test("FeatureRows rejects an unsafe link href", () => {
+  assert.throws(
+    () =>
+      parseBlock("FeatureRows", featureRowsSchema, {
+        title: "x",
+        rows: [
+          { ...threeRows[0], link: { label: "Go", href: "javascript:alert(1)" } },
+          ...threeRows.slice(1),
+        ],
+      }),
+    /href/,
+  );
+});
+
+test("FeatureRows takes no index prop — 01/02/03 is derived from position", () => {
+  const parsed = parseBlock("FeatureRows", featureRowsSchema, {
+    title: "x",
+    rows: threeRows,
+  });
+  assert.equal("index" in parsed.rows[0], false);
 });
 
 // --- ImageCards --------------------------------------------------------

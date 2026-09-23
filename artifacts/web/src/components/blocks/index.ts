@@ -5,6 +5,7 @@ import { Comparison } from "./comparison";
 import { CtaBand } from "./cta-band";
 import { Faq } from "./faq";
 import { FeatureGrid } from "./feature-grid";
+import { FeatureRows } from "./feature-rows";
 import { FeatureSplit } from "./feature-split";
 import { Gallery } from "./gallery";
 import { Hero } from "./hero";
@@ -26,6 +27,7 @@ export const blockComponents: Record<string, ComponentType<never>> = {
   Comparison,
   FeatureGrid,
   FeatureSplit,
+  FeatureRows,
   ImageCards,
   Gallery,
   PostGrid,

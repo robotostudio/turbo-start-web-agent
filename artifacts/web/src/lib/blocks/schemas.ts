@@ -188,6 +188,38 @@ export const featureSplitSchema = z
   );
 export type FeatureSplitProps = z.input<typeof featureSplitSchema>;
 
+/** Three rows, no more and no less. Unlike FeatureGrid's `.min(1)`, the count
+ * is load-bearing: each row's illustration is fixed artwork selected by
+ * POSITION (see components/blocks/feature-row-art.tsx), so a fourth row would
+ * have nothing to draw. Exported so the component and the tests read the same
+ * number rather than repeating it, the same reason statsCount and
+ * galleryImageCount are exported. */
+export const featureRowsCount = 3;
+
+export const featureRowsSchema = z
+  .object({
+    eyebrow: z.string().optional(),
+    title: z.string(),
+    rows: z
+      .array(
+        z.object({
+          title: z.string(),
+          body: z.string(),
+          /** Reuses `link` rather than `cta` (pricingSchema.plans[].cta)
+           * because the comp draws a text link with a chevron here, not a
+           * button — the name says which of the two a Block renders. Either
+           * way the href goes through safeUrl(), so its rule reaches the
+           * catalog. */
+          link: link.optional(),
+        }),
+      )
+      .length(featureRowsCount),
+  })
+  .describe(
+    "Exactly three full-width rows, each pairing a numbered title, a short body and an optional text link against its own illustration. The illustrations are fixed artwork from the design, not something you supply: row 1 draws a content file listing its Blocks, row 2 a branch merging into main, row 3 a file of design tokens — so the copy has to describe those three things, in that order. The 01/02/03 index is derived from position and is not a prop. Use mid-page to walk through three capabilities in more depth than a feature grid allows; for one capability against one image of your own, use FeatureSplit.",
+  );
+export type FeatureRowsProps = z.input<typeof featureRowsSchema>;
+
 export const imageCardsSchema = z
   .object({
     title: z.string(),
@@ -442,6 +474,7 @@ export const blockSchemas: Array<{ name: string; schema: z.ZodType }> = [
   { name: "Comparison", schema: comparisonSchema },
   { name: "FeatureGrid", schema: featureGridSchema },
   { name: "FeatureSplit", schema: featureSplitSchema },
+  { name: "FeatureRows", schema: featureRowsSchema },
   { name: "ImageCards", schema: imageCardsSchema },
   { name: "Gallery", schema: gallerySchema },
   { name: "PostGrid", schema: postGridSchema },
