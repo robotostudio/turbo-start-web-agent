@@ -17,16 +17,21 @@ import { cn } from "@/lib/utils";
 // media frame (432x324) on a 7% white hairline, a 20px gap, then the title at
 // 21/29 (the subtitle role, 22/30) and a meta line 12px under it.
 
-// The comp's vignette over a card's texture. Only drawn when a post has no
-// cover: a cover brings its own picture, and the comp's covers already carry
-// this same treatment baked in.
-const CARD_VIGNETTE = `radial-gradient(ellipse 70% 70% at 50% 50% in oklab, ${groundAt(82)} 0%, ${groundAt(42)} 58%, ${groundAt(0)} 100%)`;
+// The vignette over a cover-less card's texture. Only drawn when a post has no
+// cover: a cover brings its own picture.
+//
+// Deliberately the INVERSE of the comp's card vignette (82% at the centre, 0%
+// at the rim). The comp darkens the middle to seat the pill or panel each of
+// its covers puts there; a cover-less card has nothing in the middle, and
+// rendered with the comp's stops it showed as a dark hole ringed by bright
+// texture. Clear in the centre and darkening outward, the field reads as a bed
+// on its own, the way the footer's and the CTA's do.
+const CARD_VIGNETTE = `radial-gradient(ellipse 70% 70% at 50% 50% in oklab, ${groundAt(0)} 0%, ${groundAt(42)} 58%, ${groundAt(82)} 100%)`;
 
 export function PostCard({
   post,
   featured = false,
   headingLevel = "h3",
-  sizes,
 }: {
   post: Entry<"blog">;
   /** The lead post on the /blog index: the cover beside the text rather than
@@ -36,8 +41,6 @@ export function PostCard({
   /** h3 under a section's own h2, as in PostGrid; h2 on the /blog index, where
    * the cards sit directly under the page's h1. */
   headingLevel?: "h2" | "h3";
-  /** The `sizes` hint for the cover, for a layout other than the defaults. */
-  sizes?: string;
 }) {
   const { title, category, pubDate, cover, excerpt } = post.data;
   const Heading = headingLevel;
@@ -64,10 +67,9 @@ export function PostCard({
           fill
           priority={featured}
           sizes={
-            sizes ??
-            (featured
+            featured
               ? "(min-width: 1024px) 58vw, 100vw"
-              : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw")
+              : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
           }
           src={cover}
         />
