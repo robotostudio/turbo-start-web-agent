@@ -25,6 +25,7 @@ import {
   parseBlock,
   postGridMaxCount,
   postGridSchema,
+  previewStageSchema,
   pricingSchema,
   safeUrl,
   statsCount,
@@ -732,6 +733,34 @@ test("Team rejects an unsafe avatar URL", () => {
 test("Team's person schema carries no href field (no hover affordance)", () => {
   const parsed = parseBlock("Team", teamSchema, { title: "x", team: threePeople });
   assert.equal("href" in parsed.team[0], false);
+});
+
+// --- PreviewStage ---------------------------------------------------------
+
+test("PreviewStage parses valid props", () => {
+  const parsed = parseBlock("PreviewStage", previewStageSchema, {
+    eyebrow: "Preview-ready",
+    title: "Every block ships with real content, not lorem ipsum.",
+    lede: "Preview a block and it already reads like a finished page.",
+  });
+  assert.equal(parsed.title, "Every block ships with real content, not lorem ipsum.");
+});
+
+test("PreviewStage needs only a title (eyebrow and lede are optional)", () => {
+  const parsed = parseBlock("PreviewStage", previewStageSchema, { title: "x" });
+  assert.equal(parsed.eyebrow, undefined);
+  assert.equal(parsed.lede, undefined);
+});
+
+test("PreviewStage rejects a missing title", () => {
+  assert.throws(
+    () => parseBlock("PreviewStage", previewStageSchema, { lede: "x" }),
+    (error: Error) => error.message.includes("<PreviewStage>") && error.message.includes("title"),
+  );
+});
+
+test("PreviewStage takes no props for its illustration (fixed artwork)", () => {
+  assert.deepEqual(Object.keys(previewStageSchema.shape).sort(), ["eyebrow", "lede", "title"]);
 });
 
 // --- FeaturedQuote --------------------------------------------------------

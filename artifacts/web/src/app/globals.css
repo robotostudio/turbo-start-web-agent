@@ -136,6 +136,11 @@
      reads as recessed against the textured band behind it, over the same drop
      shadow the buttons carry. Both values are the 2026-09 comp's. */
   --shadow-prompt-card: inset 0 2px 16px oklch(0.13 0 0), 0 4px 4px oklch(0.06 0.03 264 / 0.2);
+  /* The PreviewStage mock (components/blocks/preview-stage-art.tsx): the
+     browser window sits deep on its bed, and the toolbar floating over it a
+     little shallower. The comp's black at 67% for both. */
+  --shadow-stage-window: 0 28px 70px oklch(0 0 0 / 0.67);
+  --shadow-stage-float: 0 14px 34px oklch(0 0 0 / 0.67);
 }
 
 /* ==========================================================================
