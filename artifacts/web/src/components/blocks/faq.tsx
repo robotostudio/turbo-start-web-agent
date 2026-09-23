@@ -1,5 +1,6 @@
 import { TextLink } from "@/components/ui/text-link";
 import { type FaqProps, faqSchema, parseBlock } from "@/lib/blocks/schemas";
+import { FaqMotion } from "./faq-motion";
 import { SectionHeader } from "./section-header";
 
 // The redesign's FAQ, drawn in Paper as "faq / redesign": the header in a
@@ -12,7 +13,12 @@ import { SectionHeader } from "./section-header";
 // keyboard and screen readers get a real disclosure for free, and every
 // answer is in the server HTML whether or not it is open. The first starts
 // open, as the comp draws it, so the section never reads as a wall of
-// headings with nothing under them.
+// headings with nothing under them. FaqMotion animates the open and close
+// once JavaScript has loaded; without it, they are instant.
+//
+// `data-closing` is FaqMotion's: set on a row while it animates shut, still
+// technically open. The number and the mark read it so they switch back the
+// moment the click lands rather than when the animation ends.
 
 /** The disclosure mark: a plus while closed, its upright dropped to leave a
  * minus while open. Switched by the <details> element's own open state
@@ -21,7 +27,7 @@ function DisclosureMark() {
   return (
     <svg
       aria-hidden="true"
-      className="size-4 shrink-0 self-center text-muted-foreground group-open:text-primary"
+      className="size-4 shrink-0 self-center text-muted-foreground group-open:text-primary group-data-closing:text-muted-foreground"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -29,7 +35,7 @@ function DisclosureMark() {
       viewBox="0 0 16 16"
     >
       <path d="M3 8h10" />
-      <path className="group-open:hidden" d="M8 3v10" />
+      <path className="group-open:hidden group-data-closing:inline" d="M8 3v10" />
     </svg>
   );
 }
@@ -52,15 +58,19 @@ export function Faq(raw: FaqProps) {
           )}
         </div>
 
-        <div className="min-w-0 flex-1 border-border border-b">
+        <FaqMotion className="min-w-0 flex-1 border-border border-b">
           {faqs.map((faq, index) => (
-            <details key={faq.question} className="group border-border border-t" open={index === 0}>
-              <summary className="flex cursor-pointer list-none items-baseline gap-5 py-6 group-open:pb-3 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden">
+            <details
+              key={faq.question}
+              className="group border-border border-t pb-3"
+              open={index === 0}
+            >
+              <summary className="flex cursor-pointer list-none items-baseline gap-5 pt-6 pb-3 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden">
                 {/* The number is the ledger's, not the question's: hidden from
                     assistive tech, which already announces the list order. */}
                 <span
                   aria-hidden="true"
-                  className="w-5 shrink-0 font-mono text-subtle-foreground text-xs tabular-nums tracking-widest group-open:text-primary"
+                  className="w-5 shrink-0 font-mono text-subtle-foreground text-xs tabular-nums tracking-widest group-open:text-primary group-data-closing:text-subtle-foreground"
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -69,12 +79,12 @@ export function Faq(raw: FaqProps) {
                 </span>
                 <DisclosureMark />
               </summary>
-              <p className="max-w-170 pb-7 pl-10 sm:pr-9 text-base text-muted-foreground text-pretty leading-6.5">
+              <p className="max-w-170 pb-4 pl-10 sm:pr-9 text-base text-muted-foreground text-pretty leading-6.5">
                 {faq.answer}
               </p>
             </details>
           ))}
-        </div>
+        </FaqMotion>
       </div>
     </section>
   );
