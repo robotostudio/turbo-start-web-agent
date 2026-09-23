@@ -275,6 +275,17 @@ test("ImageCards parses valid props", () => {
   assert.equal(parsed.cards.length, 3);
 });
 
+test("ImageCards takes an optional eyebrow", () => {
+  const withEyebrow = parseBlock("ImageCards", imageCardsSchema, {
+    eyebrow: "In practice",
+    title: "x",
+    cards: threeCards,
+  });
+  assert.equal(withEyebrow.eyebrow, "In practice");
+  const without = parseBlock("ImageCards", imageCardsSchema, { title: "x", cards: threeCards });
+  assert.equal(without.eyebrow, undefined);
+});
+
 test("ImageCards rejects a missing required prop", () => {
   assert.throws(
     () => parseBlock("ImageCards", imageCardsSchema, {}),
@@ -937,6 +948,17 @@ test("Newsletter applies the buttonLabel default", () => {
     action: "/subscribe",
   });
   assert.equal(parsed.buttonLabel, "Subscribe");
+});
+
+test("Newsletter takes an optional eyebrow", () => {
+  const withEyebrow = parseBlock("Newsletter", newsletterSchema, {
+    eyebrow: "Newsletter",
+    title: "x",
+    action: "/subscribe",
+  });
+  assert.equal(withEyebrow.eyebrow, "Newsletter");
+  const without = parseBlock("Newsletter", newsletterSchema, { title: "x", action: "/subscribe" });
+  assert.equal(without.eyebrow, undefined);
 });
 
 test("Newsletter rejects a missing required prop", () => {

@@ -154,13 +154,14 @@ export type CtaBandProps = z.input<typeof ctaBandSchema>;
 
 export const newsletterSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     action: safeUrl(),
     buttonLabel: z.string().default("Subscribe"),
   })
   .describe(
-    "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide. Use to grow an email list without embedding a third-party widget.",
+    "A centered heading over a native email-capture form (no client JavaScript) that posts to a URL you provide, on a full-bleed band of the site's texture. Use to grow an email list without embedding a third-party widget.",
   );
 export type NewsletterProps = z.input<typeof newsletterSchema>;
 
@@ -239,6 +240,7 @@ export type PreviewStageProps = z.input<typeof previewStageSchema>;
 
 export const imageCardsSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     cards: z
       .array(
@@ -254,7 +256,7 @@ export const imageCardsSchema = z
       .min(3),
   })
   .describe(
-    "A row of cards, each pairing an image with a short title and body copy, three per row. Use to showcase several examples, case studies, or products side by side — provide at least 3, ideally a multiple of 3.",
+    "A row of cards, each pairing an image with a short title and body copy, three per row, in the same framed 4:3 card PostGrid uses for posts. Use to showcase several examples, case studies, or products side by side — provide at least 3, ideally a multiple of 3.",
   );
 export type ImageCardsProps = z.input<typeof imageCardsSchema>;
 
