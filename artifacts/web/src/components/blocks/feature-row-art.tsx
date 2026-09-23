@@ -40,7 +40,7 @@ import { cn } from "@/lib/utils";
  * Block is composed into the gallery too, where a listing of home.mdx's Blocks
  * would be describing a different page than the one it sits on. */
 const CONTENT_FILE = "home.mdx";
-const CONTENT_FILE_BLOCKS = ["Hero", "LogoCloud", "FeatureRows", "FeatureSplit", "Stats"] as const;
+const CONTENT_FILE_BLOCKS = ["Hero", "LogoCloud", "FeatureRows", "Stats", "FeatureSplit"] as const;
 /** Which of those rows is drawn selected. Position, not a name match, so the
  * highlight cannot silently move if the list above is edited. */
 const SELECTED_BLOCK_ROW = 2;
