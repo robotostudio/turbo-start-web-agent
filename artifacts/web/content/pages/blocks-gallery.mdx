@@ -238,13 +238,13 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <BlockSpec name="PostGrid">
 
-<PostGrid title="From the blog" lede="The three most recent posts, pulled live — not typed in here." count={3} />
+<PostGrid eyebrow="Writing" title="From the blog" count={3} />
 
-Unlike every other Block on this page, the cards above are not props: `title`, `lede`, and `count`
+Unlike every other Block on this page, the cards above are not props: `eyebrow`, `title`, and `count`
 are the only literal values this section carries. The posts themselves come straight from
-`content/blog/`, sorted newest first, the same way `/blog` itself does, so this section can never
-show a stale title or an excerpt that no longer matches the article. Add `category="Guides"` to
-show only one category's posts.
+`content/blog/`, sorted newest first, the same way `/blog` itself does, so a card can never show a
+stale title. Each card's picture is that post's own `cover` in its frontmatter; a post without one
+gets the site's texture instead. Add `category="Guides"` to show only one category's posts.
 
 </BlockSpec>
 

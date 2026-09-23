@@ -1,4 +1,4 @@
-import { SiteLink } from "@/components/site/site-link";
+import { TextLink } from "@/components/ui/text-link";
 import { type FeatureRowsProps, featureRowsSchema, parseBlock } from "@/lib/blocks/schemas";
 import { FeatureRowArt } from "./feature-row-art";
 import { SectionHeader } from "./section-header";
@@ -16,24 +16,6 @@ import { SectionHeader } from "./section-header";
 // Measured off the Paper comp (page Desktop, artboard "feature-cards / 2 --
 // Rows"): a 496px text column against the rest of the row, a 56px gutter
 // between them, and each row opening on a rule.
-
-/** The comp's link chevron: 13px, 1.4 stroke, round joins. Not the header's
- * ChevronRightIcon, which lives in a `"use client"` module and is drawn at 20px
- * for a touch target rather than at text size beside a label. */
-function LinkChevron() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="size-3.25 shrink-0"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      viewBox="0 0 13 13"
-    >
-      <path d="M4.4 2.2 8.6 6.5 4.4 10.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export function FeatureRows(raw: FeatureRowsProps) {
   const { eyebrow, title, rows } = parseBlock("FeatureRows", featureRowsSchema, raw);
@@ -71,17 +53,9 @@ export function FeatureRows(raw: FeatureRowsProps) {
                     inset and an uncapped line would run to 700px. */}
                 <p className="max-w-md text-base text-pretty text-muted-foreground">{row.body}</p>
                 {row.link && (
-                  // SiteLink, not ButtonLink: the comp draws a text link with a
-                  // chevron here, and ButtonLink's own header comment is the
-                  // reason not to hand-roll the internal-vs-external branch a
-                  // third time.
-                  <SiteLink
-                    className="mt-1 inline-flex w-fit items-center gap-1.75 text-sm text-foreground transition-colors hover:text-primary"
-                    href={row.link.href}
-                  >
-                    {row.link.label}
-                    <LinkChevron />
-                  </SiteLink>
+                  // TextLink, not ButtonLink: the comp draws a text link with a
+                  // chevron here, not a button.
+                  <TextLink className="mt-1" href={row.link.href} label={row.link.label} />
                 )}
               </div>
 

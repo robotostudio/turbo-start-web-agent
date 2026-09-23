@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { site } from "#velite";
+import { PostCard } from "@/components/content/post-card";
 import { getEntries } from "@/lib/content/loader";
-import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -14,43 +13,51 @@ export const metadata: Metadata = {
 const sortedPosts = () =>
   [...getEntries("blog")].sort((a, b) => (a.data.pubDate < b.data.pubDate ? 1 : -1));
 
+// The newest post leads, large, with its cover beside its excerpt; everything
+// after it sits in the same card grid the home page's blog row uses. Both are
+// PostCard (components/content/post-card.tsx), so a post looks the same
+// wherever it is listed, and its picture is always its own `cover`.
 export default function BlogIndex() {
-  const posts = sortedPosts();
+  const [lead, ...rest] = sortedPosts();
+
   return (
+    // The outer page-inset is what `header + .page-inset` in globals.css
+    // matches to clear the sticky header, so it stays the outermost element.
     <div className="page-inset pb-24 font-sans">
-      {/* Left-aligned at the page gutter, not centred in it. Every other
-          prose route lines up there — /privacy and /terms via ProseBlock
-          (mdx-content.tsx), and an article via its own two-column grid — so
-          an `mx-auto` here would make the index the one page whose text
-          jumps sideways when you navigate to or from it. */}
+      {/* Left-aligned at the page gutter, not centred in it, like every other
+          prose route: /privacy and /terms via ProseBlock (mdx-content.tsx), and
+          an article via its own two-column grid. */}
       <div className="max-w-3xl">
-        <h1 className="text-4xl font-semibold tracking-tight text-foreground">Blog</h1>
-        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{site.blogIntro}</p>
-        <div className="mt-12">
-          {posts.map((post) => (
-            <article key={post.slug} className="border-t border-border py-8 first:border-t-0">
-              {/* Category and date read as one meta line rather than a
-                  free-floating label above the title — same reasoning as the
-                  article header's breadcrumb (article-header.tsx). */}
-              <p className="flex flex-wrap items-center gap-2 font-mono text-sm text-muted-foreground">
-                <span>{post.data.category}</span>
-                <span aria-hidden="true" className="text-muted-foreground/50">
-                  /
-                </span>
-                <time dateTime={post.data.pubDate}>{formatDate(post.data.pubDate)}</time>
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-                <Link href={`/blog/${post.slug}`} className="hover:underline">
-                  {post.data.title}
-                </Link>
-              </h2>
-              {post.data.excerpt ? (
-                <p className="mt-3 text-pretty text-muted-foreground">{post.data.excerpt}</p>
-              ) : null}
-            </article>
-          ))}
-        </div>
+        {/* The interior-page heading size the Hero's centered and left variants
+            use, so /blog opens at the same scale as the pages beside it. */}
+        <h1 className="text-5xl text-foreground lg:text-display">Blog</h1>
+        <p className="mt-6 max-w-xl text-lede text-pretty text-muted-foreground">
+          {site.blogIntro}
+        </p>
       </div>
+
+      {lead ? (
+        <>
+          <div className="mt-14 sm:mt-16">
+            <PostCard featured headingLevel="h2" post={lead} />
+          </div>
+
+          {/* No rule above the grid: the featured post's own frame already
+              closes it off. Every card title is an h2, directly under the
+              page's h1 with no section heading between them to make them h3s. */}
+          {rest.length > 0 && (
+            <ul className="mt-16 grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+              {rest.map((post) => (
+                <li key={post.slug}>
+                  <PostCard headingLevel="h2" post={post} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      ) : (
+        <p className="mt-14 text-muted-foreground">No posts published yet.</p>
+      )}
     </div>
   );
 }
