@@ -1,37 +1,52 @@
-import Image from "next/image";
 import { parseBlock, type TestimonialProps, testimonialSchema } from "@/lib/blocks/schemas";
+import { CompanyPanel, QuoteAttribution, QuoteText } from "./quote-parts";
 import { SectionHeader } from "./section-header";
 
+// Three or more quotes, each drawn the way FeaturedQuote draws its one: a light
+// quote, a square greyscale photo, and the company on a textured strip. The
+// parts come from quote-parts.tsx, so the two Blocks are one design at two
+// widths rather than two designs.
+//
+// The quote is the subtitle role at FeaturedQuote's weight, not its size: 36px
+// in a third of the page runs a quote ten lines deep.
 export function Testimonial(raw: TestimonialProps) {
-  const { title, testimonials } = parseBlock("Testimonial", testimonialSchema, raw);
+  const { eyebrow, title, testimonials } = parseBlock("Testimonial", testimonialSchema, raw);
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
-        <SectionHeader title={title} />
-        <ul className="mt-16 grid grid-cols-1 gap-x-10 gap-y-14 sm:mt-20 sm:grid-cols-3">
+      <div className="page-inset py-16 lg:py-22">
+        <SectionHeader eyebrow={eyebrow} title={title} />
+
+        {/* The ledger arrangement Stats and LogoCloud use: the top and left
+            rules belong to the list, every other rule is a cell's own right
+            and bottom, so no two ever stack into a doubled line, and any
+            count closes at one column or three. */}
+        <ul className="mt-12 grid grid-cols-1 border-border border-t border-l lg:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <li key={testimonial.person.name} className="flex flex-col justify-between gap-8">
-              <blockquote>
-                <p className="relative max-w-xs text-lg text-pretty text-foreground before:absolute before:inline before:-translate-x-full before:content-['\201C'] after:inline after:content-['\201D']">
-                  {testimonial.quote}
-                </p>
-              </blockquote>
-              <div className="flex items-center gap-3">
-                <Image
-                  src={testimonial.person.avatar.src}
-                  alt={testimonial.person.avatar.alt}
-                  width={40}
-                  height={40}
-                  className="size-10 shrink-0 rounded-full outline-1 -outline-offset-1 outline-foreground/5"
-                />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">
-                    {testimonial.person.name}
-                  </div>
-                  <div className="text-sm text-muted-foreground">{testimonial.person.role}</div>
+            <li
+              className="flex flex-col border-border border-r border-b"
+              // Name and quote together: nothing in the schema makes a name
+              // unique, and one person can be quoted twice.
+              key={`${testimonial.person.name}-${testimonial.quote}`}
+            >
+              <figure className="flex flex-1 flex-col">
+                <div className="flex flex-1 flex-col justify-between gap-10 px-6 py-8 sm:px-8">
+                  <blockquote>
+                    <p className="text-subtitle font-light text-pretty text-foreground">
+                      <QuoteText highlight={testimonial.highlight} quote={testimonial.quote} />
+                    </p>
+                  </blockquote>
+                  <QuoteAttribution person={testimonial.person} />
                 </div>
-              </div>
+                {/* At the foot, under its own rule. Grid rows stretch, so a
+                    cell with no company still ends level with one that has. */}
+                {testimonial.company && (
+                  <CompanyPanel
+                    className="h-24 border-border border-t"
+                    company={testimonial.company}
+                  />
+                )}
+              </figure>
             </li>
           ))}
         </ul>

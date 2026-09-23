@@ -285,31 +285,38 @@ show only one category's posts.
 <BlockSpec name="Testimonial">
 
 <Testimonial
+  eyebrow="From the agencies"
   title="What agencies say once they've shipped a client site."
   testimonials={[
     {
-      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days — and the client didn't know the difference.",
-      person: {
-        name: "Jordan Ellis",
-        role: "Creative Director, Fernwood Studio",
-        avatar: { src: "https://assets.ui.sh/avatars/3.webp", alt: "" },
-      },
-    },
-    {
-      quote: "The block registry is the first thing I show new hires. They're shipping client sections in their first week instead of their first month.",
+      quote: "The block registry is the first thing I show new hires. They're shipping client sections in their first week, not their first month.",
+      highlight: "first week, not their first month.",
       person: {
         name: "Casey Okafor",
-        role: "Founder, Northbound",
+        role: "Founder",
         avatar: { src: "https://assets.ui.sh/avatars/7.webp", alt: "" },
       },
+      company: { name: "Northbound" },
     },
     {
-      quote: "Nothing ships client JS unless a block actually needs it. Our Lighthouse scores stopped being a monthly fire drill.",
+      quote: "The client edits their own copy now. I haven't been in a “can you change this word” thread since March.",
+      highlight: "“can you change this word”",
+      person: {
+        name: "Jordan Ellis",
+        role: "Creative Director",
+        avatar: { src: "https://assets.ui.sh/avatars/3.webp", alt: "" },
+      },
+      company: { name: "Fernwood Studio" },
+    },
+    {
+      quote: "A bad edit fails the build, not the demo. That's the whole pitch, and it holds.",
+      highlight: "fails the build, not the demo.",
       person: {
         name: "Morgan Vale",
-        role: "Lead Engineer, Attic Digital",
+        role: "Lead Engineer",
         avatar: { src: "https://assets.ui.sh/avatars/11.webp", alt: "" },
       },
+      company: { name: "Attic Digital", mark: "grid" },
     },
   ]}
 />

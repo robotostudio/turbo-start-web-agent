@@ -87,6 +87,7 @@ export const person = z.object({
   role: z.string(),
   avatar: media,
 });
+export type Person = z.infer<typeof person>;
 
 /** One run of the prompt shown in the Hero's floating card. Plain text by
  * default; supplying `icon` turns the run into a chip, which is how the comp
@@ -299,26 +300,6 @@ export const faqSchema = z
   );
 export type FaqProps = z.input<typeof faqSchema>;
 
-export const testimonialSchema = z
-  .object({
-    title: z.string(),
-    testimonials: z
-      .array(
-        z.object({
-          quote: z.string(),
-          person,
-        }),
-      )
-      // The grid is a fixed 3-column row (sm:grid-cols-3) — fewer than 3
-      // quotes leaves empty columns and looks unfinished. More than 3 wraps
-      // cleanly onto additional full-width rows.
-      .min(3),
-  })
-  .describe(
-    "A row of short customer quotes, three per row, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims — provide at least 3, ideally a multiple of 3.",
-  );
-export type TestimonialProps = z.input<typeof testimonialSchema>;
-
 // The five marks the ledger can draw beside a name, by the shape each one is
 // rather than the comp placeholder it was drawn for — `mark: "diamond"` still
 // means something once the ledger holds real clients. The list lives here, not
@@ -341,6 +322,7 @@ export const logoCloudEntry = z.union([
     mark: z.enum(ledgerMarkIds).optional(),
   }),
 ]);
+export type CompanyEntry = z.infer<typeof logoCloudEntry>;
 
 export const logoCloudSchema = z
   .object({
@@ -359,6 +341,48 @@ export const logoCloudSchema = z
     "A bordered ledger of client logos under a small-caps label, with an optional note opposite it. Each entry is one of three shapes, mixable in any order: an image ({ src, alt }), a name with one of the five marks beside it ({ name, mark }), or a name on its own ({ name }) — a name is set as a wordmark in the ledger's own type, which varies by position so the grid reads as separate logos rather than one list. Marks: squares, diamond, chevron, grid, triangle. Use to signal adoption without making an argument — provide at least 6, ideally a multiple of 6, since anything else leaves a short final row.",
   );
 export type LogoCloudProps = z.input<typeof logoCloudSchema>;
+
+export const HIGHLIGHT_RULE =
+  "An exact phrase from `quote` to mark in the accent colour. Must appear in `quote` word for word, or the build fails.";
+
+/** Declared below logoCloudEntry, not beside the other card rows, because
+ * `company` reuses it and a const cannot be read before its declaration. */
+export const testimonialSchema = z
+  .object({
+    eyebrow: z.string().optional(),
+    title: z.string(),
+    testimonials: z
+      .array(
+        z
+          .object({
+            quote: z.string(),
+            person,
+            /** The comp marks one phrase in each quote. A substring rather
+             * than markup inside `quote`, because content carries no markup
+             * (remark-content-lockdown.ts). */
+            highlight: z.string().min(1).optional().describe(HIGHLIGHT_RULE),
+            /** The company strip at the foot of the cell. The ledger's entry
+             * shape, as FeaturedQuote's `company` is. */
+            company: logoCloudEntry.optional(),
+          })
+          // The refine is what actually fails the build; the describe() above
+          // is what carries the rule into catalog.json, since toJSONSchema()
+          // drops refinements. Without it, a mistyped phrase would render as
+          // an unmarked quote and nothing would say why.
+          .refine((t) => t.highlight === undefined || t.quote.includes(t.highlight), {
+            message: HIGHLIGHT_RULE,
+            path: ["highlight"],
+          }),
+      )
+      // The ledger is a fixed 3-column row from lg, and every cell draws its
+      // own right and bottom rule, so fewer than 3 quotes leaves the row open.
+      // More than 3 wraps onto further full rows, which close cleanly.
+      .min(3),
+  })
+  .describe(
+    "A bordered row of customer quotes, three per row, each attributed to a named person with their role and a greyscale photo. Each quote can mark one phrase in the accent colour (`highlight`, an exact phrase from the quote) and carry its company in a textured strip at the foot of the cell (`company`, the same shapes as a LogoCloud entry: { src, alt }, { name, mark } or { name }). Use to build trust with third-party praise rather than first-party claims. Provide at least 3, ideally a multiple of 3. For one quote given the whole width, use FeaturedQuote.",
+  );
+export type TestimonialProps = z.input<typeof testimonialSchema>;
 
 export const featuredQuoteSchema = z
   .object({
