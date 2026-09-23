@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 17,
+  "blockCount": 18,
   "blocks": {
     "Banner": {
       "schema": {
@@ -593,6 +593,100 @@
           "testimonials"
         ],
         "description": "A row of short customer quotes, three per row, each attributed to a named person with their role and photo. Use to build trust with third-party praise rather than first-party claims — provide at least 3, ideally a multiple of 3."
+      }
+    },
+    "FeaturedQuote": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          },
+          "person": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "avatar": {
+                "type": "object",
+                "properties": {
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                  },
+                  "alt": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "src"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "role",
+              "avatar"
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Must be a relative path served from /public, or an https URL on images.unsplash.com, assets.ui.sh, or a *.public.blob.vercel-storage.com subdomain — the hosts next.config.mjs images.remotePatterns allows."
+                  },
+                  "alt": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "src"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "mark": {
+                    "type": "string",
+                    "enum": [
+                      "squares",
+                      "diamond",
+                      "chevron",
+                      "grid",
+                      "triangle"
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "quote",
+          "person"
+        ],
+        "description": "One quote, set large in a bordered panel, attributed to a named person with their role and photo, with the company it comes from drawn large on a textured panel beside it. `company` takes the same three shapes as a LogoCloud entry: an image ({ src, alt }), a name with a mark ({ name, mark }), or a name alone ({ name }); leave it out and the quote takes the full width. Use once, for the single strongest endorsement on a page. For three or more quotes side by side, use Testimonial."
       }
     },
     "LogoCloud": {

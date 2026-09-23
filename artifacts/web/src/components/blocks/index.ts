@@ -7,6 +7,7 @@ import { Faq } from "./faq";
 import { FeatureGrid } from "./feature-grid";
 import { FeatureRows } from "./feature-rows";
 import { FeatureSplit } from "./feature-split";
+import { FeaturedQuote } from "./featured-quote";
 import { Gallery } from "./gallery";
 import { Hero } from "./hero";
 import { ImageCards } from "./image-cards";
@@ -33,6 +34,7 @@ export const blockComponents: Record<string, ComponentType<never>> = {
   PostGrid,
   Faq,
   Testimonial,
+  FeaturedQuote,
   LogoCloud,
   Team,
   Stats,

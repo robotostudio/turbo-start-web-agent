@@ -71,9 +71,9 @@ description: A starter marketing site you can edit with any AI agent.
   meta="Measured across 40+ client builds"
   stats={[
     {
-      value: "17",
+      value: "18",
       label: "Blocks in the registry today",
-      meter: { filled: 17 },
+      meter: { filled: 18 },
     },
     {
       value: "2.6 hrs",
@@ -107,34 +107,15 @@ description: A starter marketing site you can edit with any AI agent.
   }}
 />
 
-<Testimonial
-  title="What agencies say once they've shipped a client site."
-  testimonials={[
-    {
-      quote: "We used to quote four weeks for a rebrand. With the token file doing the heavy lifting, we shipped the last one in three days — and the client didn't know the difference.",
-      person: {
-        name: "Jordan Ellis",
-        role: "Creative Director, Fernwood Studio",
-        avatar: { src: "https://assets.ui.sh/avatars/3.webp", alt: "" },
-      },
-    },
-    {
-      quote: "The block registry is the first thing I show new hires. They're shipping client sections in their first week instead of their first month.",
-      person: {
-        name: "Casey Okafor",
-        role: "Founder, Northbound",
-        avatar: { src: "https://assets.ui.sh/avatars/7.webp", alt: "" },
-      },
-    },
-    {
-      quote: "Nothing ships client JS unless a block actually needs it. Our Lighthouse scores stopped being a monthly fire drill.",
-      person: {
-        name: "Morgan Vale",
-        role: "Lead Engineer, Attic Digital",
-        avatar: { src: "https://assets.ui.sh/avatars/11.webp", alt: "" },
-      },
-    },
-  ]}
+<FeaturedQuote
+  eyebrow="From the agencies"
+  quote="The block registry is the first thing I show new hires. They're shipping client sections in their first week instead of their first month."
+  person={{
+    name: "Casey Okafor",
+    role: "Founder, Northbound",
+    avatar: { src: "https://assets.ui.sh/avatars/7.webp", alt: "" },
+  }}
+  company={{ name: "Northbound" }}
 />
 
 <ImageCards

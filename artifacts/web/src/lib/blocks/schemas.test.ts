@@ -9,6 +9,7 @@ import {
   blockSchemas,
   ctaBandSchema,
   faqSchema,
+  featuredQuoteSchema,
   featureGridSchema,
   featureRowsCount,
   featureRowsSchema,
@@ -632,6 +633,79 @@ test("Team rejects an unsafe avatar URL", () => {
 test("Team's person schema carries no href field (no hover affordance)", () => {
   const parsed = parseBlock("Team", teamSchema, { title: "x", team: threePeople });
   assert.equal("href" in parsed.team[0], false);
+});
+
+// --- FeaturedQuote --------------------------------------------------------
+
+const casey = {
+  name: "Casey Okafor",
+  role: "Founder, Northbound",
+  avatar: { src: "https://assets.ui.sh/avatars/7.webp", alt: "" },
+};
+const oneQuote = "The block registry is the first thing I show new hires.";
+
+test("FeaturedQuote parses each company shape: a wordmark, a wordmark with a mark, a logo", () => {
+  for (const company of [
+    { name: "Northbound" },
+    { name: "Attic Digital", mark: "grid" },
+    { src: "/agents/claude.svg", alt: "Claude" },
+  ]) {
+    const parsed = parseBlock("FeaturedQuote", featuredQuoteSchema, {
+      quote: oneQuote,
+      person: casey,
+      company,
+    });
+    assert.deepEqual(parsed.company, company);
+  }
+});
+
+test("FeaturedQuote parses with no company (the quote takes the full width)", () => {
+  const parsed = parseBlock("FeaturedQuote", featuredQuoteSchema, {
+    quote: oneQuote,
+    person: casey,
+  });
+  assert.equal(parsed.company, undefined);
+});
+
+test("FeaturedQuote rejects a missing quote", () => {
+  assert.throws(
+    () => parseBlock("FeaturedQuote", featuredQuoteSchema, { person: casey }),
+    (error: Error) => error.message.includes("<FeaturedQuote>") && error.message.includes("quote"),
+  );
+});
+
+test("FeaturedQuote rejects a person with no avatar", () => {
+  assert.throws(
+    () =>
+      parseBlock("FeaturedQuote", featuredQuoteSchema, {
+        quote: oneQuote,
+        person: { name: "Casey Okafor", role: "Founder" },
+      }),
+    /avatar/,
+  );
+});
+
+test("FeaturedQuote rejects an avatar on a host next/image is not configured for", () => {
+  assert.throws(
+    () =>
+      parseBlock("FeaturedQuote", featuredQuoteSchema, {
+        quote: oneQuote,
+        person: { ...casey, avatar: { src: "https://example.com/me.jpg", alt: "" } },
+      }),
+    /avatar\.src/,
+  );
+});
+
+test("FeaturedQuote rejects a company logo on a host next/image is not configured for", () => {
+  assert.throws(
+    () =>
+      parseBlock("FeaturedQuote", featuredQuoteSchema, {
+        quote: oneQuote,
+        person: casey,
+        company: { src: "https://example.com/logo.svg", alt: "Acme" },
+      }),
+    /company/,
+  );
 });
 
 // --- Stats --------------------------------------------------------
