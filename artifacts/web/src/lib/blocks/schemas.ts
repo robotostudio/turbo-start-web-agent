@@ -273,13 +273,18 @@ export const postGridMaxCount = 6;
 
 export const postGridSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     count: z.number().int().min(1).max(postGridMaxCount).default(3),
     category: z.string().optional(),
+    /** The link to /blog opposite the title. The route is fixed, because it is
+     * code and every site built on this template has it; only the words are
+     * copy. */
+    allPostsLabel: z.string().default("All posts"),
   })
   .describe(
-    "A grid of recent post previews — category, date, title, and excerpt — each linking to its article, three per row. Unlike every other Block here, its cards are NOT authored as props: it reads the live blog collection at render (newest first, optionally filtered to one `category`) and takes only `count` and `category` as literal props, so the grid can never drift out of step with the posts themselves. Use to surface recent writing on a page other than /blog, e.g. the homepage. If `category` matches no published post, the grid renders a plain 'No posts published yet.' line instead of an empty row.",
+    "A row of recent post cards, each linking to its article, three per row, with a link to /blog opposite the heading. Each card shows the post's cover image (its `cover` frontmatter, or the site's texture when it has none), its title, and its category and date. Unlike every other Block here, its cards are NOT authored as props: it reads the live blog collection at render (newest first, optionally filtered to one `category`) and takes only `count` and `category`, so a card can never drift out of step with its post. To change a card's picture, set `cover` in that post's frontmatter. Use to surface recent writing on a page other than /blog, e.g. the homepage. If `category` matches no published post, the row renders a plain 'No posts published yet.' line instead.",
   );
 export type PostGridProps = z.input<typeof postGridSchema>;
 

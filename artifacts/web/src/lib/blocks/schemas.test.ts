@@ -354,6 +354,23 @@ test("PostGrid applies the count default", () => {
   assert.equal(parsed.count, 3);
 });
 
+test("PostGrid takes an eyebrow and defaults the all-posts link's label", () => {
+  const parsed = parseBlock("PostGrid", postGridSchema, {
+    eyebrow: "Writing",
+    title: "From the blog",
+  });
+  assert.equal(parsed.eyebrow, "Writing");
+  assert.equal(parsed.allPostsLabel, "All posts");
+});
+
+test("PostGrid lets the all-posts link's label be rewritten", () => {
+  const parsed = parseBlock("PostGrid", postGridSchema, {
+    title: "From the blog",
+    allPostsLabel: "Read the journal",
+  });
+  assert.equal(parsed.allPostsLabel, "Read the journal");
+});
+
 test("PostGrid accepts an explicit category filter", () => {
   const parsed = parseBlock("PostGrid", postGridSchema, { title: "x", category: "Guides" });
   assert.equal(parsed.category, "Guides");
