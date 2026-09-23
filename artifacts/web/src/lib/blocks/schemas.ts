@@ -138,11 +138,16 @@ export type BannerProps = z.input<typeof bannerSchema>;
 export const ctaBandSchema = z
   .object({
     title: z.string(),
+    /** A second line of the same heading, set in the muted tone. Part of the
+     * one `<h2>`, not a separate element, so it is read as a single heading:
+     * the comp's "Compose pages from Blocks." / "The build is the gate." */
+    titleMuted: z.string().optional(),
     lede: z.string().optional(),
     primary: link,
+    secondary: link.optional(),
   })
   .describe(
-    "A full-bleed, brand-colored closing band with a heading, optional supporting copy, and a single button — the highest-contrast CTA treatment available. Use as the last section on a page for the strongest possible visual close.",
+    "A full-bleed closing band on the site's dark animated texture, with its content pinned to the corners: the heading top left (optionally a second line in a muted tone, via `titleMuted`), the supporting copy bottom left, and a primary button with an optional outline `secondary` bottom right. Use once, as the last section on a page.",
   );
 export type CtaBandProps = z.input<typeof ctaBandSchema>;
 

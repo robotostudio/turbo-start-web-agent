@@ -35,7 +35,6 @@ const VARIANTS = [
   "ghost",
   "destructive",
   "link",
-  "inverse",
 ] as const satisfies readonly ButtonVariant[];
 
 const SIZES = [

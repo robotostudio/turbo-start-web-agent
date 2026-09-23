@@ -839,7 +839,7 @@ test("the plan CTA URL rule survives into the JSON Schema", () => {
 
 // --- CTA (ctaBandSchema) --------------------------------------------------
 
-test("CTA band parses valid props", () => {
+test("CTA parses valid props", () => {
   const parsed = parseBlock("CTA", ctaBandSchema, {
     title: "Your next client site starts here.",
     lede: "Six Blocks, one token file, zero lock-in.",
@@ -848,21 +848,21 @@ test("CTA band parses valid props", () => {
   assert.equal(parsed.primary.label, "Clone the repo");
 });
 
-test("CTA band requires primary (no variant without a button to fall back on)", () => {
+test("CTA requires primary (secondary is optional, the primary button is not)", () => {
   assert.throws(
     () => parseBlock("CTA", ctaBandSchema, { title: "x" }),
     (error: Error) => error.message.includes("<CTA>") && error.message.includes("primary"),
   );
 });
 
-test("CTA band rejects a primary link missing href", () => {
+test("CTA rejects a primary link missing href", () => {
   assert.throws(
     () => parseBlock("CTA", ctaBandSchema, { title: "x", primary: { label: "Go" } }),
     /href/,
   );
 });
 
-test("CTA band rejects an unsafe primary URL", () => {
+test("CTA rejects an unsafe primary URL", () => {
   assert.throws(
     () =>
       parseBlock("CTA", ctaBandSchema, {
@@ -870,6 +870,39 @@ test("CTA band rejects an unsafe primary URL", () => {
         primary: { label: "Go", href: "javascript:alert(1)" },
       }),
     /href/,
+  );
+});
+
+test("CTA parses the comp's full shape: a muted second line and a secondary button", () => {
+  const parsed = parseBlock("CTA", ctaBandSchema, {
+    title: "Compose pages from Blocks.",
+    titleMuted: "The build is the gate.",
+    lede: "MIT-licensed. Clone it and ship your own site.",
+    primary: { label: "Read the docs", href: "/blog/introducing-harbour" },
+    secondary: { label: "Browse the blocks", href: "/blocks-gallery" },
+  });
+  assert.equal(parsed.titleMuted, "The build is the gate.");
+  assert.equal(parsed.secondary?.href, "/blocks-gallery");
+});
+
+test("CTA still parses a title and primary alone (the about and contact pages' shape)", () => {
+  const parsed = parseBlock("CTA", ctaBandSchema, {
+    title: "Ready to go deeper?",
+    primary: { label: "Read the guides", href: "/blog" },
+  });
+  assert.equal(parsed.titleMuted, undefined);
+  assert.equal(parsed.secondary, undefined);
+});
+
+test("CTA rejects an unsafe secondary URL", () => {
+  assert.throws(
+    () =>
+      parseBlock("CTA", ctaBandSchema, {
+        title: "x",
+        primary: { label: "Go", href: "/" },
+        secondary: { label: "No", href: "javascript:alert(1)" },
+      }),
+    /secondary\.href/,
   );
 });
 

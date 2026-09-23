@@ -61,10 +61,18 @@ export function CornerTick({ className }: { className?: string }) {
 // Inline styles rather than Tailwind arbitrary values: these are four
 // multi-stop gradients with commas and percentages in them, and the escaped
 // class-name version is unreadable for no gain.
-const bg = (alpha: number) =>
+//
+// Exported because the CTA band's bed is built the same way: the comp gives it
+// the identical vignette and its own pair of scrims, all `--background` at
+// some alpha.
+export const groundAt = (alpha: number) =>
   alpha >= 100
     ? "var(--background)"
     : `color-mix(in oklab, var(--background) ${alpha}%, transparent)`;
+
+/** The oval that darkens a textured bed towards its edges. Shared, not
+ * similar: the footer and the CTA band carry the same ellipse, stop for stop. */
+export const BED_VIGNETTE = `radial-gradient(ellipse 75.01% 96.44% at 50% 53.18% in oklab, ${groundAt(15)} 0%, ${groundAt(72)} 58%, ${groundAt(100)} 100%)`;
 
 export function EdgeScrims({ className }: { className?: string }) {
   return (
@@ -72,25 +80,25 @@ export function EdgeScrims({ className }: { className?: string }) {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(in oklab 76.16deg, ${bg(0)} 49.11%, ${bg(55)} 60.69%, ${bg(100)} 79.03%)`,
+          backgroundImage: `linear-gradient(in oklab 76.16deg, ${groundAt(0)} 49.11%, ${groundAt(55)} 60.69%, ${groundAt(100)} 79.03%)`,
         }}
       />
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(in oklab 79.1deg, ${bg(100)} 15.69%, ${bg(55)} 40.21%, ${bg(0)} 55.71%)`,
+          backgroundImage: `linear-gradient(in oklab 79.1deg, ${groundAt(100)} 15.69%, ${groundAt(55)} 40.21%, ${groundAt(0)} 55.71%)`,
         }}
       />
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(in oklab 168.06deg, ${bg(100)} 49.22%, ${bg(55)} 63.4%, ${bg(0)} 72.36%)`,
+          backgroundImage: `linear-gradient(in oklab 168.06deg, ${groundAt(100)} 49.22%, ${groundAt(55)} 63.4%, ${groundAt(0)} 72.36%)`,
         }}
       />
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `radial-gradient(ellipse 75.01% 96.44% at 50% 53.18% in oklab, ${bg(15)} 0%, ${bg(72)} 58%, ${bg(100)} 100%)`,
+          backgroundImage: BED_VIGNETTE,
         }}
       />
     </div>
