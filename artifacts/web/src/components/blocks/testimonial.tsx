@@ -26,7 +26,9 @@ export function Testimonial(raw: TestimonialProps) {
             ledger: the two read as one set of endorsements. */}
         {featured && (
           <FeaturedFigure
-            className="mt-11"
+            // A border, where FeaturedQuote draws an outline: inside the box,
+            // so its edge lands on the ledger's rules below. See FeaturedFigure.
+            className="mt-11 border border-border"
             company={featured.company}
             highlight={featured.highlight}
             person={featured.person}
@@ -61,24 +63,24 @@ export function Testimonial(raw: TestimonialProps) {
               // unique, and one person can be quoted twice.
               key={`${testimonial.person.name}-${testimonial.quote}`}
             >
-              <figure className="flex flex-1 flex-col">
-                <div className="flex flex-1 flex-col justify-between gap-10 px-6 py-8 sm:px-8">
-                  <blockquote>
-                    <p className="text-subtitle font-light text-pretty text-foreground">
-                      <QuoteText highlight={testimonial.highlight} quote={testimonial.quote} />
-                    </p>
-                  </blockquote>
-                  <QuoteAttribution person={testimonial.person} />
-                </div>
-                {/* At the foot, under its own rule. Grid rows stretch, so a
-                    cell with no company still ends level with one that has. */}
-                {testimonial.company && (
-                  <CompanyPanel
-                    className="h-24 border-border border-t"
-                    company={testimonial.company}
-                  />
-                )}
+              {/* The quote column is the figure, so the attribution's
+                  figcaption is its last child and captions the quote. */}
+              <figure className="flex flex-1 flex-col justify-between gap-10 px-6 py-8 sm:px-8">
+                <blockquote>
+                  <p className="text-subtitle font-light text-pretty text-foreground">
+                    <QuoteText highlight={testimonial.highlight} quote={testimonial.quote} />
+                  </p>
+                </blockquote>
+                <QuoteAttribution person={testimonial.person} />
               </figure>
+              {/* At the foot, under its own rule. Grid rows stretch, so a cell
+                  with no company still ends level with one that has. */}
+              {testimonial.company && (
+                <CompanyPanel
+                  className="h-24 border-border border-t"
+                  company={testimonial.company}
+                />
+              )}
             </li>
           ))}
         </ul>

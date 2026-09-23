@@ -130,19 +130,23 @@ export function FeaturedFigure({
   className?: string;
 }) {
   return (
-    // A figure, so the quote and the person it belongs to are one thing to
-    // assistive tech rather than a paragraph followed by a name. Side by side
-    // only from xl. At lg the 406px panel took nearly half of a 928px inset
-    // and set the quote six lines deep in a column four words wide; stacked,
-    // the quote gets the whole measure.
+    // The quote column is the figure, so QuoteAttribution's figcaption is its
+    // last child, the only places HTML lets a caption sit and still caption
+    // anything. The company panel sits beside it, outside the figure.
     //
-    // A border, not an outline. An outline sits a pixel outside the box, so
-    // above Testimonial's ledger (whose rules are borders, inside theirs) the
-    // two edges missed by a pixel each side; pulling the outline in with a
-    // negative offset put it under the company panel, which painted over it.
-    // A border is inside the box and under nothing.
-    <figure className={cn("flex flex-col border border-border xl:flex-row", className)}>
-      <div className="flex flex-1 flex-col justify-between gap-12 px-6 py-8 sm:px-12 xl:pt-11 xl:pr-14 xl:pb-10 xl:pl-12">
+    // No edge of its own: the caller passes it in `className`. FeaturedQuote
+    // draws an outline, which sits a pixel outside the box, as it always has.
+    // Testimonial draws a border, inside the box, so this panel's edge lands on
+    // the same pixel as the ledger's rules beneath it. One treatment for both
+    // was tried and could not work: a border moved FeaturedQuote by a pixel,
+    // and an outline pulled inside with a negative offset slid under the
+    // company panel, which painted over it.
+    //
+    // Side by side only from xl. At lg the 406px panel took nearly half of a
+    // 928px inset and set the quote six lines deep in a column four words
+    // wide; stacked, the quote gets the whole measure.
+    <div className={cn("flex flex-col xl:flex-row", className)}>
+      <figure className="flex flex-1 flex-col justify-between gap-12 px-6 py-8 sm:px-12 xl:pt-11 xl:pr-14 xl:pb-10 xl:pl-12">
         {/* 24px on a phone, where 36px set a quote this long nine lines deep,
             and the comp's size from sm. The comp breaks the lines by hand;
             this lets them wrap under a measure instead, since the copy is an
@@ -153,7 +157,7 @@ export function FeaturedFigure({
           </p>
         </blockquote>
         <QuoteAttribution person={person} />
-      </div>
+      </figure>
 
       {company && (
         // min-h-84 is the comp's 337px (336, the nearest step): the panel sets
@@ -164,6 +168,6 @@ export function FeaturedFigure({
           company={company}
         />
       )}
-    </figure>
+    </div>
   );
 }

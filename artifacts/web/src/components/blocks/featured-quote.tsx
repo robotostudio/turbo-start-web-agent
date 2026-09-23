@@ -1,4 +1,5 @@
 import { type FeaturedQuoteProps, featuredQuoteSchema, parseBlock } from "@/lib/blocks/schemas";
+import { cn } from "@/lib/utils";
 import { FeaturedFigure } from "./quote-parts";
 
 // The comp's "testimonial / 1 — Marked": one quote, set large in a bordered
@@ -38,7 +39,7 @@ export function FeaturedQuote(raw: FeaturedQuoteProps) {
         )}
 
         <FeaturedFigure
-          className={eyebrow ? "mt-11" : undefined}
+          className={cn("outline outline-border", eyebrow && "mt-11")}
           company={company}
           person={person}
           quote={quote}
