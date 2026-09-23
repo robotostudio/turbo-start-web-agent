@@ -1,6 +1,6 @@
 {
   "$note": "GENERATED FILE — do not edit by hand. Run `pnpm catalog` to regenerate from src/lib/blocks/schemas.ts after adding or changing a Block.",
-  "blockCount": 16,
+  "blockCount": 17,
   "blocks": {
     "Banner": {
       "schema": {
@@ -296,6 +296,62 @@
           "image"
         ],
         "description": "A two-column section pairing a headline, supporting copy, and an optional bullet list against a single supporting image. Use mid-page to explain one capability in more depth than a feature grid allows."
+      }
+    },
+    "FeatureRows": {
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "rows": {
+            "minItems": 3,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "link": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "href": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Must be an http(s), mailto, tel, or relative URL."
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ]
+                }
+              },
+              "required": [
+                "title",
+                "body"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "rows"
+        ],
+        "description": "Exactly three full-width rows, each pairing a numbered title, a short body and an optional text link against its own illustration. The illustrations are fixed artwork from the design, not something you supply: row 1 draws a content file listing its Blocks, row 2 a branch merging into main, row 3 a file of design tokens — so the copy has to describe those three things, in that order. The 01/02/03 index is derived from position and is not a prop. Use mid-page to walk through three capabilities in more depth than a feature grid allows; for one capability against one image of your own, use FeatureSplit."
       }
     },
     "ImageCards": {

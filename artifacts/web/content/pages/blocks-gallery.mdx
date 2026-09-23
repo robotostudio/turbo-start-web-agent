@@ -155,6 +155,32 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 </BlockSpec>
 
+<BlockSpec name="FeatureRows">
+
+<FeatureRows
+  eyebrow="What you get"
+  title="A template that stays out of your way once the client signs off."
+  rows={[
+    {
+      title: "Block system",
+      body: "Compose pages from a library of finished sections instead of hand-rolling a layout for every client.",
+      link: { label: "Browse the blocks", href: "/blocks-gallery" },
+    },
+    {
+      title: "Content lives in git",
+      body: "Pages are plain-text MDX, so a change is diffable, reviewable as a pull request, revertible, and editable by an agent.",
+      link: { label: "Read how it works", href: "/about" },
+    },
+    {
+      title: "One token file",
+      body: "Rebrand a site by editing a handful of CSS variables instead of hunting hex codes through components.",
+      link: { label: "Open the style guide", href: "/style-guide" },
+    },
+  ]}
+/>
+
+</BlockSpec>
+
 <BlockSpec name="ImageCards">
 
 <ImageCards
@@ -359,9 +385,9 @@ show only one category's posts.
   meta="Measured across 40+ client builds"
   stats={[
     {
-      value: "16",
+      value: "17",
       label: "Blocks in the registry today",
-      meter: { filled: 16 },
+      meter: { filled: 17 },
     },
     {
       value: "3.2 hrs",

@@ -77,6 +77,16 @@
   --text-lede: 1.125rem; /* 18px */
   --text-lede--line-height: 1.75rem; /* 28px */
 
+  /* The sub-heading role, filling the hole between title (36px) and lede
+     (18px) that the scale had no step for. Measured off the comp's feature
+     rows, where every row heading is 22/30 at -0.32px, the same tracking the
+     display and title roles carry. Named for the role rather than the Block:
+     it is an h3 treatment, and the next Block that needs one wants this and
+     not a Tailwind step 2px either side of it. */
+  --text-subtitle: 1.375rem; /* 22px */
+  --text-subtitle--line-height: 1.875rem; /* 30px */
+  --text-subtitle--letter-spacing: -0.32px;
+
   /* Used by the eyebrow label SectionHeader gains in ROB-3209. Defined here
      so the whole scale lands in one commit. */
   --text-eyebrow: 0.75rem; /* 12px */
@@ -420,6 +430,10 @@
   --color-ledger-meter-empty: var(--ledger-meter-empty);
   --color-ledger-wordmark: var(--ledger-wordmark);
   --color-ledger-wordmark-dim: var(--ledger-wordmark-dim);
+  --color-mock-edge: var(--mock-edge);
+  --color-mock-rule: var(--mock-rule);
+  --color-mock-text: var(--mock-text);
+  --color-mock-node: var(--mock-node);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -516,6 +530,31 @@
      square is drawn in it, read off that cell in the comp rather than
      derived from --ledger-wordmark above. */
   --ledger-wordmark-dim: #5c5c5c;
+
+  /* ------------------------------------------------------------------
+     UI MOCKS
+     The four tones the drawings inside FeatureRows are built from
+     (components/blocks/feature-row-art.tsx). Those drawings are little
+     pictures of software — a content file listing its Blocks, a branch
+     merging, a file of design tokens — so they need a panel edge, a
+     hairline, a row of text and an inert graph node, none of which any
+     existing token matches: --border is 10% white where the panel edge is
+     an opaque near-black, and the row text sits 33 levels above
+     --muted-foreground.
+
+     Everything else in those drawings reuses the system rather than
+     measuring the comp: the swatches in the token panel are literally
+     --primary, --background, --foreground and --border, so the picture of
+     a token file rethemes along with the site it is describing, which is
+     the point the row beside it is making.
+
+     Same caveat as the ledger family above: these are read off a dark comp,
+     so a client re-theming --background to a light ground has to give them
+     new values too. */
+  --mock-edge: #1f1f1f;
+  --mock-rule: #ffffff14;
+  --mock-text: #c4c4c4;
+  --mock-node: #4a4a4a;
   --ring: oklch(0.664 0.273 348.8);
   --radius: 0.75rem;
 
