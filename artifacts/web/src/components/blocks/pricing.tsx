@@ -1,78 +1,105 @@
 import { ButtonLink } from "@/components/ui/button-link";
 import { type PricingProps, parseBlock, pricingSchema } from "@/lib/blocks/schemas";
 import { cn } from "@/lib/utils";
-import { SectionHeader } from "./section-header";
+import { LedgerCorners } from "./ledger";
+import { CheckMark } from "./ledger-marks";
+import { SectionHeaderSplit } from "./section-header";
 
-// Podium: a symmetric grid of plan cards where the emphasized plan pokes out
-// top and bottom via explicit grid rows, never negative margins. The
-// `--spacing()` grid-row-template value is a reviewed, deliberate exception
-// to "canonical Tailwind only" — no canonical utility expresses "half a row
-// of overhang above and below", and the ratio is load-bearing for the raised
-// card effect. Ported from the design-preview exploration; content now comes
-// entirely from props instead of shared fixture data.
+// The redesign's pricing, drawn in Paper as "pricing / redesign" (and its 375
+// frame): the plans side by side in one ruled ledger rather than as floating
+// cards, stacked on a phone. It replaced a podium of rounded, bordered cards,
+// and with it the one arbitrary grid template the Blocks carried.
+//
+// The emphasized plan takes Comparison's treatment for the recommended
+// column: a lifted `foreground/3` panel under a brand-coloured rule, pink
+// checks, and the primary button. Every other plan is plain, with muted
+// checks and outline buttons, so the choice reads at a glance.
+
+// One column per plan from lg, up to four; more than four wraps.
+const COLUMNS: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+};
+
 export function Pricing(raw: PricingProps) {
-  const { title, lede, plans } = parseBlock("Pricing", pricingSchema, raw);
+  const { eyebrow, title, lede, plans } = parseBlock("Pricing", pricingSchema, raw);
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
-        <SectionHeader title={title} lede={lede} />
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:mt-16 lg:grid-cols-3 lg:grid-rows-[--spacing(6)_1fr_--spacing(6)]">
-          {plans.map((plan) => (
-            <div
-              key={plan.title}
-              className={cn(
-                "flex flex-col justify-between gap-8 rounded-lg border p-8 lg:row-start-2",
-                plan.emphasized ? "border-primary" : "border-border",
-                plan.emphasized && "lg:row-span-full",
-              )}
-            >
-              <div>
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-lg font-semibold text-foreground">{plan.title}</h3>
-                  {plan.emphasized && (
-                    <span className="font-mono text-xs tracking-wide text-primary uppercase">
-                      Popular
+      <div className="page-inset py-16 lg:py-22">
+        <SectionHeaderSplit eyebrow={eyebrow} lede={lede} title={title} />
+        <div className="relative mt-14">
+          <ul
+            className={cn(
+              "grid grid-cols-1 border-ledger-rule border-t border-l",
+              COLUMNS[plans.length] ?? "lg:grid-cols-4",
+            )}
+          >
+            {plans.map((plan) => (
+              <li
+                className={cn(
+                  "relative flex flex-col justify-between gap-10 border-ledger-rule border-r border-b p-6 sm:p-8",
+                  plan.emphasized && "bg-foreground/3",
+                )}
+                key={plan.title}
+              >
+                {plan.emphasized && (
+                  <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 bg-primary" />
+                )}
+                <div>
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-foreground text-subtitle">{plan.title}</h3>
+                    {plan.emphasized && (
+                      <span className="font-mono text-eyebrow text-primary uppercase">Popular</span>
+                    )}
+                  </div>
+                  <p className="flex flex-wrap items-baseline gap-x-2.5 pt-7">
+                    <span className="font-light text-foreground text-stat tabular-nums">
+                      {plan.price}
                     </span>
+                    {plan.period && (
+                      <span className="font-mono text-eyebrow text-subtle-foreground uppercase">
+                        {plan.period}
+                      </span>
+                    )}
+                  </p>
+                  {plan.body && (
+                    <p className="pt-3 text-base text-muted-foreground text-pretty leading-6.5">
+                      {plan.body}
+                    </p>
+                  )}
+                  {plan.features && plan.features.length > 0 && (
+                    <ul className="mt-7 border-border border-b">
+                      {plan.features.map((item) => (
+                        <li
+                          className="flex items-center gap-3 border-border border-t py-3"
+                          key={item}
+                        >
+                          <CheckMark
+                            className={cn(
+                              "size-3.5 shrink-0",
+                              plan.emphasized ? "text-primary" : "text-muted-foreground",
+                            )}
+                          />
+                          <span className="text-base text-foreground">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
-                <p className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-foreground tabular-nums">
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="font-mono text-sm text-muted-foreground">{plan.period}</span>
-                  )}
-                </p>
-                {plan.body && (
-                  <p className="mt-4 text-base text-pretty text-muted-foreground">{plan.body}</p>
+                {plan.cta && (
+                  <ButtonLink
+                    className="w-full"
+                    href={plan.cta.href}
+                    label={plan.cta.label}
+                    variant={plan.emphasized ? "default" : "outline"}
+                  />
                 )}
-                {plan.features && plan.features.length > 0 && (
-                  <ul className="mt-6 flex flex-col gap-3">
-                    {plan.features.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
-                        <span
-                          aria-hidden="true"
-                          className="mt-2.5 size-1 shrink-0 rounded-full bg-muted-foreground"
-                        />
-                        <span className="text-base text-foreground">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              {plan.cta && (
-                // w-full because these sit at the foot of a card and used to
-                // be block-level; the primitive is inline-flex.
-                <ButtonLink
-                  href={plan.cta.href}
-                  label={plan.cta.label}
-                  variant={plan.emphasized ? "default" : "outline"}
-                  className="w-full"
-                />
-              )}
-            </div>
-          ))}
+              </li>
+            ))}
+          </ul>
+          <LedgerCorners />
         </div>
       </div>
     </section>

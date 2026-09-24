@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { LogoWordmark, ledgerTypeCadence } from "@/components/blocks/logo-wordmarks";
-import { CornerTick } from "@/components/site/site-mark";
 import { type LogoCloudProps, logoCloudSchema, parseBlock } from "@/lib/blocks/schemas";
+import { LedgerCorners } from "./ledger";
 
 // The comp's logo ledger: a label row, then the client logos laid out in a
 // bordered 6x2 grid with a crosshair on each corner. It replaced a scrolling
@@ -99,10 +99,7 @@ export function LogoCloud(raw: LogoCloudProps) {
               </li>
             ))}
           </ul>
-          <CornerTick className="absolute -top-1 -left-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -top-1 -right-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -bottom-1 -left-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -right-1 -bottom-1 size-2.25 text-ledger-tick" />
+          <LedgerCorners />
         </div>
       </div>
     </section>

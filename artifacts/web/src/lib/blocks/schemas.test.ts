@@ -1330,3 +1330,27 @@ test("Comparison keeps its five-to-six row bounds", () => {
     /rows/,
   );
 });
+
+// --- Gallery, Team, Pricing: the redesign's eyebrow -------------------------
+
+test("Gallery, Team and Pricing take an optional eyebrow", () => {
+  const image = { src: "https://assets.ui.sh/wallpapers/landscapes.webp", alt: "" };
+  const gallery = { title: "x", images: Array.from({ length: 8 }, () => image) };
+  assert.equal(parseBlock("Gallery", gallerySchema, gallery).eyebrow, undefined);
+  assert.equal(parseBlock("Gallery", gallerySchema, { ...gallery, eyebrow: "E" }).eyebrow, "E");
+
+  const person = {
+    name: "A",
+    role: "B",
+    avatar: { src: "https://assets.ui.sh/avatars/2.webp", alt: "" },
+  };
+  const team = { title: "x", team: [person, { ...person, name: "C" }, { ...person, name: "D" }] };
+  const parsedTeam = parseBlock("Team", teamSchema, { ...team, eyebrow: "E", lede: "L" });
+  assert.equal(parsedTeam.eyebrow, "E");
+  assert.equal(parsedTeam.lede, "L");
+  assert.equal(parseBlock("Team", teamSchema, team).lede, undefined);
+
+  const pricing = { title: "x", plans: [{ title: "Starter", price: "Free" }] };
+  assert.equal(parseBlock("Pricing", pricingSchema, pricing).eyebrow, undefined);
+  assert.equal(parseBlock("Pricing", pricingSchema, { ...pricing, eyebrow: "E" }).eyebrow, "E");
+});

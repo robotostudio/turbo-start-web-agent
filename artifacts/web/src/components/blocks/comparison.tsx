@@ -1,7 +1,7 @@
 import { site } from "#velite";
 import { type ComparisonProps, comparisonSchema, parseBlock } from "@/lib/blocks/schemas";
 import { CheckMark, DashMark } from "./ledger-marks";
-import { SectionHeader } from "./section-header";
+import { SectionHeaderSplit } from "./section-header";
 
 // The redesign's comparison, drawn in Paper as "comparison / redesign" (and a
 // 375px frame beside it): a ruled table whose recommended column sits on a
@@ -30,16 +30,7 @@ export function Comparison(raw: ComparisonProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-16 lg:py-22">
-        <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-4">
-          <div>
-            <SectionHeader eyebrow={eyebrow} title={title} />
-          </div>
-          {lede && (
-            <p className="max-w-80 pb-1.5 text-base text-muted-foreground text-pretty leading-6.5">
-              {lede}
-            </p>
-          )}
-        </div>
+        <SectionHeaderSplit eyebrow={eyebrow} lede={lede} title={title} />
 
         <table className="mt-14 hidden w-full table-fixed border-collapse border-border border-b text-left text-base md:table">
           <caption className="sr-only">
