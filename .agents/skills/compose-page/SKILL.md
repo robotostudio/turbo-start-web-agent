@@ -16,14 +16,14 @@ tells you what to do instead.
 ## 1. Locate the file
 
 - Site pages: `artifacts/web/content/pages/*.mdx` (e.g. `home.mdx`,
-  `about.mdx`, `privacy.mdx`, `terms.mdx`, `style-guide.mdx`,
+  `about.mdx`, `contact.mdx`, `privacy.mdx`, `terms.mdx`, `style-guide.mdx`,
   `blocks-gallery.mdx`). A new page is a new file here.
 - Blog posts: `artifacts/web/content/blog/*.mdx` (e.g.
   `introducing-harbour.mdx`, `composing-pages.mdx`).
 - The site name, header nav, footer, and site-wide announcement bar are
   **not** a page — they're YAML at
   `artifacts/web/content/settings/site.yml`, `navigation.yml`, `footer.yml`,
-  and `announcement.yml`, not covered by this skill. `site.yml` is where the
+  `announcement.yml` and `overscroll.yml`, not covered by this skill. `site.yml` is where the
   site's name and description live; the header, the browser tab title, and
   the blog index all read from it, so a request like "change the site name"
   is one edit there and never a change to a `.tsx` file. The announcement bar is chrome rendered above the header on every
@@ -42,7 +42,7 @@ reference (`pnpm catalog` regenerates it; do not hand-edit it). Its shape:
 {
   "blockCount": 19,
   "blocks": {
-    "Hero": { "schema": { "properties": { "...": "..." }, "required": ["title"], "description": "..." } }
+    "FeatureGrid": { "schema": { "properties": { "...": "..." }, "required": ["title", "features"], "description": "..." } }
   }
 }
 ```
@@ -56,7 +56,16 @@ scheme. Today's 19 Blocks: `Banner`, `Hero`, `CTA`, `Comparison`,
 `Team`, `Stats`, `Newsletter`, `Pricing`. For a
 worked example of every Block with real props, read
 `artifacts/web/content/pages/blocks-gallery.mdx` or
-`home.mdx` — both are live composed pages, not documentation. If the Block you
+`home.mdx` — both are live composed pages, not documentation.
+
+**Read each Block's `description` before choosing it.** It says what the Block
+is for, and for the ledger grids it says the count that fills cleanly: FeatureGrid,
+Team and ImageCards want a multiple of 3, LogoCloud a multiple of 6, FeatureRows
+exactly 3, Comparison 5 or 6 rows, Gallery exactly 8 images, Pricing 1 to 4
+plans. FeatureGrid and Team close a short last row with empty ruled cells; the
+other grids do not, so an off count leaves a visible gap.
+
+If the Block you
 need doesn't exist, that's a code change (new schema + component), not a
 content edit — see the README's "Adding a Block" section — and is out of
 scope for this skill.
@@ -77,7 +86,8 @@ draft: true                # new pages start true; omit for existing pages you'r
 the sitemap (still visible on preview deployments) — always start a **new**
 page with `draft: true` and flip it once the client approves. `noindex: true`
 (default `false`) publishes a page but keeps it out of the sitemap and asks
-search engines not to index it — used on `blocks-gallery.mdx` today. Blog
+search engines not to index it — used on `blocks-gallery.mdx`, `privacy.mdx`
+and `terms.mdx` today. Blog
 posts additionally require `pubDate` (ISO date, e.g. `2026-08-17`) and
 `category` (string), with optional `excerpt` (max 300 chars) and `cover` (must
 be a full `https://*.public.blob.vercel-storage.com/...` URL).
@@ -92,12 +102,34 @@ all, which is the right shape for a short note.
 ## 4. Compose Blocks with literal props
 
 ```mdx
-<Hero
-  variant="centered"
-  title="Your website, editable by any AI agent"
-  primary={{ label: "Read the docs", href: "/about" }}
+<FeatureGrid
+  eyebrow="What you get"
+  title="A template that stays out of your way once the client signs off."
+  lede="Six pieces, each one doing a single job well."
+  features={[
+    { title: "Block system", body: "Compose pages from pre-built sections." },
+    { title: "One token file", body: "Rebrand by editing CSS variables." },
+    { title: "Schemas that catch mistakes", body: "A bad edit fails the build." },
+  ]}
 />
 ```
+
+**Eyebrows.** Most Blocks take an optional `eyebrow`: the small-caps label with
+a pink tick above the title. Use one when it tells the reader something the
+title does not ("Pricing" above "One template, three ways to license it"), and
+leave it out when it would only repeat the title. `LogoCloud` has no title, so
+its `eyebrow` is required.
+
+**Hero.** `variant` is `showcase` (the default, and what home uses: a lede, a
+prompt card on the texture, no headline), `centered` or `left`. The `title` is
+optional in every variant.
+
+**A worked page: home.** `home.mdx` runs Hero (showcase), LogoCloud,
+FeatureRows, Stats, PreviewStage, FeaturedQuote, Faq, PostGrid, CTA. It opens on
+the product, proves it (logos, numbers, the preview), lets a customer speak,
+answers objections, shows it is alive (the blog), and closes on one call to
+action. Most of its sections carry an eyebrow. Borrow the shape for a landing
+page rather than stacking Blocks at random.
 
 Hard constraints — breaking any of these fails `content:check` with the
 lockdown's own hint: *"Content MDX is compose-only: assemble Blocks from

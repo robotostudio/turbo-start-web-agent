@@ -474,6 +474,9 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
@@ -507,7 +510,7 @@
           "title",
           "images"
         ],
-        "description": "An eight-image mosaic of varying tile sizes, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. Use when the goal is browsing images, not reading copy."
+        "description": "An eight-image mosaic in three even rows (wide, square, square / square, square, wide / wide, wide), square-cornered frames on the ledger hairline, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. The 1st, 6th, 7th and 8th images take the wide slots, so order them with that in mind. Use when the goal is browsing images, not reading copy."
       }
     },
     "PostGrid": {
@@ -974,7 +977,13 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
+            "type": "string"
+          },
+          "lede": {
             "type": "string"
           },
           "team": {
@@ -1019,7 +1028,7 @@
           "title",
           "team"
         ],
-        "description": "A grid of team member photos with name and role beneath each, three per row. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages. Provide at least 3, ideally a multiple of 3."
+        "description": "A ruled ledger grid of team members, three per row from desktop and two on a phone: a square greyscale portrait, the name, and the role in small caps. Carries no links or hover state; use to put faces to an organization, not when members have individual bio pages. Provide at least 3, ideally a multiple of 3 (a multiple of 6 also fills the two-column phone layout)."
       }
     },
     "Stats": {
@@ -1135,6 +1144,9 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
@@ -1143,6 +1155,7 @@
           },
           "plans": {
             "minItems": 1,
+            "maxItems": 4,
             "type": "array",
             "items": {
               "type": "object",
@@ -1198,7 +1211,7 @@
           "title",
           "plans"
         ],
-        "description": "A row of pricing plan cards, each with a title, price, optional feature list, and call to action, with one plan visually raised as the recommended choice — the only bordered, carded Block in this set. Use to compare plan tiers side by side on a pricing page or section; not for a single fixed price."
+        "description": "A ruled ledger of pricing plans side by side (stacked on a phone), each with a title, price, optional period, description, checked feature list, and call to action. Mark one plan `emphasized` to raise it as the recommended choice: a lifted panel under a brand-coloured rule, a Popular label and the primary button. Use 2 to 4 plans to compare tiers on a pricing page or section; not for a single fixed price."
       }
     }
   }

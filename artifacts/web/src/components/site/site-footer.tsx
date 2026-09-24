@@ -31,7 +31,7 @@ import { GridField } from "@/components/texture/grid-field";
 // No social icons here. The design moved them out of the footer and into the
 // header, where they are driven by navigation.yml.
 
-const CELL = "flex flex-col gap-4 border-l border-border px-6 py-[34px]";
+const CELL = "flex flex-col gap-4 border-l border-border px-6 py-8.5";
 
 export function SiteFooter() {
   // Static generation only — computed once per build, same as every other
@@ -57,7 +57,7 @@ export function SiteFooter() {
           <CornerTick className="absolute -right-1 -bottom-1.25 size-2.25 text-ledger-tick" />
 
           <div className="flex flex-col lg:flex-row">
-            <div className={`${CELL} gap-5 lg:w-[380px] lg:shrink-0 lg:pr-12`}>
+            <div className={`${CELL} gap-5 lg:w-95 lg:shrink-0 lg:pr-12`}>
               <SiteLink
                 href={footer.brand.href}
                 aria-label="Homepage"
@@ -75,7 +75,7 @@ export function SiteFooter() {
                 <ul className="flex flex-wrap items-center gap-2">
                   {footer.pills.map((pill) => (
                     <li
-                      className="flex h-[26px] items-center gap-[7px] rounded-full px-2.5 outline-1 outline-foreground/15"
+                      className="flex h-6.5 items-center gap-1.75 rounded-full px-2.5 outline-1 outline-foreground/15"
                       key={pill.label}
                     >
                       {pill.tone === "accent" ? (
@@ -122,7 +122,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar, outside the ledger. */}
-        <div className="mt-[26px] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-6.5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="flex flex-wrap items-center gap-x-2 text-sm text-subtle-foreground">
             <span>{copyright}</span>
             {footer.builtBy ? (
@@ -181,8 +181,8 @@ export function SiteFooter() {
           bed. Decorative and behind everything. The texture does not animate: a
           moving field under a column of links is harder to read than a still
           one, and `animate={false}` keeps the footer free of client JS. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-30 h-80 sm:h-[26rem]">
-        <GridField animate={false} className="size-full opacity-[0.16]" preset="dense" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-30 h-80 sm:h-104">
+        <GridField animate={false} className="size-full opacity-16" preset="dense" />
       </div>
       {/* Vignette and corner scrims over the bed, so it falls away into the page
           instead of ending on a line. Sits above the texture and below the mark,
@@ -192,9 +192,9 @@ export function SiteFooter() {
           it before, which read as one block instead of two. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none relative -z-10 flex justify-center pt-[72px] pb-12"
+        className="pointer-events-none relative -z-10 flex justify-center pt-18 pb-12"
       >
-        <SiteMark className="h-44 w-auto text-foreground/85 sm:h-[270px]" />
+        <SiteMark className="h-44 w-auto text-foreground/85 sm:h-67.5" />
       </div>
     </footer>
   );

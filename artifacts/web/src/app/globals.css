@@ -409,10 +409,10 @@
 
 /* Markdown images arrive as bare `<img>` with no way for an author to add a
    class (content carries no markup — see remark-content-lockdown.ts), so the
-   only place to give them the site's card treatment is here. Matches the
-   `rounded-lg` + `border-border` every other surface on the site uses, so a
-   screenshot dropped into a post reads as part of the page rather than as a
-   raw asset. */
+   only place to frame them is here. Prose media is the one surface that keeps
+   a radius: the redesign's cards and frames are square on a hairline, but an
+   image set inside running text reads better softened, the way the UI
+   drawings are. The border is the same hairline the frames use. */
 .prose img {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);

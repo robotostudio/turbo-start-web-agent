@@ -112,7 +112,7 @@ export function PreviewStageArt() {
           animate={false}
           className="size-full opacity-30"
           preset="dense"
-          tile={{ width: "1056px", position: "100% 80%" }}
+          tile={{ width: "66rem", position: "100% 80%" }}
         />
       </div>
 
@@ -154,7 +154,7 @@ export function PreviewStageArt() {
               animate={false}
               className="size-full opacity-45"
               preset="dense"
-              tile={{ width: "1056px", position: "40% 60%" }}
+              tile={{ width: "66rem", position: "40% 60%" }}
             />
             <div className="absolute inset-x-0 top-0 h-14 bg-linear-to-b from-4% from-background to-transparent" />
           </div>

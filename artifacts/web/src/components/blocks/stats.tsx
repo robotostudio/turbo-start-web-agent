@@ -1,5 +1,5 @@
-import { CornerTick } from "@/components/site/site-mark";
 import { parseBlock, type StatsProps, statsSchema } from "@/lib/blocks/schemas";
+import { LedgerCorners } from "./ledger";
 import { SectionHeader } from "./section-header";
 import { StatMeter } from "./stat-meter";
 
@@ -8,7 +8,7 @@ export function Stats(raw: StatsProps) {
 
   return (
     <section className="font-sans">
-      <div className="page-inset py-20 sm:py-28">
+      <div className="page-inset py-16">
         <SectionHeader eyebrow={eyebrow} meta={meta} title={title} />
 
         {/* `relative` so the crosshairs can hang off the grid's corners. The
@@ -42,10 +42,7 @@ export function Stats(raw: StatsProps) {
               </div>
             ))}
           </dl>
-          <CornerTick className="-top-1 -left-1 absolute size-2.25 text-ledger-tick" />
-          <CornerTick className="-top-1 -right-1 absolute size-2.25 text-ledger-tick" />
-          <CornerTick className="-bottom-1 -left-1 absolute size-2.25 text-ledger-tick" />
-          <CornerTick className="-right-1 -bottom-1 absolute size-2.25 text-ledger-tick" />
+          <LedgerCorners />
         </div>
       </div>
     </section>

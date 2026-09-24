@@ -270,12 +270,13 @@ export const galleryImageCount = 8;
 
 export const gallerySchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     images: z.array(media).length(galleryImageCount),
   })
   .describe(
-    "An eight-image mosaic of varying tile sizes, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. Use when the goal is browsing images, not reading copy.",
+    "An eight-image mosaic in three even rows (wide, square, square / square, square, wide / wide, wide), square-cornered frames on the ledger hairline, for showcasing a set of visual assets (photography, product shots, wallpapers) rather than making an argument. The 1st, 6th, 7th and 8th images take the wide slots, so order them with that in mind. Use when the goal is browsing images, not reading copy.",
   );
 export type GalleryProps = z.input<typeof gallerySchema>;
 
@@ -439,14 +440,16 @@ export type FeaturedQuoteProps = z.input<typeof featuredQuoteSchema>;
 
 export const teamSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
-    // The grid is a fixed 3-column row (sm:grid-cols-3) — fewer than 3
-    // members leaves empty columns and looks unfinished. More than 3 wraps
-    // cleanly onto additional full-width rows.
+    lede: z.string().optional(),
+    // A ledger grid, three to a row from lg and two below. Fewer than 3
+    // members reads as a fragment; a short last row is closed with empty
+    // ruled cells, so any count renders, but a multiple of 3 fills cleanly.
     team: z.array(person).min(3),
   })
   .describe(
-    "A grid of team member photos with name and role beneath each, three per row. Carries no links or hover state — use to put faces to an organization, not when members have individual bio pages. Provide at least 3, ideally a multiple of 3.",
+    "A ruled ledger grid of team members, three per row from desktop and two on a phone: a square greyscale portrait, the name, and the role in small caps. Carries no links or hover state; use to put faces to an organization, not when members have individual bio pages. Provide at least 3, ideally a multiple of 3 (a multiple of 6 also fills the two-column phone layout).",
   );
 export type TeamProps = z.input<typeof teamSchema>;
 
@@ -505,6 +508,7 @@ export type StatsProps = z.input<typeof statsSchema>;
 
 export const pricingSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     plans: z
@@ -519,10 +523,13 @@ export const pricingSchema = z
           emphasized: z.boolean().default(false),
         }),
       )
-      .min(1),
+      // One ledger row from lg: four plans is the widest row the grid draws,
+      // and a fifth would wrap into a row the ledger's rules do not close.
+      .min(1)
+      .max(4),
   })
   .describe(
-    "A row of pricing plan cards, each with a title, price, optional feature list, and call to action, with one plan visually raised as the recommended choice — the only bordered, carded Block in this set. Use to compare plan tiers side by side on a pricing page or section; not for a single fixed price.",
+    "A ruled ledger of pricing plans side by side (stacked on a phone), each with a title, price, optional period, description, checked feature list, and call to action. Mark one plan `emphasized` to raise it as the recommended choice: a lifted panel under a brand-coloured rule, a Popular label and the primary button. Use 2 to 4 plans to compare tiers on a pricing page or section; not for a single fixed price.",
   );
 export type PricingProps = z.input<typeof pricingSchema>;
 

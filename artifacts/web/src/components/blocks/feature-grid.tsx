@@ -1,6 +1,6 @@
-import { CornerTick } from "@/components/site/site-mark";
 import { type FeatureGridProps, featureGridSchema, parseBlock } from "@/lib/blocks/schemas";
-import { SectionHeader } from "./section-header";
+import { LedgerCorners, ledgerFillers } from "./ledger";
+import { SectionHeaderSplit } from "./section-header";
 
 // The redesign's feature grid, drawn in Paper as "feature-grid / redesign": a
 // ruled ledger of numbered cells under a header whose lede sits opposite the
@@ -16,40 +16,13 @@ import { SectionHeader } from "./section-header";
 // are empty list items hidden from assistive tech, and a <dl> may only hold
 // terms and descriptions.
 
-/** Empty ruled cells to close a short last row, so the grid never ends on a
- * gap. Counted per breakpoint: two columns from md, three from lg. */
-function fillerClasses(count: number) {
-  const mdFill = (2 - (count % 2)) % 2;
-  const lgFill = (3 - (count % 3)) % 3;
-  return Array.from({ length: Math.max(mdFill, lgFill) }, (_, index) =>
-    [
-      "hidden border-r border-b border-ledger-rule",
-      index < mdFill && "md:block",
-      index < lgFill ? "lg:block" : "lg:hidden",
-    ]
-      .filter(Boolean)
-      .join(" "),
-  );
-}
-
 export function FeatureGrid(raw: FeatureGridProps) {
   const { eyebrow, title, lede, features } = parseBlock("FeatureGrid", featureGridSchema, raw);
 
   return (
     <section className="font-sans">
       <div className="page-inset py-16 lg:py-22">
-        {/* The lede opposite the title, bottom-aligned, as the comp sets it;
-            on a narrow screen it wraps under the title instead. */}
-        <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-4">
-          <div>
-            <SectionHeader eyebrow={eyebrow} title={title} />
-          </div>
-          {lede && (
-            <p className="max-w-80 pb-1.5 text-base text-muted-foreground text-pretty leading-6.5">
-              {lede}
-            </p>
-          )}
-        </div>
+        <SectionHeaderSplit eyebrow={eyebrow} lede={lede} title={title} />
 
         {/* `relative` so the crosshairs can hang off the grid's corners. */}
         <div className="relative mt-14">
@@ -75,15 +48,12 @@ export function FeatureGrid(raw: FeatureGridProps) {
                 </div>
               </li>
             ))}
-            {fillerClasses(features.length).map((className, index) => (
+            {ledgerFillers(features.length, { md: 2, lg: 3 }).map((className, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: fillers are identical and positional
               <li aria-hidden="true" className={className} key={`filler-${index}`} />
             ))}
           </ul>
-          <CornerTick className="absolute -top-1 -left-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -top-1 -right-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -bottom-1 -left-1 size-2.25 text-ledger-tick" />
-          <CornerTick className="absolute -right-1 -bottom-1 size-2.25 text-ledger-tick" />
+          <LedgerCorners />
         </div>
       </div>
     </section>

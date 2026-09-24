@@ -1,120 +1,172 @@
 ---
 title: Style guide
-description: The design system behind every Block — tokens, type, rhythm, and what to reuse before building something new.
+description: The design system behind every Block, from tokens and type to rhythm, shape and the shared parts to reuse before building something new.
 ---
 
 ## What this page is for
 
 Every Block on this site is assembled from the same small set of decisions:
-five or six type sizes, one spacing rhythm, one button primitive, one set of
-colour tokens. This page is the written half of that system.
+eight type roles, one section rhythm, one button primitive, three families of
+colour tokens, and a few shared parts. This page writes them down, and renders
+the specimens under each rule so you can see it as well as read it.
 
-The rendered half is [the Block gallery](/blocks-gallery), which shows every
-Block, every button variant, and every type role live. Read this to know what
-the rules are; open that to see them.
-
-If you are about to design something new here, the useful order is: check the
-gallery for a Block that already does it, check the button matrix before
-styling anything clickable, then pick a type role from the scale rather than
-choosing a size.
+[The Block gallery](/blocks-gallery) shows every Block live. If you are about
+to design something new, the useful order is: check the gallery for a Block
+that already does it, then pick a type role, a token and a shared part from
+this page rather than choosing a size, a colour or a layout.
 
 ## Colour
 
-Twenty tokens, all defined in `src/app/globals.css`. Blocks reference them by
-name — `bg-primary`, `text-muted-foreground`, `border-border` — and never a
+Every colour is a token in `src/app/globals.css`. Blocks reference them by
+name (`bg-primary`, `text-muted-foreground`, `border-ledger-rule`) and never a
 raw hex code.
 
-| Group | Tokens |
-|---|---|
-| Surface | `background`, `card`, `popover`, `muted`, `accent` |
-| Text | `foreground`, `muted-foreground`, and the `-foreground` pair for each surface |
-| Action | `primary`, `secondary`, `destructive`, and their `-foreground` pairs |
-| Edges | `border`, `input`, `ring` |
+| Family | Tokens | For |
+|---|---|---|
+| Base | `background`, `foreground`, `card`, `muted`, `primary`, `border`, `input`, `ring` and their pairs | Everything, and the contract shadcn components expect |
+| Text tiers | `foreground`, `muted-foreground`, `subtle-foreground` | Copy, then supporting copy, then indexes, labels and chrome |
+| Ledger | `ledger-rule`, `ledger-tick`, `ledger-meta`, `ledger-meter`, `ledger-meter-empty`, `ledger-wordmark`, `ledger-wordmark-dim` | The hairline grids and their parts |
+| Mock | `mock-edge`, `mock-rule`, `mock-text`, `mock-node` | Only the UI drawings in FeatureRows and PreviewStage |
+
+A few things worth knowing:
+
+- `subtle-foreground` measures 3.7:1 on the ground, so it is for small mono
+  labels and indexes, never for body copy.
+- `primary-foreground` is near-black on purpose: white on the accent fails
+  contrast.
+- The site is dark only (`color-scheme: dark`), so a `dark:` utility never
+  applies.
+- The ledger and mock tokens are white-on-dark alphas, so a light retheme sets
+  them too.
+- `accent`, `secondary`, `popover` and `destructive` exist for the shadcn
+  primitives under `ui/`. No Block uses them.
 
 **Rebranding a client site means editing the values in that file, and nothing
-else.** That is the whole promise, and it only holds while Blocks keep
-referencing tokens by name. A Block that hardcodes a colour is a Block that
-will still be the old brand's colour after the rebrand.
-
-Never rename or remove a token — every Block refers to them by name, so a
-rename is a silent breakage across the site rather than a build error.
+else.** That promise holds only while Blocks keep referencing tokens by name.
+Never rename or remove a token: every Block refers to them by name, so a rename
+is a silent breakage rather than a build error.
 
 ## Type
 
 Two faces, both loaded through `next/font`: **Geist Sans** for everything a
-visitor reads, **Geist Mono** for metadata — dates, categories, labels, the
-gallery's own chrome.
+visitor reads, and **Geist Mono** for labels and metadata.
 
-Five roles carry the whole site. [The gallery renders them live](/blocks-gallery).
+Eight roles carry the whole site, each a `--text-*` token with its line height
+and tracking built in. Weight is not part of the token. Titles are set at 400,
+and the stat role at 300.
 
-| Role | Class | Where |
+| Role | Size | For |
 |---|---|---|
-| Page title | `text-5xl lg:text-6xl` | Hero — one per page |
-| Section title | `text-4xl font-semibold tracking-tight` | Every other Block, via `SectionHeader` |
-| Lede | `text-lg text-muted-foreground` | One sentence under a title, `max-w-md` |
-| Body | `text-base text-muted-foreground` | Prose and card copy |
-| Metadata | `font-mono text-sm text-muted-foreground` | Dates, categories, labels |
+| `text-display` | 64/70 | The page title: Hero, the blog index, a post |
+| `text-statement` | 52/62 | A closing statement: the CTA band, Newsletter |
+| `text-title` | 36/44 | A section title, through `SectionHeader` |
+| `text-subtitle` | 22/30 | An item inside a section: questions, cells, plans |
+| `text-lede` | 18/28 | The sentence under or beside a title |
+| `text-stat` | 60/64 | Figures and prices |
+| `text-eyebrow` | 12/16 | Mono small caps: eyebrows, roles, periods |
+| `text-label` | 10/14 | The footer's column headings, and nothing read as prose |
 
-Tailwind offers a dozen more steps. The point of the table is that this site
-uses these, so a new Block picks a row instead of introducing a sixth size.
+Large roles step down on small screens with a Tailwind size first, for example
+`text-5xl lg:text-display`, because 64px is most of a phone's width per word.
+
+<TypeScale />
+
+## Section headings
+
+Every section title comes from `SectionHeader`: an optional **eyebrow** (a pink
+tick and a mono label), the title, an optional **meta** note opposite it, and
+an optional lede. The ledger sections set the lede opposite the title instead,
+with `SectionHeaderSplit`.
+
+An eyebrow has to say something the title does not. "Pricing" above "One
+template, three ways to license it" earns its place; "Our features" above "Our
+features" does not.
+
+<SectionHeaderSlots />
 
 ## Rhythm
 
 Every Block is a `<section>` wrapping a `<div class="page-inset">`. The inset
-centres content at `max-w-80rem` with `1.5rem` of side padding, and it is the
-only horizontal measure — no Block sets its own container width.
+centres content at a maximum of 90rem, with 1.5rem gutters that open to 3rem
+from `lg`. It is the only horizontal measure: no Block sets its own container
+width.
 
-Vertical spacing is `py-20 sm:py-28`, used by twelve of the fifteen Blocks. The
-three that differ are deliberate: a banner and an announcement are thin by
-nature.
+Sections are spaced `py-16 lg:py-22` (64px, then 88px). Stats, the logo cloud,
+the blog row, image cards and the preview stage sit tighter at `py-16`, because
+the design draws them that way.
 
-Two measures recur inside sections, both on `SectionHeader`: `max-w-2xl` for a
-title, `max-w-md` for a lede. A line of body text that runs the full 80rem is
-unreadable, which is why nothing does.
+A full-bleed band (the hero's texture, the preview stage, the closing call to
+action) draws its background outside the inset and keeps its content inside
+one, so the text still lines up with the sections around it.
+
+## Shape and elevation
+
+- **Square**: cards, image frames and grid cells. Square corners on a hairline,
+  never a rounded card.
+- **Round**: buttons, pills and the eyebrow tick.
+- **Radius** is kept for the UI drawings, images inside an article, and small
+  marks like the quote avatar.
+- **Shadows** are tokens: `--shadow-button`, `--shadow-button-primary`,
+  `--shadow-prompt-card`, `--shadow-stage-window` and `--shadow-stage-float`.
+
+## Shared parts
+
+Most sections are built from the same few parts. A new Block composes them
+rather than redrawing them.
+
+- **The ledger grid**: a grid of cells sharing hairline rules, with a crosshair
+  on each outer corner, and empty ruled cells closing a short last row. Used by
+  the feature grid, team, pricing, stats and logo cloud.
+- **The texture**: a procedural grid of cells, animated in the hero and the
+  closing call to action, and still everywhere else. With JavaScript off it is
+  the same picture, just still.
+- **The card frame**: an image at 4:3 in a square hairline frame, shared by the
+  blog cards, image cards and the feature split.
+- **The recommended choice**: a lifted panel under a pink rule, with pink checks
+  and the primary button. Comparison and pricing use it, and pink appears once
+  per section, for that choice.
+- **Text links**: a label with a chevron, for any link that is not a call to
+  action.
+
+<TextureField />
 
 ## Buttons
 
-One primitive, `src/components/ui/button.tsx`, from shadcn against this
-project's own `components.json`. [The gallery renders every variant against
-every size](/blocks-gallery).
+One primitive. A link that looks like a button is `ButtonLink`, and a real form
+button takes `buttonVariants()`. Buttons are pills on a soft drop shadow, and
+the primary one adds a halo in the accent. Use `variant="default"` for the
+primary action and `variant="outline"` for the one beside it, at
+`size="marketing"`.
 
-A Block never writes its own button classes. Reach for `variant="default"` for
-a primary action and `variant="outline"` for the one beside it, at
-`size="marketing"` — the size added specifically for calls to action sitting
-under a large heading, since the stock sizes are drawn for application UI.
+<ButtonMatrix />
 
 ## What this system deliberately does not have
 
-**No eyebrows.** Sections open with a statement, not a label — no small-caps
-kicker and no coloured rule above the title. That combination reads as generic
-and was rejected on purpose; `SectionHeader` carries the same note so nobody
-reintroduces it while working in the file.
-
 **No arbitrary values.** `p-[13px]` and `text-[#4a4a4a]` bypass both the
-spacing rhythm and the token system. Canonical Tailwind classes only.
+spacing rhythm and the token system, and the class you want usually exists.
+Canonical Tailwind classes only.
 
-**No client JavaScript by default.** Blocks are server components. A Block
-ships a bundle only when it genuinely needs one, which is why the site's
-Lighthouse score is not a monthly problem.
+**No rounded cards and no hover zoom.** Cards are square frames on a hairline,
+and nothing that is not a link moves when you point at it.
+
+**No client JavaScript by default.** Blocks are server components. Where
+something is interactive, the page renders working HTML first (the FAQ is
+native disclosure) and a small script only improves it, so nothing breaks
+without one.
 
 ## Motion
 
-Animation is opt-in per element and always gated: `motion-safe:animate-*`, so
-a visitor who has asked their system for reduced motion gets none of it. Where
-an animation duplicates content to loop seamlessly — the announcement bar and
-the logo cloud both do — the duplicate carries `aria-hidden="true"` and
-`motion-reduce:hidden`.
-
-`--animate-marquee` already exists for horizontal scrolling. Check
-`globals.css` for a keyframe before writing a new one.
+Animation is always gated on the visitor's setting, so anyone who has asked
+their system for reduced motion gets none of it. That covers the marquee in the
+announcement bar, the texture in the hero and closing call to action, and the
+FAQ opening and closing. Where a loop duplicates content to run seamlessly, the
+copy is hidden from assistive tech and from reduced motion.
 
 ## Indexable, like most pages
 
 This page carries no `noindex`, so it appears in the sitemap and search engines
 are free to index it. That is the default for every page here.
 
-Where you want the opposite — a page that stays published and directly
-reachable but out of the sitemap, with `robots: noindex` — add `noindex: true`
-to its frontmatter. `privacy.mdx`, `terms.mdx`, and `blocks-gallery.mdx` all
-do. It is the flag for internal references you share by link but do not want
-surfaced.
+Where you want the opposite, a page that stays published and reachable by link
+but out of the sitemap, add `noindex: true` to its frontmatter.
+`privacy.mdx`, `terms.mdx` and `blocks-gallery.mdx` all do.

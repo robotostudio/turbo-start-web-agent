@@ -1,7 +1,7 @@
 import { site } from "#velite";
 import { type ComparisonProps, comparisonSchema, parseBlock } from "@/lib/blocks/schemas";
 import { CheckMark, DashMark } from "./ledger-marks";
-import { SectionHeader } from "./section-header";
+import { SectionHeaderSplit } from "./section-header";
 
 // The redesign's comparison, drawn in Paper as "comparison / redesign" (and a
 // 375px frame beside it): a ruled table whose recommended column sits on a
@@ -30,16 +30,7 @@ export function Comparison(raw: ComparisonProps) {
   return (
     <section className="font-sans">
       <div className="page-inset py-16 lg:py-22">
-        <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-4">
-          <div>
-            <SectionHeader eyebrow={eyebrow} title={title} />
-          </div>
-          {lede && (
-            <p className="max-w-80 pb-1.5 text-base text-muted-foreground text-pretty leading-6.5">
-              {lede}
-            </p>
-          )}
-        </div>
+        <SectionHeaderSplit eyebrow={eyebrow} lede={lede} title={title} />
 
         <table className="mt-14 hidden w-full table-fixed border-collapse border-border border-b text-left text-base md:table">
           <caption className="sr-only">
@@ -101,6 +92,9 @@ export function Comparison(raw: ComparisonProps) {
         <ul className="mt-10 border-border border-b md:hidden">
           {rows.map((row) => (
             <li className="border-border border-t pt-5.5 pb-6" key={row.criteria}>
+              {/* 18px on purpose: this list only renders below md, and the
+                  approved 375 artboard sets the row title there a step under
+                  the subtitle role, as design-a-block's step-down rule has it. */}
               <h3 className="text-foreground text-lg">{row.criteria}</h3>
               <dl className="mt-3.5 flex flex-col gap-3.5">
                 <div className="border-primary border-l-2 bg-foreground/3 px-4 py-3.5">

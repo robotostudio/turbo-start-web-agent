@@ -35,12 +35,12 @@ export function ArticleHeader({
         <span className="text-muted-foreground">{category}</span>
       </nav>
 
-      <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl">
+      <h1 className="mt-6 max-w-3xl text-5xl text-balance text-foreground lg:text-display">
         {title}
       </h1>
 
       {description ? (
-        <p className="mt-5 max-w-2xl text-lg text-pretty text-muted-foreground">{description}</p>
+        <p className="mt-5 max-w-2xl text-lede text-pretty text-muted-foreground">{description}</p>
       ) : null}
 
       {/* `dateTime` carries the machine-readable instant while the visible

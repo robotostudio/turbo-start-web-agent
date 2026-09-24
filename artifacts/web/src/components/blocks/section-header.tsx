@@ -67,3 +67,29 @@ export function SectionHeader({
     </>
   );
 }
+
+/** The header with its lede opposite the title, bottom-aligned, as the
+ * redesign's ledger sections set it (FeatureGrid, Comparison, Team, Pricing,
+ * Gallery). On a narrow screen the lede wraps under the title instead. */
+export function SectionHeaderSplit({
+  title,
+  lede,
+  eyebrow,
+}: {
+  title: string;
+  lede?: string;
+  eyebrow?: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-x-16 gap-y-4">
+      <div>
+        <SectionHeader eyebrow={eyebrow} title={title} />
+      </div>
+      {lede && (
+        <p className="max-w-80 pb-1.5 text-base text-muted-foreground text-pretty leading-6.5">
+          {lede}
+        </p>
+      )}
+    </div>
+  );
+}

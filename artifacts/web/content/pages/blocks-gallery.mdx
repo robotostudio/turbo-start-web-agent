@@ -42,7 +42,7 @@ noindex: true
 <Hero
   variant="left"
   title="Or lead from the left"
-  lede="Same Block, different variant — set through a literal prop, not a new component."
+  lede="Same Block, different variant, set through a literal prop rather than a new component."
   primary={{ label: "Read the docs", href: "/about" }}
 />
 
@@ -200,7 +200,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <ImageCards
   eyebrow="In practice"
-  title="Built on the same six blocks."
+  title="Built from the same Blocks."
   cards={[
     {
       title: "Agency portfolio",
@@ -234,6 +234,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 <BlockSpec name="Gallery">
 
 <Gallery
+  eyebrow="Wallpapers"
   title="Wallpapers, ready for a hero background."
   lede="A wide crop for full-bleed heroes, square crops for everything smaller."
   images={[
@@ -390,7 +391,9 @@ gets the site's texture instead. Add `category="Guides"` to show only one catego
 <BlockSpec name="Team">
 
 <Team
+  eyebrow="The team"
   title="The people building the block registry."
+  lede="Six people across design, engineering and operations."
   team={[
     {
       name: "Jordan Reyes",
@@ -447,7 +450,7 @@ gets the site's texture instead. Add `category="Guides"` to show only one catego
     {
       value: "94%",
       label: "Sections shipped without custom code",
-      meter: { filled: 15, total: 16 },
+      meter: { filled: 15, total: 16, tone: "accent" },
     },
     {
       value: "0kb",
@@ -473,6 +476,7 @@ gets the site's texture instead. Add `category="Guides"` to show only one catego
 <BlockSpec name="Pricing">
 
 <Pricing
+  eyebrow="Pricing"
   title="One template, three ways to license it."
   lede="Start free, upgrade the day you take on a second client."
   plans={[
@@ -494,7 +498,7 @@ gets the site's texture instead. Add `category="Guides"` to show only one catego
         "Figma kit included",
         "Priority support",
       ],
-      cta: { label: "Get Studio", href: "/pricing" },
+      cta: { label: "Get Studio", href: "/contact" },
       emphasized: true,
     },
     {
