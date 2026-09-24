@@ -167,6 +167,7 @@ export type NewsletterProps = z.input<typeof newsletterSchema>;
 
 export const featureGridSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     features: z
@@ -179,19 +180,20 @@ export const featureGridSchema = z
       .min(1),
   })
   .describe(
-    "An unbordered grid of short title/body pairs enumerating several capabilities at a glance, with no icons or cards. Use mid-page to list what the product does when each point needs only a sentence.",
+    "A ruled ledger grid of short title/body pairs, three per row on desktop, each numbered in order, with no icons or images. Use mid-page to list what the product does when each point needs only a sentence. Provide a multiple of 3 (3 or 6 is typical): a short last row is closed with empty ruled cells, which reads as a gap.",
   );
 export type FeatureGridProps = z.input<typeof featureGridSchema>;
 
 export const featureSplitSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     points: z.array(z.string()).optional(),
     image: media,
   })
   .describe(
-    "A two-column section pairing a headline, supporting copy, and an optional bullet list against a single supporting image. Use mid-page to explain one capability in more depth than a feature grid allows.",
+    "A two-column section pairing a headline, supporting copy, and an optional ruled list of points against a single supporting image, framed 4:3 on a bed of the site's texture. Use mid-page to explain one capability in more depth than a feature grid allows. A darker image sits better on the dark page than a pale one.",
   );
 export type FeatureSplitProps = z.input<typeof featureSplitSchema>;
 
@@ -526,8 +528,19 @@ export type PricingProps = z.input<typeof pricingSchema>;
 
 export const comparisonSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
+    usLabel: z
+      .string()
+      .optional()
+      .describe(
+        "The heading over the recommended column. Leave it out to use the site's name from content/settings/site.yml.",
+      ),
+    traditionalLabel: z
+      .string()
+      .default("The old way")
+      .describe("The heading over the alternative column."),
     rows: z
       .array(
         z.object({
@@ -540,7 +553,7 @@ export const comparisonSchema = z
       .max(6),
   })
   .describe(
-    "A two-column comparison table with five or six concise rows. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan.",
+    "A comparison table with five or six concise rows: a criteria column, the recommended column (highlighted, headed by the site name unless usLabel says otherwise), and the alternative. On a phone each row stacks. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan.",
   );
 export type ComparisonProps = z.input<typeof comparisonSchema>;
 

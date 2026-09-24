@@ -71,6 +71,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 <BlockSpec name="Comparison">
 
 <Comparison
+  eyebrow="How it compares"
   title="How this approach compares"
   lede="A quick view of what changes when content and layout live in the same system."
   rows={[
@@ -107,31 +108,32 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 <BlockSpec name="FeatureGrid">
 
 <FeatureGrid
+  eyebrow="What you get"
   title="A template that stays out of your way once the client signs off."
   lede="Six pieces, each one doing a single job well."
   features={[
     {
-      title: "Block system.",
+      title: "Block system",
       body: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
     },
     {
-      title: "Bring your own content.",
-      body: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+      title: "Bring your own content",
+      body: "Wire pages to Markdown, Sanity, or a JSON file. The block components never know which one is behind them.",
     },
     {
-      title: "One token file.",
+      title: "One token file",
       body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
     },
     {
-      title: "Schemas that catch mistakes.",
+      title: "Schemas that catch mistakes",
       body: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
     },
     {
-      title: "No client JS by default.",
-      body: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+      title: "No client JS by default",
+      body: "Sections render on the server. A block only ships a bundle when it actually needs one.",
     },
     {
-      title: "Ships in an afternoon.",
+      title: "Ships in an afternoon",
       body: "Clone the repo, swap the tokens and copy, push. Most rebuilds go live the same day.",
     },
   ]}
@@ -142,15 +144,16 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 <BlockSpec name="FeatureSplit">
 
 <FeatureSplit
+  eyebrow="Real content"
   title="Every block ships with real content, not lorem ipsum."
-  lede="Preview a block and it already reads like a finished page — swap the copy when the client's ready, not before."
+  lede="Preview a block and it already reads like a finished page. Swap the copy when the client is ready, not before."
   points={[
     "Every block preview ships with client-ready copy",
     "Content stays wired to the same schema in production",
     "Nothing on the page reads like a placeholder",
   ]}
   image={{
-    src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right",
+    src: "https://assets.ui.sh/screenshots/1.webp?top=900&left=1200&position=bottom-right&color=mist",
     alt: "",
   }}
 />
