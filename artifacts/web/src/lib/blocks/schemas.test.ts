@@ -7,6 +7,7 @@ import { z } from "zod";
 import {
   bannerSchema,
   blockSchemas,
+  comparisonSchema,
   ctaBandSchema,
   faqSchema,
   featuredQuoteSchema,
@@ -167,6 +168,18 @@ test("FeatureSplit parses valid props", () => {
     image: { src: "https://assets.ui.sh/screenshots/1.webp", alt: "" },
   });
   assert.equal(parsed.image.src, "https://assets.ui.sh/screenshots/1.webp");
+});
+
+test("FeatureSplit takes an optional eyebrow", () => {
+  const image = { src: "https://assets.ui.sh/screenshots/1.webp", alt: "" };
+  const withEyebrow = parseBlock("FeatureSplit", featureSplitSchema, {
+    eyebrow: "Real content",
+    title: "x",
+    image,
+  });
+  assert.equal(withEyebrow.eyebrow, "Real content");
+  const without = parseBlock("FeatureSplit", featureSplitSchema, { title: "x", image });
+  assert.equal(without.eyebrow, undefined);
 });
 
 test("FeatureSplit rejects a missing required prop", () => {
@@ -1271,5 +1284,49 @@ test("Faq rejects an unsafe contact href", () => {
         faqs: [{ question: "Q?", answer: "A." }],
       }),
     /contact/,
+  );
+});
+
+// --- Comparison ------------------------------------------------------------
+
+const comparisonRows = Array.from({ length: 5 }, (_, index) => ({
+  criteria: `Criteria ${index + 1}`,
+  us: "Compose a page from existing Blocks",
+  traditional: "Design each section from scratch",
+}));
+
+test("Comparison defaults its labels: the site name is resolved at render", () => {
+  const parsed = parseBlock("Comparison", comparisonSchema, { title: "x", rows: comparisonRows });
+  assert.equal(parsed.traditionalLabel, "The old way");
+  assert.equal(parsed.usLabel, undefined);
+  assert.equal(parsed.eyebrow, undefined);
+});
+
+test("Comparison takes an eyebrow and both column labels", () => {
+  const parsed = parseBlock("Comparison", comparisonSchema, {
+    eyebrow: "How it compares",
+    title: "x",
+    usLabel: "Northbound",
+    traditionalLabel: "An agency retainer",
+    rows: comparisonRows,
+  });
+  assert.equal(parsed.eyebrow, "How it compares");
+  assert.equal(parsed.usLabel, "Northbound");
+  assert.equal(parsed.traditionalLabel, "An agency retainer");
+});
+
+test("Comparison keeps its five-to-six row bounds", () => {
+  assert.throws(
+    () =>
+      parseBlock("Comparison", comparisonSchema, { title: "x", rows: comparisonRows.slice(0, 4) }),
+    /rows/,
+  );
+  assert.throws(
+    () =>
+      parseBlock("Comparison", comparisonSchema, {
+        title: "x",
+        rows: [...comparisonRows, ...comparisonRows.slice(0, 2)],
+      }),
+    /rows/,
   );
 });

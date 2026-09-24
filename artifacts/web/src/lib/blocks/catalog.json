@@ -200,10 +200,22 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
           "lede": {
+            "type": "string"
+          },
+          "usLabel": {
+            "description": "The heading over the recommended column. Leave it out to use the site's name from content/settings/site.yml.",
+            "type": "string"
+          },
+          "traditionalLabel": {
+            "default": "The old way",
+            "description": "The heading over the alternative column.",
             "type": "string"
           },
           "rows": {
@@ -235,7 +247,7 @@
           "title",
           "rows"
         ],
-        "description": "A two-column comparison table with five or six concise rows. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan."
+        "description": "A comparison table with five or six concise rows: a criteria column, the recommended column (highlighted, headed by the site name unless usLabel says otherwise), and the alternative. On a phone each row stacks. Use to compare the product or service with a familiar alternative, keeping each cell short enough to scan."
       }
     },
     "FeatureGrid": {
@@ -284,6 +296,9 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "eyebrow": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
@@ -318,7 +333,7 @@
           "title",
           "image"
         ],
-        "description": "A two-column section pairing a headline, supporting copy, and an optional bullet list against a single supporting image. Use mid-page to explain one capability in more depth than a feature grid allows."
+        "description": "A two-column section pairing a headline, supporting copy, and an optional ruled list of points against a single supporting image, framed 4:3 on a bed of the site's texture. Use mid-page to explain one capability in more depth than a feature grid allows. A darker image sits better on the dark page than a pale one."
       }
     },
     "FeatureRows": {
