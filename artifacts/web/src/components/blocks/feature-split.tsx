@@ -46,7 +46,7 @@ export function FeatureSplit(raw: FeatureSplitProps) {
               animate={false}
               className="size-full opacity-35"
               preset="dense"
-              tile={{ width: "1056px", position: "100% 80%" }}
+              tile={{ width: "66rem", position: "100% 80%" }}
             />
             <div className="absolute inset-0" style={{ backgroundImage: STAGE_VIGNETTE }} />
           </div>
