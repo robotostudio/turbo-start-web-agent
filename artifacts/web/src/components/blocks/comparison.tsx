@@ -92,6 +92,9 @@ export function Comparison(raw: ComparisonProps) {
         <ul className="mt-10 border-border border-b md:hidden">
           {rows.map((row) => (
             <li className="border-border border-t pt-5.5 pb-6" key={row.criteria}>
+              {/* 18px on purpose: this list only renders below md, and the
+                  approved 375 artboard sets the row title there a step under
+                  the subtitle role, as design-a-block's step-down rule has it. */}
               <h3 className="text-foreground text-lg">{row.criteria}</h3>
               <dl className="mt-3.5 flex flex-col gap-3.5">
                 <div className="border-primary border-l-2 bg-foreground/3 px-4 py-3.5">

@@ -61,8 +61,9 @@ worked example of every Block with real props, read
 **Read each Block's `description` before choosing it.** It says what the Block
 is for, and for the ledger grids it says the count that fills cleanly: FeatureGrid,
 Team and ImageCards want a multiple of 3, LogoCloud a multiple of 6, FeatureRows
-exactly 3, Comparison 5 or 6 rows, Gallery exactly 8 images. A short last row
-still renders (it is closed with empty ruled cells) but reads as a gap.
+exactly 3, Comparison 5 or 6 rows, Gallery exactly 8 images, Pricing 1 to 4
+plans. FeatureGrid and Team close a short last row with empty ruled cells; the
+other grids do not, so an off count leaves a visible gap.
 
 If the Block you
 need doesn't exist, that's a code change (new schema + component), not a

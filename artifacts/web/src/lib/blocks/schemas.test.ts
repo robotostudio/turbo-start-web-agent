@@ -1354,3 +1354,13 @@ test("Gallery, Team and Pricing take an optional eyebrow", () => {
   assert.equal(parseBlock("Pricing", pricingSchema, pricing).eyebrow, undefined);
   assert.equal(parseBlock("Pricing", pricingSchema, { ...pricing, eyebrow: "E" }).eyebrow, "E");
 });
+
+test("Pricing takes at most four plans, one full ledger row", () => {
+  const plan = (title: string) => ({ title, price: "Free" });
+  const four = ["A", "B", "C", "D"].map(plan);
+  assert.equal(parseBlock("Pricing", pricingSchema, { title: "x", plans: four }).plans.length, 4);
+  assert.throws(
+    () => parseBlock("Pricing", pricingSchema, { title: "x", plans: [...four, plan("E")] }),
+    /plans/,
+  );
+});

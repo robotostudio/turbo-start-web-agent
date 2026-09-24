@@ -102,6 +102,9 @@ export function CompanyPanel({
             width={160}
           />
         ) : (
+          // A logo, not a type role: the placeholder wordmark stands in for a
+          // company's mark, which carries its own weight, so the "no
+          // font-semibold titles" rule in design-a-block does not apply here.
           <LogoWordmark
             className="text-2xl font-semibold tracking-tight"
             mark={company.mark}

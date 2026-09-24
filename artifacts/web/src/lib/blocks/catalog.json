@@ -1155,6 +1155,7 @@
           },
           "plans": {
             "minItems": 1,
+            "maxItems": 4,
             "type": "array",
             "items": {
               "type": "object",

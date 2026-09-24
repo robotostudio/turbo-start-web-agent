@@ -523,7 +523,10 @@ export const pricingSchema = z
           emphasized: z.boolean().default(false),
         }),
       )
-      .min(1),
+      // One ledger row from lg: four plans is the widest row the grid draws,
+      // and a fifth would wrap into a row the ledger's rules do not close.
+      .min(1)
+      .max(4),
   })
   .describe(
     "A ruled ledger of pricing plans side by side (stacked on a phone), each with a title, price, optional period, description, checked feature list, and call to action. Mark one plan `emphasized` to raise it as the recommended choice: a lifted panel under a brand-coloured rule, a Popular label and the primary button. Use 2 to 4 plans to compare tiers on a pricing page or section; not for a single fixed price.",

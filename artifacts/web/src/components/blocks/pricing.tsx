@@ -15,11 +15,13 @@ import { SectionHeaderSplit } from "./section-header";
 // checks, and the primary button. Every other plan is plain, with muted
 // checks and outline buttons, so the choice reads at a glance.
 
-// One column per plan from lg, up to four; more than four wraps.
+// One column per plan from lg. The schema caps `plans` at four, so the ledger
+// is always one full row and never needs filler cells.
 const COLUMNS: Record<number, string> = {
   1: "lg:grid-cols-1",
   2: "lg:grid-cols-2",
   3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
 };
 
 export function Pricing(raw: PricingProps) {
@@ -33,7 +35,7 @@ export function Pricing(raw: PricingProps) {
           <ul
             className={cn(
               "grid grid-cols-1 border-ledger-rule border-t border-l",
-              COLUMNS[plans.length] ?? "lg:grid-cols-4",
+              COLUMNS[plans.length],
             )}
           >
             {plans.map((plan) => (
