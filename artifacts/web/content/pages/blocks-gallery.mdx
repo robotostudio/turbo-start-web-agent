@@ -107,31 +107,32 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 <BlockSpec name="FeatureGrid">
 
 <FeatureGrid
+  eyebrow="What you get"
   title="A template that stays out of your way once the client signs off."
   lede="Six pieces, each one doing a single job well."
   features={[
     {
-      title: "Block system.",
+      title: "Block system",
       body: "Compose pages from a growing library of pre-built sections instead of hand-rolling layout for every client.",
     },
     {
-      title: "Bring your own content.",
-      body: "Wire pages to Markdown, Sanity, or a JSON file — the block components never know which one is behind them.",
+      title: "Bring your own content",
+      body: "Wire pages to Markdown, Sanity, or a JSON file. The block components never know which one is behind them.",
     },
     {
-      title: "One token file.",
+      title: "One token file",
       body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase.",
     },
     {
-      title: "Schemas that catch mistakes.",
+      title: "Schemas that catch mistakes",
       body: "Every block validates its props at build time, so a bad edit fails the build, not the client demo.",
     },
     {
-      title: "No client JS by default.",
-      body: "Sections render as server components — a block only ships a bundle when it actually needs one.",
+      title: "No client JS by default",
+      body: "Sections render on the server. A block only ships a bundle when it actually needs one.",
     },
     {
-      title: "Ships in an afternoon.",
+      title: "Ships in an afternoon",
       body: "Clone the repo, swap the tokens and copy, push. Most rebuilds go live the same day.",
     },
   ]}

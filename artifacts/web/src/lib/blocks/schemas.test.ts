@@ -120,6 +120,18 @@ test("FeatureGrid parses valid props", () => {
   assert.equal(parsed.features.length, 1);
 });
 
+test("FeatureGrid takes an optional eyebrow", () => {
+  const features = [{ title: "Block system", body: "Compose pages from sections." }];
+  const withEyebrow = parseBlock("FeatureGrid", featureGridSchema, {
+    eyebrow: "What you get",
+    title: "x",
+    features,
+  });
+  assert.equal(withEyebrow.eyebrow, "What you get");
+  const without = parseBlock("FeatureGrid", featureGridSchema, { title: "x", features });
+  assert.equal(without.eyebrow, undefined);
+});
+
 test("FeatureGrid rejects a missing required prop", () => {
   assert.throws(
     () => parseBlock("FeatureGrid", featureGridSchema, {}),

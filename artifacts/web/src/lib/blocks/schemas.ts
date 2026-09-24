@@ -167,6 +167,7 @@ export type NewsletterProps = z.input<typeof newsletterSchema>;
 
 export const featureGridSchema = z
   .object({
+    eyebrow: z.string().optional(),
     title: z.string(),
     lede: z.string().optional(),
     features: z
@@ -179,7 +180,7 @@ export const featureGridSchema = z
       .min(1),
   })
   .describe(
-    "An unbordered grid of short title/body pairs enumerating several capabilities at a glance, with no icons or cards. Use mid-page to list what the product does when each point needs only a sentence.",
+    "A ruled ledger grid of short title/body pairs, three per row on desktop, each numbered in order, with no icons or images. Use mid-page to list what the product does when each point needs only a sentence. Provide a multiple of 3 (3 or 6 is typical): a short last row is closed with empty ruled cells, which reads as a gap.",
   );
 export type FeatureGridProps = z.input<typeof featureGridSchema>;
 
