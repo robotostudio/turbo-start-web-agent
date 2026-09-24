@@ -1,5 +1,5 @@
 import type { VariantProps } from "class-variance-authority";
-import { SectionHeader } from "@/components/blocks/section-header";
+import { SectionHeader, SectionHeaderSplit } from "@/components/blocks/section-header";
 import { GridField } from "@/components/texture/grid-field";
 import {
   type buttonVariants,
@@ -133,47 +133,71 @@ export function ButtonMatrix() {
   );
 }
 
-// The type scale as the Blocks actually use it, not as Tailwind ships it.
-// Every row is a real pairing taken from a Block — Hero's h1, SectionHeader's
-// h2 and lede, the mono used for metadata — so an agent designing a new Block
-// picks a row rather than inventing a size. Tailwind offers a dozen more
-// steps; the point of this table is that this site uses these.
+// The type scale as the Blocks actually use it, not as Tailwind ships it: the
+// eight `--text-*` roles from globals.css, plus body and metadata, each with a
+// real pairing taken from a Block. An agent designing a new Block picks a row
+// rather than inventing a size. Tailwind offers a dozen more steps; the point
+// of this table is that this site uses these.
 const TYPE_ROLES = [
   {
     role: "Eyebrow",
-    where: "SectionHeader — above a title",
+    where: "SectionHeader, above a title",
     className: "font-mono text-eyebrow uppercase text-muted-foreground",
     sample: "What you get",
   },
   {
-    role: "Page title",
-    where: "Hero — one per page",
+    role: "Display",
+    where: "Hero, /blog, a post title; one per page",
     className: "text-5xl lg:text-display",
     sample: "Your website, editable by any AI agent",
   },
   {
-    role: "Section title",
-    where: "SectionHeader — every other Block",
-    className: "text-title font-normal",
+    role: "Statement",
+    where: "The CTA band and Newsletter",
+    className: "text-3xl sm:text-title lg:text-statement",
+    sample: "Compose pages from Blocks.",
+  },
+  {
+    role: "Title",
+    where: "SectionHeader, every other section",
+    className: "text-title",
     sample: "Every section opens with a statement",
   },
   {
+    role: "Subtitle",
+    where: "An item inside a section: FAQ, grid cells, plans",
+    className: "text-subtitle",
+    sample: "Content lives in git",
+  },
+  {
     role: "Lede",
-    where: "Under a title, max-w-md",
+    where: "Under or opposite a title",
     className: "text-lede text-muted-foreground",
     sample: "One supporting sentence, never two paragraphs.",
   },
   {
+    role: "Stat",
+    where: "Stats and plan prices, at font-light",
+    className: "text-stat font-light tabular-nums",
+    sample: "2.6 hrs",
+  },
+  {
     role: "Body",
-    where: "Prose and card copy",
+    where: "Prose and cell copy",
     className: "text-base text-muted-foreground",
     sample: "The size everything falls back to when nothing else applies.",
   },
   {
     role: "Metadata",
-    where: "Dates, categories, labels",
+    where: "Dates, categories, indexes",
     className: "font-mono text-sm text-muted-foreground",
     sample: "Product · 27 August 2026",
+  },
+  {
+    role: "Label",
+    where: "The footer's column headings only",
+    className: "font-mono text-label uppercase text-subtle-foreground",
+    sample: "Design system",
   },
 ] as const;
 
@@ -205,12 +229,10 @@ export function TypeScale() {
   );
 }
 
-// SectionHeader's two optional slots, rendered live. Both were added for the
-// 2026-09 redesign, and Stats became the first Block to pass them when the
-// stats ledger landed -- each remaining section ticket adds its own `eyebrow`
-// as it arrives. The specimen stays because it is the only place both slots
-// are shown together, and against the copy the comp uses. Same reasoning as
-// ButtonMatrix above: the system is real but otherwise invisible.
+// SectionHeader's optional slots, rendered live: the eyebrow and meta the
+// 2026-09 redesign added, and the split form with the lede opposite the title
+// that the ledger sections use. This is the only place they are shown side by
+// side, against the copy the comp uses.
 export function SectionHeaderSlots() {
   return (
     <section className="border-t border-border font-sans">
@@ -220,7 +242,7 @@ export function SectionHeaderSlots() {
             Section header slots
           </h2>
           <p className={`${MONO} text-muted-foreground`}>
-            src/components/blocks/section-header.tsx · eyebrow, meta · both optional
+            src/components/blocks/section-header.tsx · eyebrow, meta, split
           </p>
         </div>
 
@@ -236,10 +258,13 @@ export function SectionHeaderSlots() {
           </div>
 
           <div className="border-t border-border pt-6">
-            <p className={`${MONO} mb-4 text-muted-foreground`}>neither — unchanged from before</p>
-            <SectionHeader
-              title="Every section opens with a statement"
-              lede="One supporting sentence, never two paragraphs."
+            <p className={`${MONO} mb-4 text-muted-foreground`}>
+              SectionHeaderSplit: lede opposite the title
+            </p>
+            <SectionHeaderSplit
+              eyebrow="Pricing"
+              title="One template, three ways to license it."
+              lede="Start free, upgrade the day you take on a second client."
             />
           </div>
         </div>
@@ -248,10 +273,9 @@ export function SectionHeaderSlots() {
   );
 }
 
-// The procedural grid texture, at both densities. Like the section-header
-// specimen above, this exists because no Block composes the texture yet -- each
-// section ticket adds it as that section lands -- and a primitive with no call
-// site is one nobody can look at.
+// The procedural grid texture, at both densities, outside any Block so its two
+// modes can be compared directly. The Hero, CTA, Newsletter, FeatureSplit,
+// PreviewStage and the footer all compose it as a bed.
 //
 // Worth knowing while looking: what renders first is SVG from the server, and
 // the canvas replaces it on mount. With JavaScript disabled the two panels below
@@ -272,16 +296,16 @@ export function TextureField() {
         <div className="flex flex-col gap-8">
           <div className="border-t border-border pt-6">
             <p className={`${MONO} mb-4 text-muted-foreground`}>
-              dense — animated, pointer={"{true}"} — move the cursor over it
+              dense: animated, pointer={"{true}"}; move the cursor over it
             </p>
-            <GridField className="h-56 w-full rounded-lg" pointer preset="dense" />
+            <GridField className="h-56 w-full" pointer preset="dense" />
           </div>
 
           <div className="border-t border-border pt-6">
             <p className={`${MONO} mb-4 text-muted-foreground`}>
-              coarse — animate={"{false}"}, ships no client JS
+              coarse: animate={"{false}"}, ships no client JS
             </p>
-            <GridField animate={false} className="h-40 w-full rounded-lg" preset="coarse" />
+            <GridField animate={false} className="h-40 w-full" preset="coarse" />
           </div>
         </div>
       </div>

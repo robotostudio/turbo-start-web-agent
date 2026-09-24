@@ -42,7 +42,7 @@ noindex: true
 <Hero
   variant="left"
   title="Or lead from the left"
-  lede="Same Block, different variant — set through a literal prop, not a new component."
+  lede="Same Block, different variant, set through a literal prop rather than a new component."
   primary={{ label: "Read the docs", href: "/about" }}
 />
 
@@ -200,7 +200,7 @@ Each Block lives inside its own `<BlockSpec>` wrapper in this file's raw MDX sou
 
 <ImageCards
   eyebrow="In practice"
-  title="Built on the same six blocks."
+  title="Built from the same Blocks."
   cards={[
     {
       title: "Agency portfolio",
@@ -450,7 +450,7 @@ gets the site's texture instead. Add `category="Guides"` to show only one catego
     {
       value: "94%",
       label: "Sections shipped without custom code",
-      meter: { filled: 15, total: 16 },
+      meter: { filled: 15, total: 16, tone: "accent" },
     },
     {
       value: "0kb",
