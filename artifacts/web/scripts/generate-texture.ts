@@ -33,7 +33,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const outputDir = join(here, "..", "public", "texture");
 
 /** Whole tenths, matching planGridFieldSvg. Full float precision doubles the bytes for nothing. */
-function renderPreset(preset: GridPresetName): string {
+function renderPreset(preset: GridPresetName, band = false): string {
   const geometry = resolveToolcraftGridGeometry(geometryInputFor(preset));
   const sampler = planToolcraftFieldSampler(fieldParametersFor(preset), LOOP_SECONDS);
   const levels = ensureToolcraftLevelBuffer(null, sampler.cellCount);
@@ -47,6 +47,27 @@ function renderPreset(preset: GridPresetName): string {
       return `<g fill-opacity="${bucket.opacity}">${cells}</g>`;
     })
     .join("");
+
+  // The band variant, for a full-bleed band that repeats the still frame
+  // sideways (GridField's `band`). The field is not periodic, so repeating it
+  // as-is puts a hard seam wherever the last column meets the first. Mirroring
+  // it removes the seam: a mirrored copy meets the original on the same column.
+  // One tile is half a mirrored copy, the original, then half a mirrored copy,
+  // so centring it puts the original exactly where the flat file puts it, and
+  // the cells are drawn once and reused through <use>, so the file stays the
+  // size of the flat one rather than growing with the width it covers.
+  if (band) {
+    const [, , width, height] = plan.viewBox.split(" ").map(Number);
+    const pitch = width + (geometry.gap ?? 0);
+    return [
+      `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${-pitch / 2} 0 ${pitch * 2} ${height}">`,
+      `<style>rect{width:${plan.cell.width}px;height:${plan.cell.height}px;rx:${plan.cell.radius}px;fill:#fff}</style>`,
+      `<g id="f">${groups}</g>`,
+      `<use href="#f" xlink:href="#f" transform="translate(${-(pitch - width)} 0) scale(-1 1)"/>`,
+      `<use href="#f" xlink:href="#f" transform="translate(${pitch + width} 0) scale(-1 1)"/>`,
+      `</svg>`,
+    ].join("");
+  }
 
   // Width, height and corner radius are identical for every cell, so they are
   // declared once in a style rule rather than repeated a few thousand times.
@@ -69,11 +90,14 @@ function renderPreset(preset: GridPresetName): string {
   ].join("");
 }
 
-const rendered = (Object.keys(GRID_PRESETS) as GridPresetName[]).map((preset) => ({
-  content: renderPreset(preset),
-  path: join(outputDir, `${preset}.svg`),
-  preset,
-}));
+const rendered = (Object.keys(GRID_PRESETS) as GridPresetName[]).flatMap((preset) => [
+  { content: renderPreset(preset), path: join(outputDir, `${preset}.svg`), preset },
+  {
+    content: renderPreset(preset, true),
+    path: join(outputDir, `${preset}-band.svg`),
+    preset: `${preset}-band`,
+  },
+]);
 
 const check = process.argv.includes("--check");
 

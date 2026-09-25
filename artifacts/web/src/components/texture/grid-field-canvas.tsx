@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   fieldParametersFor,
+  GRID_PRESETS,
   type GridPresetName,
   geometryInputFor,
   LOOP_SECONDS,
@@ -31,14 +32,44 @@ import {
 // SVG used to be.
 
 export function GridFieldCanvas({
+  band = false,
   pointer = false,
   preset,
 }: {
+  /** Fit the column count to the band's shape; see `band` on GridField. */
+  band?: boolean;
   pointer?: boolean;
   preset: GridPresetName;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [painted, setPainted] = useState(false);
+  // The preset's own count until measured, and for any placement that is not
+  // a band, so a first paint never waits on layout.
+  const [columns, setColumns] = useState(GRID_PRESETS[preset].columns);
+
+  // A band's column count follows its shape: enough that the grid, fitted to
+  // the band's height, is at least as wide as the band. Never fewer than the
+  // preset's own, so nothing narrower than the comp changes. Rounded up to a
+  // multiple of 8 so a window drag re-plans the field a few times, not on
+  // every pixel.
+  useEffect(() => {
+    if (!band) return;
+    const canvas = canvasRef.current;
+    const box = canvas?.parentElement;
+    if (!canvas || !box) return;
+    const base = resolveToolcraftGridGeometry(geometryInputFor(preset));
+    const baseColumns = GRID_PRESETS[preset].columns;
+    const fit = () => {
+      const { width, height } = box.getBoundingClientRect();
+      if (width === 0 || height === 0) return;
+      const needed = (width / height) * (base.height / base.width) * baseColumns;
+      setColumns(Math.max(baseColumns, Math.ceil(needed / 8) * 8));
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [band, preset]);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -49,8 +80,11 @@ export function GridFieldCanvas({
     const context = canvas.getContext("2d");
     if (!context) return;
 
-    const geometry = resolveToolcraftGridGeometry(geometryInputFor(preset));
-    const planned = planToolcraftFieldSampler(fieldParametersFor(preset), LOOP_SECONDS);
+    const geometry = resolveToolcraftGridGeometry({ ...geometryInputFor(preset), columns });
+    const planned = planToolcraftFieldSampler(
+      { ...fieldParametersFor(preset), columns },
+      LOOP_SECONDS,
+    );
     const levels = ensureToolcraftLevelBuffer(null, planned.cellCount);
 
     // Where the cursor is, in the grid's own pixel space, or null when it is
@@ -214,7 +248,7 @@ export function GridFieldCanvas({
       window.removeEventListener("pointerleave", clearPointer);
       window.removeEventListener("blur", clearPointer);
     };
-  }, [pointer, preset]);
+  }, [columns, pointer, preset]);
 
   return (
     <canvas

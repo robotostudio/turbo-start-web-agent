@@ -30,7 +30,7 @@ export function Newsletter(raw: NewsletterProps) {
       {/* The bed. Still, unlike the CTA band's: presets.ts keeps the animated
           register to the Hero and the CTA, and this band sits near the CTA. */}
       <div aria-hidden="true" className="absolute inset-0 -z-10">
-        <GridField animate={false} className="size-full opacity-55" preset="dense" />
+        <GridField animate={false} className="size-full opacity-55" band preset="dense" />
         <div className="absolute inset-0" style={{ backgroundImage: CENTRE_VIGNETTE }} />
         <div className="absolute inset-x-0 top-0 h-17.5 bg-linear-to-b from-background to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-17.5 bg-linear-to-t from-background to-transparent" />
