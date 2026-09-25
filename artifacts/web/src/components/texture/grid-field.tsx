@@ -32,6 +32,7 @@ import { GridFieldCanvas } from "./grid-field-canvas";
 
 export function GridField({
   animate = true,
+  band = false,
   className,
   pointer = false,
   preset = "coarse",
@@ -43,6 +44,21 @@ export function GridField({
    * what is passed here -- that decision belongs to them, not to the caller.
    */
   animate?: boolean;
+  /**
+   * For a full-bleed band (Hero, CTA, Newsletter, the footer bed): always fill
+   * the band's height with whole rows, however wide the screen.
+   *
+   * A band is a fixed height at every width, so on a screen wider than about
+   * 1440 covering it would scale the grid up by width, slicing the top and
+   * bottom rows in half and doubling the cells by 2560. Instead the still frame
+   * is sized to the band's height and repeated sideways (from a mirrored file,
+   * `<preset>-band.svg`, so the repeat has no seam), and the canvas draws
+   * as many columns as the band's shape needs (the field is sampled per
+   * absolute cell, so extra columns extend it rather than change it). Up to
+   * about 1440 that is the preset's own column count, so the band renders, and
+   * costs, exactly what it did before.
+   */
+  band?: boolean;
   className?: string;
   /**
    * Whether the field lights up under the cursor. Off by default: it suits one
@@ -64,12 +80,12 @@ export function GridField({
    */
   tile?: { width: string; position?: string };
 }) {
-  const mask = `url(/texture/${preset}.svg)`;
-  const maskSize = tile ? `${tile.width} auto` : "cover";
+  const mask = `url(/texture/${preset}${band ? "-band" : ""}.svg)`;
+  const maskSize = tile ? `${tile.width} auto` : band ? "auto 100%" : "cover";
   const maskPosition = tile?.position ?? "center";
-  // Left unset without `tile`, so every existing placement renders the exact
-  // style it did before this option existed.
-  const maskRepeat = tile ? "repeat" : undefined;
+  // Left unset without `tile` or `band`, so every other placement renders the
+  // exact style it did before these options existed.
+  const maskRepeat = tile ? "repeat" : band ? "repeat-x" : undefined;
 
   return (
     <div
@@ -97,7 +113,7 @@ export function GridField({
           WebkitMaskSize: maskSize,
         }}
       />
-      {animate && !tile && <GridFieldCanvas pointer={pointer} preset={preset} />}
+      {animate && !tile && <GridFieldCanvas band={band} pointer={pointer} preset={preset} />}
     </div>
   );
 }

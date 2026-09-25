@@ -182,7 +182,7 @@ export function SiteFooter() {
           moving field under a column of links is harder to read than a still
           one, and `animate={false}` keeps the footer free of client JS. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-30 h-80 sm:h-104">
-        <GridField animate={false} className="size-full opacity-16" preset="band" />
+        <GridField animate={false} className="size-full opacity-16" band preset="dense" />
       </div>
       {/* Vignette and corner scrims over the bed, so it falls away into the page
           instead of ending on a line. Sits above the texture and below the mark,

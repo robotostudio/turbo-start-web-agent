@@ -67,7 +67,7 @@ export function Hero(raw: HeroProps) {
             and this band is that one placement. */}
         <div className="relative h-80 sm:h-108">
           <div className="absolute inset-0 overflow-hidden">
-            <GridField className="size-full" pointer preset="band" />
+            <GridField className="size-full" pointer band preset="dense" />
           </div>
           {prompt && prompt.length > 0 && (
             <div className="page-inset absolute inset-x-0 top-1/2 -translate-y-1/2">

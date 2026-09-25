@@ -35,7 +35,7 @@ export function CtaBand(raw: CtaBandProps) {
           The canvas never mounts for a reduced-motion visitor, who gets the
           same field as a still frame. */}
       <div aria-hidden="true" className="absolute inset-0 -z-10">
-        <GridField className="size-full opacity-50" preset="band" />
+        <GridField className="size-full opacity-50" band preset="dense" />
         <div className="absolute inset-0" style={{ backgroundImage: BED_VIGNETTE }} />
         <div className="absolute inset-0" style={{ backgroundImage: HEADING_SCRIM }} />
         <div className="absolute inset-0 opacity-50" style={{ backgroundImage: ACTIONS_SCRIM }} />

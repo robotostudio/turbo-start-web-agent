@@ -46,14 +46,12 @@ export const CELL_ASPECT = 0.63;
 
 export const CORNER_RADIUS_PERCENT = 25;
 
-export type GridPresetName = "dense" | "coarse" | "band";
+export type GridPresetName = "dense" | "coarse";
 
 type GridPreset = Omit<ToolcraftGridGeometryInput, "cellAspect" | "cornerRadiusPercent">;
 
 /**
- * `dense` is the texture inside a section (a stage, a card, a panel), and
- * `band` is its wide form for the full-bleed bands: the hero and the CTA
- * (animated), Newsletter and the footer bed (still).
+ * `dense` is the animated register: the hero band and the CTA bed.
  * `coarse` is what the server renders for the still frame, and what a smaller
  * placement such as the footer watermark uses outright.
  */
@@ -62,20 +60,7 @@ type GridPreset = Omit<ToolcraftGridGeometryInput, "cellAspect" | "cornerRadiusP
 // pitch and a 20.66px row pitch across the 1440x430 band, which is 102 by 21.
 // It was 128 by 32, and since the mask stretches to whatever element carries it,
 // those extra rows read as a visibly busier field than the design has.
-//
-// `band` is `dense` made wide, for the full-bleed bands (Hero, CTA, Newsletter,
-// the footer bed). Those bands are a fixed height at every width, so on a
-// screen wider than about 1440 a 102-column grid had to scale up to cover the
-// width, which pushed rows past the band's top and bottom edges and sliced
-// them in half (and made the cells up to twice the comp's size by 2560). With
-// 288 columns the grid is wide enough that cover always fits the band's
-// height, up to a 3840-wide screen on the shortest band (the footer's 416px):
-// whole rows fill it top to bottom at the comp's cell size, and the extra
-// width is cropped at the viewport's side edges, where a cut column reads as
-// the texture carrying on. Same cell size, gap and rows as `dense`, so at 1440
-// and below it looks the same.
 export const GRID_PRESETS: Record<GridPresetName, GridPreset> = {
-  band: { cellSize: 12, columns: 288, gap: 3, rows: 21 },
   coarse: { cellSize: 28, columns: 55, gap: 7, rows: 9 },
   dense: { cellSize: 12, columns: 102, gap: 3, rows: 21 },
 };
