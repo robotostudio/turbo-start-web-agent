@@ -286,8 +286,8 @@
 }
 
 :root {
-  --background: oklch(0.96 0.015 95);
-  --foreground: oklch(0.16 0.01 60);
+  --background: oklch(0.55 0.22 264);
+  --foreground: oklch(1 0 0);
   --card: oklch(0.98 0.01 95);
   --card-foreground: oklch(0.16 0.01 60);
   --popover: oklch(0.98 0.01 95);
