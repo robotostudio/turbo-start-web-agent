@@ -23,3 +23,10 @@ next-env.d.ts
 docs/superpowers/
 .vercel
 .env*
+# shelve-managed-block
+.env
+.env.*
+!.env.template
+!.env.example
+.shelve/
+# end shelve-managed-block
