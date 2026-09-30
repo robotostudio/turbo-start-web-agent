@@ -33,6 +33,7 @@ numbers so a reader can verify it instead of believing it:
 | **v0** | `AGENTS.md` + `.agents/skills/` | **Yes** — preview pane in-chat | Itself | #25, #34, #38, #47, #51, #54 |
 | **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI | #2, #13, #17, #23 |
 | **Codex** | `AGENTS.md` | No — diff only | Button in the UI | #4, #18, #22 |
+
 v0's preview pane is a property of the *cloud* product. Claude Code and
 Codex both have one in their **desktop apps**, which need a local install and
 a checkout — the developer setup this template exists to spare the client.

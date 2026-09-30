@@ -43,7 +43,14 @@ export function Hero(raw: HeroProps) {
                 <ul className="flex items-center gap-2">
                   {agents.map((agent) => (
                     <li className="flex" key={agent.src}>
-                      <Image alt={agent.alt} height={20} src={agent.src} width={20} />
+                      {/* Fixed height, natural width: v0's mark is 2.1:1, not square. */}
+                      <Image
+                        alt={agent.alt}
+                        className="h-5 w-auto"
+                        height={20}
+                        src={agent.src}
+                        width={20}
+                      />
                     </li>
                   ))}
                 </ul>
