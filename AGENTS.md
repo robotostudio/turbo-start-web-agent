@@ -89,7 +89,7 @@ elsewhere (see `skills-lock.json`):
 Codex, Cursor, Copilot/VS Code, Zed, and most of the rest of the ecosystem
 read only this file and never load `.agents/skills/` — for those platforms
 the table above, not the skill files themselves, is the documentation.
-Claude Code and Replit also load these by description at the paths shown.
+Claude Code also loads these by description at the paths shown.
 `.claude/skills/` is a generated, byte-identical mirror of `.agents/skills/`
 for Claude Code, refreshed by `pnpm harness` (§5) — edit skills under
 `.agents/skills/`, never under `.claude/skills/` directly.
@@ -254,7 +254,7 @@ to try a body by hand. All of it must pass before a change is considered done �
 is not the same as correct: always click through the built site afterward.
 
 **Regenerating the platform surfaces.** `pnpm harness` regenerates
-`CLAUDE.md`, the `.claude/skills/` mirror, `replit.md`, and `.replit`
+`CLAUDE.md` and the `.claude/skills/` mirror
 from `AGENTS.md`, `harness.config.json`, and
 `.agents/skills/` (see `scripts/harness-gen/`) — run it any time you edit
 any of those three inputs, including after adding, editing, or removing a
@@ -271,8 +271,7 @@ file, and Codex truncates project docs past 32 KiB **silently** — so this
 section holds only lessons that apply whatever platform you are on. Anything
 true of one platform lives in that platform's runbook under
 `docs/platforms/`, which is where an operator connecting it will look:
-Replit's import offering to rewrite the app and its pnpm stall
-(`replit.md`), Codex having no git remote (`codex.md`), a public repo hiding
+Codex having no git remote (`codex.md`), a public repo hiding
 a broken GitHub connection and org settings needing a paid plan
 (`claude-code.md`), scoping a v0 import to a subdirectory (`v0.md`), and
 SSO-gated preview URLs (`docs/platforms/README.md`).

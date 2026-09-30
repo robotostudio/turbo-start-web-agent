@@ -186,8 +186,8 @@ or `CLAUDE.md` at all, the bridge isn't wired up; re-check §0.
   This repo ships that hook. `.claude/settings.json` runs
   `scripts/preflight.sh` at session start, gated on
   `CLAUDE_CODE_REMOTE=true` so it fires in cloud sessions and stays out of
-  the way locally. That gives Claude Code the same capability report
-  Replit gets from its `onBoot` — which matters, because the report is
+  the way locally. That gives Claude Code a capability report
+  before it does anything, which matters, because the report is
   what stops an agent telling a client it published a change when it never
   had push credentials.
 

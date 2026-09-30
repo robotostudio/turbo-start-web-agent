@@ -188,7 +188,7 @@ force-push, so it is much cheaper to get right the first time.
 
 `Requested-by:` is whoever asked for the change — `client` when a client
 asked through an agent, or a name when you know it. `Agent:` is the platform
-you are running on: `Claude Code`, `Codex`, `Cursor`, `Replit`. Both are
+you are running on: `Claude Code`, `Codex`, `v0`. Both are
 plain git trailers, so `git log --grep='^Requested-by: client'` answers
 "what did the client change this month" and `git log --grep='^Agent: Codex'`
 answers "what came through Codex" — which is the provenance a developer

@@ -9,12 +9,11 @@ behavior off, disabling platform-side rules or skills that would fight this
 template's conventions, the branch-protection reality on the client's plan,
 and a smoke test.
 
-- [`replit.md`](./replit.md)
 - [`claude-code.md`](./claude-code.md)
 - [`codex.md`](./codex.md)
 - [`v0.md`](./v0.md)
 
-Every platform-behavior claim in these four files traces to
+Every platform-behavior claim in these three files traces to
 [`docs/research/agent-platform-surfaces.md`](../research/agent-platform-surfaces.md)
 or to a primary source verified while writing them. If a platform's
 documented behavior changes, that research file — and these runbooks — need
@@ -22,7 +21,7 @@ a re-check, not a guess.
 
 ## Which platform for which client
 
-The four supported platforms are not interchangeable, and the difference
+The three supported platforms are not interchangeable, and the difference
 that matters most to a non-technical client is whether they can *see* their
 own change. Every row below is checked against that platform's own
 documentation. The last column is the stronger claim — a real content change
@@ -34,22 +33,12 @@ numbers so a reader can verify it instead of believing it:
 | **v0** | `AGENTS.md` + `.agents/skills/` | **Yes** — preview pane in-chat | Itself | #25, #34, #38, #47, #51, #54 |
 | **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI | #2, #13, #17, #23 |
 | **Codex** | `AGENTS.md` | No — diff only | Button in the UI | #4, #18, #22 |
-| **Replit** | `replit.md` | **Yes** — preview pane in-workspace | No; on GitHub | **None yet** |
 
-**Replit's runbook is research, not a walked path.** No content change has
-been taken through Replit to a pull request. Its one recorded session is the
-2026-08-20 import described in [`replit.md`](./replit.md) §1, which tried to
-port the app to Vite before any prompt was given. Everything in that runbook
-past §1 is drawn from Replit's own documentation and from the harness this
-repo generates — sound, and unconfirmed. Say so to a client rather than
-implying parity with the three platforms above.
-
-Both preview panes are a property of the *cloud* product. Claude Code and
+v0's preview pane is a property of the *cloud* product. Claude Code and
 Codex both have one in their **desktop apps**, which need a local install and
 a checkout — the developer setup this template exists to spare the client.
 
-The practical rule: **a client who needs to see the site wants v0 or
-Replit.** On Claude Code or Codex their only view of a change is the hosting
+The practical rule: **a client who needs to see the site wants v0.** On Claude Code or Codex their only view of a change is the hosting
 preview URL, which makes the section below load-bearing rather than a
 nice-to-have. Pick the platform for whoever is actually driving.
 
@@ -102,13 +91,13 @@ that, and says it before it shows any command.
 
 ## Supported vs. not
 
-Four platforms have a runbook because all four can import an *existing*
+Three platforms have a runbook because all three can import an *existing*
 repository and land changes as a reviewable branch — the two properties
 this template's review-before-publish premise depends on, **and** show the
 client something they can act on. Four more were considered and are
 deliberately out of scope:
 
-Codex is the odd one out among the four: it reads `AGENTS.md` natively, so
+Codex is the odd one out among the three: it reads `AGENTS.md` natively, so
 `harness-gen` emits nothing for it and `"codex"` is deliberately absent from
 `harness.config.json`'s `platforms` array (that array drives the generator,
 and every entry must match an adapter). Its runbook is entirely about the
@@ -120,6 +109,7 @@ before the agent runs, which silently breaks the capability probes.
 | Platform | Status | Why |
 |---|---|---|
 | **Cursor** | Removed 2026-08-20 | Cursor reads `AGENTS.md` natively, so it was originally supported on that basis alone. Re-examined once the other four had been tested live: **Cursor Cloud** (`cursor.com/agents`) runs in a browser, clones repos, works on a branch and opens PRs — but shows the user *"changed files in the diff view, not a full workspace."* No live preview pane; visibility is screenshots, videos, or taking control of a remote desktop. That places it alongside Claude Code and Codex rather than v0 and Replit, and this template already had two diff-only platforms. It was dropped to keep the supported set meaningful rather than merely long. The `.cursorignore` adapter went with it. Nothing stops a developer using Cursor locally — it reads `AGENTS.md` for free, which is the whole point of that file. |
+| **Replit** | Removed 2026-09-30 | Supported on research alone and never taken through to a pull request. Its one recorded session, the 2026-08-20 import, opened an unprompted task to port the app from Next.js to Vite, which would have destroyed the content pipeline. Dropped, along with its `replit.md`/`.replit` harness adapter and runbook. v0 covers the client-sees-the-site case with six merged PRs behind it. |
 | **Lovable** | Not supported, ever | Lovable **cannot import an existing repository at all** — connecting always creates a brand-new GitHub repo from a Lovable project; it only exports, never imports. There is no way to point it at a client's existing clone of this template, so "connect a finished client site" is impossible on Lovable regardless of configuration. |
 | **Bolt.new** | Not supported, ever | Bolt *can* import an existing repo, but it then **auto-commits every non-breaking change straight to the connected branch** (polling GitHub every 30s) with **no in-app merge and no documented PR-creation flow** — the opposite of "land as a branch and a PR for review." A safe posture would require a human to pre-create a dedicated branch, manually switch Bolt onto it, and open every PR by hand on GitHub outside Bolt entirely, which is enough process overhead that it stops being a real integration. |
 

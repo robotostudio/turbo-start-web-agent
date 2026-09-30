@@ -132,28 +132,28 @@ canonical rulebook — the content model, Block composition, the
 build-is-the-gate rule, git discipline — read natively by Codex, Cursor,
 GitHub Copilot/VS Code, Zed, and most of the rest of the ecosystem.
 
-Claude Code and Replit don't read `AGENTS.md` on their own, so
-**`CLAUDE.md`, `replit.md`, and `.replit` bridge that gap — and all three
-are generated**, by `pnpm harness`, from `AGENTS.md`,
-`harness.config.json`, and `.agents/skills/`. Never hand-edit a generated
+Claude Code doesn't read `AGENTS.md` on its own, so **`CLAUDE.md` and the
+`.claude/skills/` mirror bridge that gap — and both are generated**, by
+`pnpm harness`, from `AGENTS.md`, `harness.config.json`, and
+`.agents/skills/`. Never hand-edit a generated
 file (each one says so at the top); edit the inputs and regenerate.
 `pnpm harness:check` is the read-only drift gate CI runs — it fails,
 naming exactly which generated file is stale, instead of writing anything.
 
 `docs/platforms/` holds a connection runbook per supported platform
-(v0, Replit, Claude Code, Codex): scoping a client repo to one
+(v0, Claude Code, Codex): scoping a client repo to one
 platform, a write-only push identity, turning off platform-side automation
 that would fight this template's review-before-publish model, and a smoke
 test.
 
 `scripts/preflight.sh` reports what an agent session can actually do —
 git remote reachability, `gh`/`pnpm`/`node` presence, manifest capability
-probes — at session start (wired to Replit's `onBoot`; run it by hand on
-other platforms).
+probes — at session start (wired to Claude Code's `SessionStart` hook in
+cloud sessions; run it by hand elsewhere).
 
 ### Which platform for which client
 
-The platforms are not interchangeable. Three of the four have taken a real
+The platforms are not interchangeable. All three have taken a real
 client-style content change through to a merged pull request. The last column
 names them by number, so the claim can be checked rather than taken on trust:
 
@@ -162,19 +162,9 @@ names them by number, so the claim can be checked rather than taken on trust:
 | **v0** | `AGENTS.md` + `.agents/skills/` | **Yes**, in-chat preview | Itself | #25, #34, #38, #47, #51, #54 |
 | **Claude Code** | `CLAUDE.md` (imports `AGENTS.md`) | No — diff only | Button in the UI | #2, #13, #17, #23 |
 | **Codex** | `AGENTS.md` | No — diff only | Button in the UI | #4, #18, #22 |
-| **Replit** | `replit.md` | **Yes**, workspace preview | No — on GitHub | **None yet** |
-
-**Replit is documented, not verified.** Its runbook and its generated
-surfaces are the most carefully researched of the four, and no content change
-has ever been taken through it to a pull request. The only session on record
-is the 2026-08-20 import, which opened an unprompted task to port the app to
-Vite — the incident the generated `replit.md` now carries a standing
-instruction against, and whose prevention nobody has watched work. Read
-`docs/platforms/replit.md` as the best available account of Replit's
-documented behaviour, not as a path anyone has walked.
 
 The column that decides it for a non-technical client is **shows the
-client the site**. On v0 and Replit they watch the site change as they ask for it; on Claude
+client the site**. On v0 they watch the site change as they ask for it; on Claude
 Code and Codex they get a diff, and their only view of the result is the
 hosting preview URL — which is behind a login by default on most hosts, so
 it needs configuring rather than assuming. Both of those platforms *do*
@@ -189,13 +179,9 @@ and every one of them has some.
 ### What live testing changed
 
 Testing moved this from documented to verified, and corrected the docs in
-about a dozen places. Two findings are worth knowing before you connect
+about a dozen places. One finding is worth knowing before you connect
 anything:
 
-- **Replit's guided import may offer to *port* the app** rather than run
-  it — a Next.js → Vite conversion, unprompted, which would destroy the
-  content pipeline. The generated `replit.md` now carries a standing
-  instruction against it. See `docs/platforms/replit.md` §1.
 - **On an agent-authored pull request, the file list is the truth and the
   prose is a claim.** One platform committed a dev-server side effect as
   its own commit and titled the PR after it, never mentioning the change

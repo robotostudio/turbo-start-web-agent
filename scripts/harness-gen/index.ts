@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateClaudeCode } from "./adapters/claude-code.ts";
-import { generateReplit } from "./adapters/replit.ts";
 import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 
 // harness-gen — the per-platform surface generator.
@@ -10,8 +9,8 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 // AGENTS.md is the single canonical instruction set for this repo, read
 // natively by Codex, Cursor, Copilot/VS Code, Zed, Jules, Gemini CLI, Devin,
 // Warp, Amp, and most of the rest of the ecosystem. Claude Code does not
-// read AGENTS.md at all, and Replit only reads replit.md, root only — this
-// generator exists so those platform-specific surfaces are derived from
+// read AGENTS.md at all — this generator exists so its platform-specific
+// surfaces are derived from
 // AGENTS.md and harness.config.json instead of hand-maintained, which is
 // exactly how they'd drift out of sync with the canonical rules.
 //
@@ -26,12 +25,7 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 // is a pure function of its declared inputs (AGENTS.md, harness.config.json,
 // and/or .agents/skills/, per adapter — see each adapter's own comments for
 // which it reads), never of wall-clock time. That's what keeps --check
-// honest and every regeneration diff meaningful instead of noise. It also
-// means an edit to AGENTS.md must change at least one generated file's
-// bytes and trip harness:check — replit.ts quotes AGENTS.md §1 verbatim
-// into replit.md specifically so that's true in practice, not just in
-// principle (see its own comment for why restating the rules in
-// independently hand-written prose would have been the wrong fix).
+// honest and every regeneration diff meaningful instead of noise.
 
 // Known platform ids -> the adapter that generates their surface. Also the
 // source of truth harness.config.json's "platforms" array is validated
@@ -40,7 +34,6 @@ import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
 // silently doing nothing (see F8/harness follow-ups).
 const ADAPTERS: Record<string, Adapter> = {
   "claude-code": generateClaudeCode,
-  replit: generateReplit,
 };
 
 function errorMessage(err: unknown): string {
