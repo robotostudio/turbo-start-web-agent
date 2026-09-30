@@ -1,0 +1,65 @@
+---
+title: Changelog
+description: What changed in the 2026-09 redesign, grouped by what you need to do about it.
+---
+
+## 2026-09: the full redesign
+
+The site's Blocks, design tokens and docs were reworked together. This entry lists what changed, and the last section lists what an existing site's content will notice.
+
+### New Blocks
+
+- `FeatureRows`: three full-width rows, each with a numbered title, a short body and an optional text link.
+- `PreviewStage`: a heading and lede above an illustration of the site being edited in place.
+- `FeaturedQuote`: one large quote with a person, and an optional company drawn beside it.
+
+### Redesigned Blocks
+
+- Hero, with a new `showcase` variant: copy above a textured band carrying a floating prompt card.
+- LogoCloud, now a bordered ledger.
+- Stats, now a ledger with an optional meter under each figure.
+- Testimonial, with an optional featured quote and a highlighted phrase per quote.
+- PostGrid and the /blog index, now cards with a cover image.
+- CTA, on the dark textured band.
+- ImageCards, in the same framed card PostGrid uses.
+- Newsletter, on the textured band.
+- Faq, using the browser's native disclosure, with an opening animation.
+- FeatureGrid, a numbered ledger grid.
+- FeatureSplit, with a framed image on a textured bed.
+- Comparison, with a stacked layout on a phone.
+- Gallery, three even rows of frames.
+- Team, a ledger grid of portraits.
+- Pricing, a ruled ledger of plans.
+
+### System
+
+- Eyebrows: the small label above a section title used to be ruled out, and is now part of the system. Most Blocks take an optional `eyebrow`.
+- The type roles: each piece of text has a named role instead of a one-off size.
+- New ledger, mock and subtle tokens in the design tokens file.
+- The texture: `GridField`, the `band` fit, and the mirrored still.
+- Shared ledger parts, so every ledger Block draws its rules and cells the same way.
+
+### Content and props authors need to know about
+
+- `eyebrow` is available on sixteen Blocks.
+- Comparison takes labels for its two columns: `usLabel` and `traditionalLabel`.
+- Faq takes an optional `contact` link for anyone whose question is not listed.
+- Pricing takes at most 4 plans.
+- The home page has a new composition.
+
+### Docs
+
+- The `design-a-block` skill was rewritten.
+- The `compose-page` skill was updated.
+- The /style-guide page was rewritten.
+
+### Breaking or behavioural changes
+
+- Pricing accepts at most 4 plans. A page with 5 or more plans fails the build.
+- LogoCloud now requires `eyebrow`. A page that uses LogoCloud without it fails the build.
+- LogoCloud no longer has a `lede` prop. Text passed as `lede` is ignored, so move it to `eyebrow` or `meta`.
+- Hero's default `variant` is now `showcase`. A Hero that sets no `variant` used to render as `centered`, so set `variant="centered"` to keep the old look.
+- Hero's `title` is now optional.
+- Testimonial and Faq keep their old props. Both now draw differently, and Faq shows its first answer open.
+- FeatureGrid and Team pad a short last row with empty cells. Use a multiple of 3 items.
+- Gallery puts the 1st, 6th, 7th and 8th images in the wide slots, so the order of images matters.
