@@ -86,8 +86,13 @@ export const checkNonEmptyBody = (body: string): Finding[] =>
  * The session URL is not a secret (it 403s for anyone but the account that
  * made it), so this is about the permanent record in a public repository,
  * not about disclosure.
+ *
+ * One co-author is not a vendor credit: `workcellhq[bot]`, the Workcell
+ * Plant's GitHub App. A Plant Run commits as the person who started it and
+ * co-authors each commit as itself, so `git log` shows which Run made it.
  */
-const VENDOR_TRAILER = /^\s*(co-authored-by|claude-session|generated-(?:by|with)|x-session)\s*:/im;
+const VENDOR_TRAILER =
+  /^\s*(co-authored-by(?!\s*:\s*workcellhq\[bot\]\s*<)|claude-session|generated-(?:by|with)|x-session)\s*:/im;
 
 export const checkVendorTrailers = (commitMessages: readonly string[]): Finding[] =>
   commitMessages

@@ -80,6 +80,27 @@ test("this repo's own trailer convention passes", () => {
   assert.deepEqual(checkVendorTrailers([commit]), []);
 });
 
+test("the Workcell Plant's co-author trailer passes", () => {
+  const commit = [
+    "Add a changelog page for the redesign",
+    "",
+    "Requested-by: client",
+    "Agent: claude-code",
+    "Co-authored-by: workcellhq[bot] <333816956+workcellhq[bot]@users.noreply.github.com>",
+  ].join("\n");
+  assert.deepEqual(checkVendorTrailers([commit]), []);
+});
+
+test("a vendor co-author beside workcellhq[bot] is still flagged", () => {
+  const commit = [
+    "Add a changelog page for the redesign",
+    "",
+    "Co-authored-by: workcellhq[bot] <333816956+workcellhq[bot]@users.noreply.github.com>",
+    "Co-Authored-By: Someone Else <a@b.c>",
+  ].join("\n");
+  assert.equal(checkVendorTrailers([commit]).length, 1);
+});
+
 test("a clean pull request produces no findings", () => {
   const body = "## The change\n\nOne FAQ entry added.\n\n## Verification\n\nAll gates green.\n";
   const commits = ["content: add an FAQ entry\n\nRequested-by: client\nAgent: Codex"];
