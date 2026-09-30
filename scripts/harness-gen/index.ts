@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateClaudeCode } from "./adapters/claude-code.ts";
 import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
@@ -141,7 +141,14 @@ function validateConfig(raw: unknown): HarnessConfig {
 }
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(here, "..", "..");
+// The repo this generator lives in, unless HARNESS_ROOT names another one.
+// The override exists for index.test.ts, which runs the generator against a
+// temporary copy so that proving it catches drift and deletes stale files
+// never writes into this repo's own CLAUDE.md or .claude/ (a sandbox that
+// locks .claude/, as the Plant does, would otherwise fail the suite).
+const repoRoot = process.env.HARNESS_ROOT
+  ? resolve(process.env.HARNESS_ROOT)
+  : join(here, "..", "..");
 
 const agentsMdPath = join(repoRoot, "AGENTS.md");
 const configPath = join(repoRoot, "harness.config.json");
