@@ -53,7 +53,7 @@ columns:
       - label: GitHub
         href: https://github.com/robotostudio/turbo-start-web-agent
       - label: Changelog
-        href: https://github.com/robotostudio/turbo-start-web-agent/commits/main
+        href: /changelog
       - label: MIT licence
         href: /terms
 
