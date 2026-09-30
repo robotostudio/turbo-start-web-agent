@@ -1,3 +1,5 @@
+<img width="1200" height="630" alt="image" src="https://github.com/user-attachments/assets/3db6a4cb-eb74-4e93-a8a6-9e4128973383" />
+
 # turbo-start-web-agent
 
 A starter for marketing sites your client can edit through **any AI agent**,
