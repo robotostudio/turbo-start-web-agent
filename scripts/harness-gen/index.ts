@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateClaudeCode } from "./adapters/claude-code.ts";
 import type { Adapter, GeneratedFile, HarnessConfig } from "./types.ts";
@@ -141,7 +141,23 @@ function validateConfig(raw: unknown): HarnessConfig {
 }
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(here, "..", "..");
+// The repo this generator lives in, unless `--root <dir>` names another one.
+// The override exists for index.test.ts, which runs the generator against a
+// temporary copy so that proving it catches drift and deletes stale files
+// never writes into this repo's own CLAUDE.md or .claude/ (a sandbox that
+// locks .claude/, as the Plant does, would otherwise fail the suite).
+//
+// A flag and not an environment variable on purpose: the write path deletes
+// every ungenerated file under <root>/.claude/skills/, so the root must only
+// ever move when a command explicitly asks. An inherited variable could point
+// `pnpm harness` at a home directory, or `harness:check` at some other tree.
+const rootFlag = process.argv.indexOf("--root");
+const rootArg = rootFlag === -1 ? undefined : process.argv[rootFlag + 1];
+if (rootFlag !== -1 && !rootArg) {
+  console.error("harness-gen: `--root` needs a directory after it.");
+  process.exit(1);
+}
+const repoRoot = rootArg ? resolve(rootArg) : join(here, "..", "..");
 
 const agentsMdPath = join(repoRoot, "AGENTS.md");
 const configPath = join(repoRoot, "harness.config.json");

@@ -15,24 +15,61 @@ import { test } from "node:test";
 
 // Run from the repo root, same as `pnpm harness` / `pnpm harness:check`.
 const INDEX = "scripts/harness-gen/index.ts";
-const CLAUDE_MD = "CLAUDE.md";
 
-function runCheck() {
-  return execFileSync("node", ["--experimental-strip-types", INDEX, "--check"], {
+// Everything the generator reads (AGENTS.md, harness.config.json,
+// .agents/skills) and writes (CLAUDE.md, .claude/skills).
+const HARNESS_FILES = ["AGENTS.md", "harness.config.json", "CLAUDE.md", ".agents", ".claude"];
+
+/**
+ * A temporary copy of the repo's harness inputs and outputs, for the tests
+ * that have to break something to prove the generator notices. They write
+ * there, never into this repo: a sandbox that locks .claude/ (the Plant does,
+ * so an agent cannot rewrite its own config) would otherwise fail the suite
+ * with EACCES before the test could prove anything.
+ */
+function copyOfHarness(): string {
+  const root = mkdtempSync(join(tmpdir(), "harness-gen-"));
+  for (const path of HARNESS_FILES) {
+    if (existsSync(path)) cpSync(path, join(root, path), { recursive: true });
+  }
+  // cpSync keeps each file's mode, so a read-only .claude/ would copy as a
+  // read-only copy the generator cannot write to. The copy is ours: make it
+  // writable.
+  makeWritable(root);
+  return root;
+}
+
+function makeWritable(path: string) {
+  chmodSync(path, statSync(path).mode | 0o200);
+  if (statSync(path).isDirectory()) {
+    for (const entry of readdirSync(path)) makeWritable(join(path, entry));
+  }
+}
+
+function runGenerator(root?: string, ...args: string[]) {
+  const rootArgs = root ? ["--root", root] : [];
+  return execFileSync("node", ["--experimental-strip-types", INDEX, ...rootArgs, ...args], {
     stdio: "pipe",
   });
 }
 
+const runCheck = (root?: string) => () => runGenerator(root, "--check");
+
 test("generated harness surfaces are in sync with AGENTS.md and harness.config.json", () => {
-  assert.doesNotThrow(runCheck);
+  // Read-only: checks this repo itself, and writes nothing.
+  assert.doesNotThrow(runCheck());
 });
 
 test("harness:check names the file that drifted, same as catalog:check", () => {
-  const original = readFileSync(CLAUDE_MD, "utf8");
-  const corrupted = `${original}\n<!-- hand-edited: this line should never survive a regenerate -->\n`;
-  writeFileSync(CLAUDE_MD, corrupted);
+  const root = copyOfHarness();
   try {
-    assert.throws(runCheck, (error: unknown) => {
+    const claudeMd = join(root, "CLAUDE.md");
+    const original = readFileSync(claudeMd, "utf8");
+    writeFileSync(
+      claudeMd,
+      `${original}\n<!-- hand-edited: this line should never survive a regenerate -->\n`,
+    );
+    assert.throws(runCheck(root), (error: unknown) => {
       const stderr = (error as { stderr?: Buffer }).stderr?.toString() ?? "";
       assert.match(stderr, /out of date/);
       assert.match(stderr, /CLAUDE\.md/);
@@ -40,7 +77,7 @@ test("harness:check names the file that drifted, same as catalog:check", () => {
       return true;
     });
   } finally {
-    writeFileSync(CLAUDE_MD, original);
+    rmSync(root, { recursive: true, force: true });
   }
 });
 
