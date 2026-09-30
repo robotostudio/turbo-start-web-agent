@@ -1,15 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
-  chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
-  readdirSync,
   readFileSync,
   rmSync,
-  statSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -93,22 +90,40 @@ test("harness:check reports a file left behind in .claude/skills/ as stale, and 
   // deleted there but whose mirror was never cleaned up — is exactly that
   // case, so create one directly under the owned dir rather than editing an
   // existing mirrored file's content.
-  const root = copyOfHarness();
+  //
+  // It runs on a copy of the generator and its inputs in a temp dir, not in
+  // the checkout: index.ts resolves the repo root from its own location, and
+  // writing into the checkout's .claude/ fails where .claude/ is read-only
+  // (the Plant's sandbox, EACCES on mkdir).
+  const root = mkdtempSync(join(tmpdir(), "harness-gen-"));
   try {
+    for (const path of ["scripts/harness-gen", ".agents", "AGENTS.md", "harness.config.json"]) {
+      cpSync(path, join(root, path), { recursive: true });
+    }
+    const index = join(root, INDEX);
+    const run = (...args: string[]) =>
+      execFileSync("node", ["--experimental-strip-types", index, ...args], {
+        cwd: root,
+        stdio: "pipe",
+      });
+    run(); // generate the copy's surfaces, so the only drift is the stale file below
+
     const stalePath = join(root, ".claude/skills/ghost-skill/SKILL.md");
     mkdirSync(dirname(stalePath), { recursive: true });
     writeFileSync(stalePath, "---\nname: ghost-skill\n---\n\nNot a real skill.\n");
-
-    assert.throws(runCheck(root), (error: unknown) => {
-      const stderr = (error as { stderr?: Buffer }).stderr?.toString() ?? "";
-      assert.match(stderr, /stale, no longer generated/);
-      assert.match(stderr, /ghost-skill/);
-      return true;
-    });
+    assert.throws(
+      () => run("--check"),
+      (error: unknown) => {
+        const stderr = (error as { stderr?: Buffer }).stderr?.toString() ?? "";
+        assert.match(stderr, /stale, no longer generated/);
+        assert.match(stderr, /ghost-skill/);
+        return true;
+      },
+    );
 
     // The non-`--check` path (`pnpm harness`) must actually delete the
     // stale file via rmSync, not just report it in --check's diff.
-    runGenerator(root);
+    run();
     assert.equal(existsSync(stalePath), false);
   } finally {
     rmSync(root, { recursive: true, force: true });
