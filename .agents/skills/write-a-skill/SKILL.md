@@ -49,8 +49,8 @@ half wherever you keep it.
 
 3. **Open with frontmatter, as the literal first bytes of the file.** No
    comment, no blank line, no generated-file header above it — the
-   agentskills.io spec parses the opening `---` and both Claude Code and
-   Replit fail on anything before it:
+   agentskills.io spec parses the opening `---` and Claude Code fails on
+   anything before it:
 
    ```markdown
    ---

@@ -2,14 +2,13 @@
 # scripts/preflight.sh
 #
 # Capability-probe script for an agent starting a session on this repo.
-# Run at session start (Replit's onBoot, Claude Code's SessionStart hook, or
-# by hand) so the agent knows what it can and cannot do BEFORE it promises
+# Run at session start (Claude Code's SessionStart hook, or by hand) so the agent knows what it can and cannot do BEFORE it promises
 # anything to a client — e.g. "I've pushed that" when it never had
 # credentials to push at all.
 #
-# This is a REPORT, not a gate: it must always exit 0. A non-zero exit here
-# can wedge a Replit workspace boot, and a broken workspace is worse than a
-# missing capability. Every failure path below is therefore handled with an
+# This is a REPORT, not a gate: it must always exit 0. A non-zero exit from a
+# session-start hook can break the session it was meant to inform, and a
+# broken session is worse than a missing capability. Every failure path below is therefore handled with an
 # if/else — nothing is allowed to abort the script — and a trap forces the
 # final exit code to 0 no matter what happens above it.
 #

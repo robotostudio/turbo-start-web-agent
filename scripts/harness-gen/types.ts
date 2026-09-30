@@ -15,7 +15,7 @@ export interface HarnessConfig {
     host: string;
   };
   commands: {
-    /** Consumed: interpolated into the generated .replit's "run" line. */
+    /** Documentation only — not read by harness-gen or preflight.sh. */
     dev: string;
     /** Documentation only — not read by harness-gen or preflight.sh. */
     build: string;

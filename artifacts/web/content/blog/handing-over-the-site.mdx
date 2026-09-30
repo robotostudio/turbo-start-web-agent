@@ -38,12 +38,10 @@ before it can claim anything. Run it yourself with `sh scripts/preflight.sh`.
 
 ## Regenerate the platform files
 
-Run `pnpm harness`. It writes `CLAUDE.md`, `replit.md`, `.replit`, `.cursorignore`, and the mirrored
-skills under `.claude/skills/` from one source: `AGENTS.md` plus the manifest.
+Run `pnpm harness`. It writes `CLAUDE.md` and the mirrored skills under `.claude/skills/` from one
+source: `AGENTS.md` plus the manifest.
 
 Do not hand-edit the generated files. `pnpm harness:check` fails CI on a drift, which is deliberate.
-Replit's own agent occasionally rewrites `replit.md` in place, so expect that check to catch it at
-some point and re-run the generator when it does.
 
 ## Check the client can open a preview
 

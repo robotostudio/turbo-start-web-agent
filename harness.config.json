@@ -11,14 +11,14 @@
   },
   "commands": {
     "dev": "pnpm run dev",
-    "//dev": "Consumed: interpolated verbatim into the generated .replit's \"run\" line by scripts/harness-gen/adapters/replit.ts.",
+    "//dev": "Documentation only: not read by scripts/harness-gen or scripts/preflight.sh. Recorded here for an operator/agent scanning this file for the dev command.",
     "build": "pnpm run build",
     "//build": "Documentation only: not read by scripts/harness-gen or scripts/preflight.sh. Recorded here for an operator/agent scanning this file for the build command.",
     "check": ["pnpm run checks"],
     "//check": "The whole gate, as one command. It used to be an eight-entry restatement of the individual checks, which is how it came to be missing brand:check: a hand-maintained copy of a list that grows. .github/workflows/ci.yml now runs this same script rather than its own steps, so there is exactly one list and it lives in package.json. Documentation only: not read by scripts/harness-gen or scripts/preflight.sh."
   },
-  "platforms": ["replit", "claude-code"],
-  "//platforms": "Consumed: drives which harness-gen adapters run (scripts/harness-gen/index.ts). Each entry must match a key in that file's ADAPTERS map (currently \"replit\", \"claude-code\") — an unrecognized entry fails generation with a named error instead of silently doing nothing.",
+  "platforms": ["claude-code"],
+  "//platforms": "Consumed: drives which harness-gen adapters run (scripts/harness-gen/index.ts). Each entry must match a key in that file's ADAPTERS map (currently \"claude-code\") — an unrecognized entry fails generation with a named error instead of silently doing nothing.",
   "capabilities": [
     {
       "env": "SLACK_WEBHOOK_URL",

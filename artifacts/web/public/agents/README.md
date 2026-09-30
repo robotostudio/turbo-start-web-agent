@@ -1,7 +1,7 @@
 # Agent marks
 
-The three marks shown beside "Edit with agents" in the Hero, lifted from the
-2026-09 Paper comp rather than redrawn, so they match the design exactly.
+The marks shown beside "Edit with agents" in the Hero. Claude and OpenAI are
+lifted from the 2026-09 Paper comp; v0 is its official artwork, recoloured to match.
 
 They are flat `#666666` rather than `currentColor`: an SVG loaded by URL is an
 isolated document and cannot read this page's custom properties, the same

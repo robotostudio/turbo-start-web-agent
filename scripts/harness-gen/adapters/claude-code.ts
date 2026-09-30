@@ -25,13 +25,13 @@ import type { Adapter, GeneratedFile } from "../types.ts";
 //   - This generator's whole contract is a byte-for-byte --check comparison
 //     of generated *content*; a symlink is a different kind of filesystem
 //     object; special-casing it here would make this adapter behave
-//     differently from the other two for no real benefit.
+//     differently from the repo's other generators for no real benefit.
 //   - A generated copy is boring, and boring is what a drift gate wants.
 //
 // The mirrored SKILL.md files are copied byte-identical, with NO header
 // injected into them: the agentskills.io spec requires SKILL.md to open
 // with `---` frontmatter as its literal first bytes, and prepending a
-// comment would break that parse for both Claude Code and Replit. The
+// comment would break that parse for Claude Code. The
 // "generated" declaration for this directory instead lives in the sibling
 // README.md (which is plain Markdown, not frontmatter-bound) and in
 // CLAUDE.md itself.
@@ -145,9 +145,9 @@ platform-neutral file.
 
 This directory is a generated, byte-identical mirror of \`.agents/skills/\`.
 Claude Code cloud sessions load \`.claude/skills/\` from the repo clone, but
-the canonical skill files live under \`.agents/skills/\` because that same
-path also serves Replit's Agent Skills convention (agentskills.io spec) —
-one folder, two platforms. Edit skills under \`.agents/skills/\`, never here;
+the canonical skill files live under \`.agents/skills/\`, the Agent Skills
+convention's directory (agentskills.io spec). Edit skills under
+\`.agents/skills/\`, never here;
 run \`pnpm harness\` to refresh this copy.
 `,
   });

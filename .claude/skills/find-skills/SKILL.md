@@ -17,8 +17,7 @@ injection with a friendly YAML header.
   no special marking — `compose-page`, `sync-changes`, and this skill are all
   project-authored. They are not listed in `skills-lock.json`.
 - Skills installed **from elsewhere** also live under `.agents/skills/<name>/`
-  (this directory doubles as both Replit's project-skill location and the
-  agentskills.io spec's skill directory, so one folder serves both), but they
+  (the agentskills.io spec's skill directory), but they
   must additionally:
   1. Carry `metadata.source` in their own frontmatter naming the origin repo,
      e.g. `metadata: { source: "https://github.com/org/repo" }` — the spec's
