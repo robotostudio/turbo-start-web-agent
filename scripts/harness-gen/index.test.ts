@@ -50,8 +50,8 @@ function makeWritable(path: string) {
 }
 
 function runGenerator(root?: string, ...args: string[]) {
-  return execFileSync("node", ["--experimental-strip-types", INDEX, ...args], {
-    env: root ? { ...process.env, HARNESS_ROOT: root } : process.env,
+  const rootArgs = root ? ["--root", root] : [];
+  return execFileSync("node", ["--experimental-strip-types", INDEX, ...rootArgs, ...args], {
     stdio: "pipe",
   });
 }
