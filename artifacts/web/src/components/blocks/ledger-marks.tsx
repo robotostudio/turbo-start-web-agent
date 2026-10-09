@@ -1,4 +1,4 @@
-// The two small marks the redesign sets beside a ledger line: a pink check for
+// The two small marks the redesign sets beside a ledger line: a green check for
 // the side being recommended, and a muted dash for the alternative. Shared by
 // FeatureSplit's points and Comparison's columns so the check is drawn once.
 // Both are decorative: the text beside them, or a column label, carries the

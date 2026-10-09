@@ -484,7 +484,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.664 0.273 348.8);
+  --primary: oklch(0.723 0.219 149.6);
   /* Near-black, not white. White on this accent measures 3.53:1, which fails
      WCAG AA for normal text and passes only as large text; button labels here
      are 16px regular. The ground colour gives 5.35:1 and passes at any size.
@@ -568,7 +568,7 @@
   --mock-rule: #ffffff14;
   --mock-text: #c4c4c4;
   --mock-node: #4a4a4a;
-  --ring: oklch(0.664 0.273 348.8);
+  --ring: oklch(0.723 0.219 149.6);
   --radius: 0.75rem;
 
   /* Endpoints for the two-tone overscroll canvas above — verified against
