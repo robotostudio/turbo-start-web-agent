@@ -5,7 +5,7 @@ import { SectionHeaderSplit } from "./section-header";
 
 // The redesign's comparison, drawn in Paper as "comparison / redesign" (and a
 // 375px frame beside it): a ruled table whose recommended column sits on a
-// faint raised panel under a pink rule, each answer led by a pink check, with
+// faint raised panel under a green rule, each answer led by a green check, with
 // the alternative muted behind a dash.
 //
 // Two renderings of the same rows, switched in CSS rather than script: a real
@@ -87,7 +87,7 @@ export function Comparison(raw: ComparisonProps) {
         </table>
 
         {/* The phone rendering: each row stacked, the recommended answer on
-            its panel with the pink rule down its edge instead of across the
+            its panel with the green rule down its edge instead of across the
             top. */}
         <ul className="mt-10 border-border border-b md:hidden">
           {rows.map((row) => (

@@ -11,7 +11,7 @@ import { SectionHeaderSplit } from "./section-header";
 // and with it the one arbitrary grid template the Blocks carried.
 //
 // The emphasized plan takes Comparison's treatment for the recommended
-// column: a lifted `foreground/3` panel under a brand-coloured rule, pink
+// column: a lifted `foreground/3` panel under a brand-coloured rule, green
 // checks, and the primary button. Every other plan is plain, with muted
 // checks and outline buttons, so the choice reads at a glance.
 

@@ -9,7 +9,7 @@
   This is deliberately a plain monogram, not a crafted logo: every template
   adopter is expected to swap this file for their own brand mark. The two
   colors below are the sRGB renderings of two design tokens in
-  src/app/globals.css: the badge is --primary (oklch(0.664 0.273 348.8)) and
+  src/app/globals.css: the badge is --primary (oklch(0.723 0.219 149.6)) and
   the glyph is --primary-foreground (oklch(0.178 0 0)). They are literal hex
   values because a favicon is served as a standalone document and can't
   resolve the host page's CSS custom properties.
@@ -23,7 +23,7 @@
   here are the only edit needed.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Site logo">
-  <rect width="32" height="32" rx="8" fill="#ff12ae" />
+  <rect width="32" height="32" rx="8" fill="#00c950" />
   <g fill="currentColor" style="color: #111111">
     <rect x="9" y="8" width="4" height="16" rx="1" />
     <rect x="19" y="8" width="4" height="16" rx="1" />
