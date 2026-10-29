@@ -1,0 +1,35 @@
+---
+title: Features
+description: Everything Harbour gives you, in one place.
+draft: true
+---
+
+<Hero
+  variant="centered"
+  title="Everything Harbour gives you"
+  lede="A starter marketing site your developers keep in git and your team edits through the agent they already use."
+  primary={{ label: "Read the docs", href: "/about" }}
+  secondary={{ label: "Browse the blocks", href: "/blocks-gallery" }}
+/>
+
+<FeatureGrid
+  eyebrow="Features"
+  title="What is in the box"
+  lede="Six pieces, each doing one job."
+  features={[
+    { title: "Block system", body: "Compose pages from a library of 19 pre-built sections instead of hand-rolling layout for every client." },
+    { title: "Content lives in git", body: "Plain-text MDX that is diffable, reviewable as a pull request, revertible, and directly editable by an AI agent." },
+    { title: "Edit with any agent", body: "Your developers keep working in git while your team edits through the agent they already use." },
+    { title: "One token file", body: "Rebrand a client site by editing a handful of CSS variables, not hunting hex codes through the codebase." },
+    { title: "The build is the gate", body: "Bad frontmatter or bad Block props fail the build by design. If the build passes, the content is valid." },
+    { title: "Content lockdown", body: "A check at build time means content can only compose Blocks with literal values, so an agent may only edit content." },
+  ]}
+/>
+
+<CTA
+  title="Compose pages from Blocks."
+  titleMuted="The build is the gate."
+  lede="MIT-licensed. Clone it, edit the content in git or through any agent, and ship your own site."
+  primary={{ label: "Read the docs", href: "/blog/introducing-harbour" }}
+  secondary={{ label: "Get in touch", href: "/contact" }}
+/>
